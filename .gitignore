@@ -1,12 +1,29 @@
+# Dependencies
 node_modules/
+
+# Hexo generated files
 public/
 db.json
+.deploy_git/
+
+# Logs and caches
 *.log
+npm-debug.log*
+.cache/
+.temp/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Tencent Cloud EdgeOne local state
+.edgeone/*
+!.edgeone/config.json
+.tef_dist/
+
+# Editors and operating systems
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
-
-# Tencent Cloud EdgeOne
-.env
-.edgeone/*
-.tef_dist/*
-  
