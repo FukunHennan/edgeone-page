@@ -1,0 +1,105 @@
+{
+  "name": "edgeone-page",
+  "installCommand": "npm ci",
+  "buildCommand": "npm run build:production",
+  "outputDirectory": "public",
+  "nodeVersion": "20.18.0",
+  "redirects": [
+    {
+      "source": "/zh",
+      "destination": "/zh-CN/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh/*",
+      "destination": "/zh-CN/:splat",
+      "statusCode": 301
+    },
+    {
+      "source": "/cn",
+      "destination": "/zh-CN/",
+      "statusCode": 301
+    },
+    {
+      "source": "/cn/*",
+      "destination": "/zh-CN/:splat",
+      "statusCode": 301
+    },
+    {
+      "source": "/en-US",
+      "destination": "/en/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en-US/*",
+      "destination": "/en/:splat",
+      "statusCode": 301
+    }
+  ],
+  "headers": [
+    {
+      "source": "/*",
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        }
+      ]
+    },
+    {
+      "source": "/service-worker.js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Service-Worker-Allowed",
+          "value": "/"
+        }
+      ]
+    },
+    {
+      "source": "/zh-CN/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    },
+    {
+      "source": "/en/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "no-cache"
+        }
+      ]
+    }
+  ]
+}
