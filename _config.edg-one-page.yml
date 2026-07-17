@@ -113,8 +113,8 @@ navbar:
       path: https://github.com/FukunHennan/edgeone-page
       icon: fa-brands fa-github
   search:
-    enable: false
-    preload: false
+    enable: true
+    preload: true
 
 home:
   sidebar:
@@ -183,12 +183,20 @@ articles:
   lazyload: true
   pangu_js: false
   recommendation:
-    enable: false
-    title: 推荐阅读
+    enable: true
+    title: Recommended reading
     limit: 3
     mobile_limit: 2
     placeholder: /images/wallhaven-wqery6-light.webp
     skip_dirs: []
+  share:
+    enable: true
+    title: Share this article
+    native: Share
+    copy: Copy link
+    email: Email
+    copied: Link copied
+    failed: Unable to share. Please try again.
 
 comment:
   enable: false
@@ -225,7 +233,7 @@ inject:
 
 plugins:
   feed:
-    enable: false
+    enable: true
   aplayer:
     enable: false
     type: fixed
