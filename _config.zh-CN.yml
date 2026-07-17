@@ -18,4 +18,5 @@ localized_theme:
     - 为腾讯云 EdgeOne Pages 优化。
   announcement: 当前显示简体中文内容，可在导航栏切换到 English。
   recommendation_title: 推荐阅读
+  author_label: 维护者
   footer_html: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">在 GitHub 查看 EdgeOne Page</a>'
