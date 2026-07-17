@@ -3,307 +3,142 @@
         <div class="left">
             <% if (theme.defaults.hasOwnProperty('logo') && theme.defaults.logo) { %>
                 <a class="logo-image h-8 w-8 sm:w-10 sm:h-10 mr-3" href="<%= config.root %>">
-                    <%- image_tag(theme.defaults.logo, {
-                        class: "w-full h-full rounded-xs"
-                    }) %>
+                    <%- image_tag(theme.defaults.logo, { class: "w-full h-full rounded-xs" }) %>
                 </a>
             <% } %>
             <a class="logo-title" href="<%= config.root %>">
                 <%- is_home() ? '<h1>' : '' %>
-                <%= theme.info.title || config.title || 'Redefine Theme' %>
+                <%= theme.info.title || config.title || 'EdgeOne Page' %>
                 <%- is_home() ? '</h1>' : '' %>
             </a>
         </div>
 
         <div class="right">
-            <!-- PC -->
             <div class="desktop">
                 <ul class="navbar-list">
                     <% for (let i in theme.navbar.links) { %>
-                        <% if (theme.navbar.links[i].path === 'none') {
-                        } else { %>
+                        <% if (theme.navbar.links[i].path !== 'none') { %>
                             <%
-                                let link = theme.navbar.links[i];
-                                let hasSubmenus = link.submenus;
-                                let isActive = isHomePagePagination(page.path, link.path) || is_current(link.path);
-                                let linkHref = hasSubmenus ? '#' : url_for(link.path);
-                                let onClickAction = hasSubmenus ? 'onClick="return false;"' : '';
-                                let iconClass = link.icon ? `<i class="${link.icon} fa-fw"></i>` : '';
-                                let linkText = __(i.toLowerCase()).toUpperCase();
-                                let dropdownIcon = hasSubmenus ? '<i class="fa-solid fa-chevron-down fa-fw"></i>' : '';
+                                const link = theme.navbar.links[i];
+                                const hasSubmenus = link.submenus;
+                                const isActive = isHomePagePagination(page.path, link.path) || is_current(link.path);
+                                const linkHref = hasSubmenus ? '#' : url_for(link.path);
+                                const onClickAction = hasSubmenus ? 'onClick="return false;"' : '';
+                                const iconClass = link.icon ? `<i class="${link.icon} fa-fw"></i>` : '';
+                                const linkText = __(i.toLowerCase()).toUpperCase();
+                                const dropdownIcon = hasSubmenus ? '<i class="fa-solid fa-chevron-down fa-fw"></i>' : '';
                             %>
-
                             <li class="navbar-item">
-                                <!-- Menu -->
                                 <a class="<%= hasSubmenus ? 'has-dropdown' : (isActive ? 'active' : '') %>"
-                                   href="<%= linkHref %>"
-                                        <%= onClickAction %>>
+                                   href="<%= linkHref %>" <%= onClickAction %>>
                                     <%- iconClass %>
-                                    <span data-i18n-upper="<%= i.toLowerCase() %>"><%= linkText %></span>
+                                    <span><%= linkText %></span>
                                     <%- dropdownIcon %>
                                 </a>
-
-                                <!-- Submenu -->
                                 <% if (hasSubmenus) { %>
                                     <ul class="sub-menu">
-                                        <% for (var submenu in link.submenus) { %>
+                                        <% for (const submenu in link.submenus) { %>
                                             <li>
                                                 <a href="<%- url_for(link.submenus[submenu]) %>">
-                                                    <span data-i18n-upper="<%= submenu.toLowerCase() %>"><%= __(submenu.toLowerCase()).toUpperCase() %></span>
+                                                    <span><%= __(submenu.toLowerCase()).toUpperCase() %></span>
                                                 </a>
                                             </li>
                                         <% } %>
                                     </ul>
                                 <% } %>
                             </li>
-                    <% } } %>
+                        <% } %>
+                    <% } %>
                     <% if (theme.navbar.search.enable === true) { %>
                         <li class="navbar-item search search-popup-trigger">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </li>
                     <% } %>
                     <%
-                        var _curLang = Array.isArray(config.language) ? config.language[0] : config.language;
-                        var _langOpts = [
+                        const currentLanguage = Array.isArray(config.language) ? config.language[0] : config.language;
+                        const languageOptions = [
                             { code: 'zh-CN', label: '简体中文' },
-                            { code: 'zh-TW', label: '繁體中文' },
-                            { code: 'en',    label: 'English' },
+                            { code: 'en', label: 'English' },
                         ];
                     %>
                     <li class="navbar-item lang-select-item">
-                        <select class="lang-select" aria-label="Language">
-                            <% _langOpts.forEach(function(opt) { %>
-                                <option value="<%= opt.code %>" <%= opt.code === _curLang ? 'selected' : '' %>><%= opt.label %></option>
+                        <select class="lang-select" aria-label="<%= currentLanguage === 'en' ? 'Language' : '语言' %>">
+                            <% languageOptions.forEach(function(option) { %>
+                                <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
                             <% }); %>
                         </select>
                     </li>
                 </ul>
             </div>
-            <!-- Mobile -->
+
             <div class="mobile">
-                <select class="lang-select lang-select-mobile" aria-label="Language">
-                    <% _langOpts.forEach(function(opt) { %>
-                        <option value="<%= opt.code %>" <%= opt.code === _curLang ? 'selected' : '' %>><%= opt.label %></option>
+                <select class="lang-select lang-select-mobile" aria-label="<%= currentLanguage === 'en' ? 'Language' : '语言' %>">
+                    <% languageOptions.forEach(function(option) { %>
+                        <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
                     <% }); %>
                 </select>
                 <% if (theme.navbar.search.enable === true) { %>
-                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i>
-                    </div>
+                    <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i></div>
                 <% } %>
-                <div class="icon-item navbar-bar">
-                    <div class="navbar-bar-middle"></div>
-                </div>
+                <div class="icon-item navbar-bar"><div class="navbar-bar-middle"></div></div>
             </div>
         </div>
     </div>
 
-    <!-- Mobile sheet -->
     <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 bg-background-color flex flex-col justify-between">
         <ul class="drawer-navbar-list flex flex-col px-4 justify-center items-start">
             <% for (let i in theme.navbar.links) { %>
                 <% if (theme.navbar.links[i].path !== 'none') { %>
                     <%
-                        // Function to check if link is active
-                        function isActiveLink(pagePath, linkPath) {
-                            return isHomePagePagination(pagePath, linkPath) || is_current(linkPath);
-                        }
-
-                        // Variables for cleaner code
-                        let linkData = theme.navbar.links[i];
-                        let hasSubmenus = linkData.submenus;
-                        let isActive = isActiveLink(page.path, linkData.path);
-                        let iconClass = linkData.icon;
-                        let linkText = __(i.toLowerCase()).toUpperCase();
-                        let linkPath = hasSubmenus ? '#' : url_for(linkData.path);
-                        let drawerNavbarItemClass = hasSubmenus ? 'drawer-navbar-item-sub' : 'drawer-navbar-item';
+                        const linkData = theme.navbar.links[i];
+                        const hasSubmenus = linkData.submenus;
+                        const isActive = isHomePagePagination(page.path, linkData.path) || is_current(linkData.path);
+                        const iconClass = linkData.icon;
+                        const linkText = __(i.toLowerCase()).toUpperCase();
+                        const linkPath = hasSubmenus ? '#' : url_for(linkData.path);
+                        const drawerClass = hasSubmenus ? 'drawer-navbar-item-sub' : 'drawer-navbar-item';
                     %>
-
-                    <li class="<%= drawerNavbarItemClass %> text-base my-1.5 flex flex-col w-full">
-                        <% if (hasSubmenus) {%>
-                        <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full <%= isActive ? 'active' : '' %>"
-                             navbar-data-toggle="submenu-<%= i %>"
-                        >
-                            <span data-i18n-upper="<%= i.toLowerCase() %>">
-                                <%= linkText %>
-                            </span>
-                            <% if (iconClass) { %>
-                                <i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i>
-                            <% } %>
-                        </div>
+                    <li class="<%= drawerClass %> text-base my-1.5 flex flex-col w-full">
+                        <% if (hasSubmenus) { %>
+                            <div class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary cursor-pointer text-2xl font-semibold group border-b border-border-color hover:border-primary w-full <%= isActive ? 'active' : '' %>"
+                                 navbar-data-toggle="submenu-<%= i %>">
+                                <span><%= linkText %></span>
+                                <% if (iconClass) { %><i class="fa-solid fa-chevron-right fa-sm fa-fw transition-all"></i><% } %>
+                            </div>
                         <% } else { %>
-                        <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full <%= isActive ? 'active' : '' %>"
-                           href="<%= linkPath %>"
-                        >
-                            <span data-i18n-upper="<%= i.toLowerCase() %>">
-                                <%= linkText %>
-                            </span>
-                            <% if (iconClass) { %>
-                                <i class="<%= iconClass %> fa-sm fa-fw"></i>
-                            <% } %>
-                        </a>
+                            <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full <%= isActive ? 'active' : '' %>"
+                               href="<%= linkPath %>">
+                                <span><%= linkText %></span>
+                                <% if (iconClass) { %><i class="<%= iconClass %> fa-sm fa-fw"></i><% } %>
+                            </a>
                         <% } %>
-
                         <% if (hasSubmenus) { %>
                             <div class="flex-col items-start px-2 py-2 hidden" data-target="submenu-<%= i %>">
-                                <% for (var submenu in linkData.submenus) { %>
+                                <% for (const submenu in linkData.submenus) { %>
                                     <div class="drawer-navbar-item text-base flex flex-col justify-center items-start hover:underline active:underline hover:underline-offset-1 rounded-3xl">
-                                        <a class=" text-third-text-color text-xl"
-                                           href="<%- url_for(linkData.submenus[submenu]) %>"><span data-i18n-upper="<%= submenu.toLowerCase() %>"><%= __(submenu.toLowerCase()).toUpperCase() %></span></a>
+                                        <a class="text-third-text-color text-xl" href="<%- url_for(linkData.submenus[submenu]) %>"><span><%= __(submenu.toLowerCase()).toUpperCase() %></span></a>
                                     </div>
                                 <% } %>
                             </div>
                         <% } %>
                     </li>
-            <% } } %>
+                <% } %>
+            <% } %>
 
-            <%# Add sidebar links %>
-            <% if (theme.home.sidebar.links !== null && theme.home.sidebar.show_on_mobile !== false) {%>
+            <% if (theme.home.sidebar.links !== null && theme.home.sidebar.show_on_mobile !== false) { %>
                 <% for (let i in theme.home.sidebar.links) { %>
-                    <% if (theme.navbar.links && theme.navbar.links.hasOwnProperty(i)) {
-                        continue;
-                    } %>
+                    <% if (theme.navbar.links && theme.navbar.links.hasOwnProperty(i)) continue; %>
                     <li class="drawer-navbar-item text-base my-1.5 flex flex-col w-full">
                         <a class="py-1.5 px-2 flex flex-row items-center justify-between gap-1 hover:!text-primary active:!text-primary text-2xl font-semibold group border-b border-border-color hover:border-primary w-full active"
-                           href="<%= url_for(theme.home.sidebar.links[i].path) %>"
-                        >
-                            <span data-i18n="<%= i %>"><%= __(i) %></span>
+                           href="<%= url_for(theme.home.sidebar.links[i].path) %>">
+                            <span><%= __(i) %></span>
                             <i class="<%= theme.home.sidebar.links[i].icon %> fa-sm fa-fw"></i>
                         </a>
                     </li>
                 <% } %>
             <% } %>
         </ul>
-
         <%- partial("components/sidebar/statistics") %>
     </div>
-
     <div class="window-mask"></div>
-
 </header>
-
-<script data-swup-reload-script>
-(() => {
-  const STORAGE_KEY = "EDGEONE-LANG";
-  const SUPPORTED_LANGS = ["zh-CN", "zh-TW", "en"];
-
-  const normalizeLanguage = (value) => {
-    if (!value) return null;
-    const normalized = String(value).replace("_", "-");
-    if (SUPPORTED_LANGS.includes(normalized)) return normalized;
-    const lower = normalized.toLowerCase();
-    if (lower.startsWith("zh")) {
-      return lower.includes("tw") || lower.includes("hk") || lower.includes("hant")
-        ? "zh-TW"
-        : "zh-CN";
-    }
-    if (lower.startsWith("en")) return "en";
-    return null;
-  };
-
-  const getNestedValue = (source, key) => {
-    if (!source || !key) return undefined;
-    return key.split(".").reduce((value, part) => {
-      if (value == null || typeof value !== "object") return undefined;
-      return value[part];
-    }, source);
-  };
-
-  const updateElements = (selector, attribute, updater) => {
-    document.querySelectorAll(selector).forEach((element) => {
-      const key = element.getAttribute(attribute);
-      const value = getNestedValue(window.i18n, key);
-      if (typeof value === "string") updater(element, value);
-    });
-  };
-
-  const syncSelectors = (language) => {
-    document.querySelectorAll(".lang-select").forEach((selector) => {
-      selector.value = language;
-      selector.setAttribute("aria-label", language === "en" ? "Language" : "语言");
-    });
-  };
-
-  const applyLanguage = (requestedLanguage, persist = true) => {
-    const language = normalizeLanguage(requestedLanguage);
-    const pack = language && window.allLangs?.[language];
-    if (!language || !pack) return false;
-
-    window.i18n = pack;
-    window.lang_ago = pack.ago || {};
-    window.currentLang = language;
-    if (window.config) window.config.language = language;
-
-    document.documentElement.lang = language;
-    document.documentElement.dir = "ltr";
-
-    updateElements("[data-i18n]", "data-i18n", (element, value) => {
-      element.textContent = value;
-    });
-    updateElements("[data-i18n-upper]", "data-i18n-upper", (element, value) => {
-      element.textContent = value.toUpperCase();
-    });
-    updateElements("[data-i18n-html]", "data-i18n-html", (element, value) => {
-      element.innerHTML = value;
-    });
-    updateElements("[data-i18n-placeholder]", "data-i18n-placeholder", (element, value) => {
-      element.setAttribute("placeholder", value);
-    });
-    updateElements("[data-i18n-aria]", "data-i18n-aria", (element, value) => {
-      element.setAttribute("aria-label", value);
-    });
-    updateElements("[data-i18n-title]", "data-i18n-title", (element, value) => {
-      element.setAttribute("title", value);
-    });
-
-    syncSelectors(language);
-
-    if (persist) {
-      try {
-        localStorage.setItem(STORAGE_KEY, language);
-        localStorage.setItem("REDEFINE-LANG", language);
-      } catch (error) {
-        console.warn("[edgeone-page] Unable to save language preference:", error);
-      }
-    }
-
-    window.dispatchEvent(
-      new CustomEvent("edgeone:language-change", { detail: { language } }),
-    );
-    return true;
-  };
-
-  const getInitialLanguage = () => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("REDEFINE-LANG");
-      if (normalizeLanguage(saved)) return normalizeLanguage(saved);
-    } catch (error) {
-      console.warn("[edgeone-page] Unable to read language preference:", error);
-    }
-
-    return (
-      normalizeLanguage(window.currentLang) ||
-      normalizeLanguage(window.config?.language) ||
-      normalizeLanguage(navigator.language) ||
-      "zh-CN"
-    );
-  };
-
-  if (!window.EdgeOneLanguage) {
-    window.EdgeOneLanguage = {
-      apply: applyLanguage,
-      refresh: () => applyLanguage(window.currentLang || getInitialLanguage(), false),
-    };
-
-    document.addEventListener("change", (event) => {
-      const selector = event.target.closest?.(".lang-select");
-      if (selector) applyLanguage(selector.value, true);
-    });
-
-    window.addEventListener("redefine:page:refresh", () => {
-      window.EdgeOneLanguage.refresh();
-    });
-  }
-
-  window.EdgeOneLanguage.apply(getInitialLanguage(), false);
-})();
-</script>
