@@ -1,0 +1,21 @@
+title: EdgeOne Page
+subtitle: Modern bilingual Hexo publishing
+description: A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.
+language: en
+url: https://edgeone-page.edgeone.app/en
+root: /en/
+source_dir: source/en
+public_dir: public/en
+
+localized_theme:
+  title: EdgeOne Page
+  subtitle: Modern bilingual publishing
+  description: A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.
+  home_banner_title: EdgeOne Page
+  home_banner_subtitles:
+    - Fast, modern, and bilingual.
+    - Chinese and English articles are stored separately and linked together.
+    - Optimized for Tencent EdgeOne Pages.
+  announcement: You are reading the English site. Switch to 简体中文 from the navigation bar.
+  recommendation_title: Recommended reading
+  footer_html: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">View EdgeOne Page on GitHub</a>'
