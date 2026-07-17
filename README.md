@@ -1,82 +1,163 @@
 # EdgeOne Page
 
-EdgeOne Page 是一个面向腾讯云 EdgeOne Pages 的 Hexo 站点项目，提供响应式布局、深色模式、文章目录以及简体中文、繁體中文和 English 运行时切换。
+EdgeOne Page 是一个面向腾讯云 EdgeOne Pages 的 Hexo 双语站点项目，只支持：
 
-## 当前配置
+- 简体中文：`zh-CN`
+- English：`en`
 
-- 默认语言：`zh-CN`
-- 构建命令：`npm run build:production`
-- 输出目录：`public`
-- Node.js：20 或更高版本
-- 主题：`themes/edg-one-page`
-- 主题覆盖：`_config.edg-one-page.yml`
-- 部署配置：`.edgeone/config.json`
+站点不是在浏览器中临时翻译文章，而是分别保存并构建中文、英文两个版本。选择语言后，导航、页面文字、文章标题和文章正文都会打开对应语言的静态页面。
 
-## 本地开发
+## 站点结构
+
+生产构建会生成：
+
+```text
+public/
+├── index.html          # 根据已保存语言或浏览器语言跳转
+├── zh-CN/              # 简体中文站点
+└── en/                 # English site
+```
+
+文章源文件分别保存在：
+
+```text
+source/
+├── zh-CN/_posts/
+└── en/_posts/
+```
+
+同一篇文章必须使用相同的相对文件路径和 `translation_key`。例如：
+
+```text
+source/zh-CN/_posts/hello-world.md
+source/en/_posts/hello-world.md
+```
+
+中文文章：
+
+```yaml
+---
+title: 你好，EdgeOne Page
+lang: zh-CN
+translation_key: hello-world
+---
+```
+
+英文文章：
+
+```yaml
+---
+title: Hello, EdgeOne Page
+lang: en
+translation_key: hello-world
+---
+```
+
+## 创建双语文章
+
+运行：
+
+```bash
+npm run new:post -- my-article-slug
+```
+
+这会同时创建：
+
+```text
+source/zh-CN/_posts/my-article-slug.md
+source/en/_posts/my-article-slug.md
+```
+
+然后分别完成中文和英文正文。文章保存后无需在访问时再次翻译。
+
+## 本地预览
+
+安装依赖：
 
 ```bash
 npm ci
-npm run server
 ```
 
-访问终端中显示的本地地址即可预览。需要显示草稿时运行：
+预览简体中文：
 
 ```bash
-npm run server:draft
+npm run server:zh-CN
 ```
 
-## 构建与检查
+预览英文：
 
 ```bash
-npm run build
+npm run server:en
+```
+
+默认 `npm run server` 打开简体中文站点。
+
+## 校验与构建
+
+只检查文章是否成对：
+
+```bash
+npm run check:content
+```
+
+完整检查并构建：
+
+```bash
 npm run check
 ```
 
-`npm run build` 会先清理旧输出，再生成完整静态站点。生成结果位于 `public/`。
+生产构建：
 
-## 配置分层
+```bash
+npm run build:production
+```
 
-项目将配置分成两层：
+校验器会检查：
 
-1. `_config.yml`：Hexo 站点、URL、文章路径、分页和构建行为。
-2. `_config.edg-one-page.yml`：主题品牌、导航栏、首页、文章样式、评论、页脚和插件。
+- 中文和英文文章是否同时存在
+- 两个文件的相对路径是否相同
+- `lang` 是否正确
+- `translation_key` 是否存在并一致
+- 同一语言内是否存在重复 `translation_key`
 
-尽量不要直接修改 `themes/edg-one-page/_config.yml`。项目专属设置应写入主题覆盖文件，便于后续升级主题代码。
+任何检查失败都会阻止部署。
 
-## EdgeOne Pages 部署
+## 语言切换
 
-仓库已经包含 `.edgeone/config.json`：
+导航栏只显示 `简体中文` 和 `English`。
+
+切换语言时，程序会保留当前页面路径，例如：
+
+```text
+/zh-CN/posts/hello-world/
+/en/posts/hello-world/
+```
+
+因为双语文章使用相同的文件路径，所以切换后会直接打开对应语言版本，而不是返回首页。
+
+用户选择保存在浏览器 `localStorage` 中。访问站点根目录时，会优先使用已保存语言；没有保存记录时，中文浏览器进入简体中文，其余浏览器进入英文。
+
+## 配置文件
+
+```text
+_config.yml                 # 两种语言共享的 Hexo 配置
+_config.zh-CN.yml           # 简体中文站点配置
+_config.en.yml              # 英文站点配置
+_config.edg-one-page.yml    # 共享主题外观配置
+scripts/localized-theme.js  # 将语言配置应用到主题
+scripts/bilingual-runtime.js# 语言切换与 hreflang
+```
+
+更完整的设置说明见 [`CONFIGURATION.md`](CONFIGURATION.md)。
+
+## EdgeOne Pages
+
+仓库中的 `.edgeone/config.json` 使用：
 
 - Build command：`npm run build:production`
 - Output directory：`public`
 
-在 EdgeOne Pages 控制台连接此仓库并选择 `master` 分支即可。推送到 `master` 后，平台可以按上述配置重新构建。
-
-## 可选功能
-
-以下功能默认关闭，需要填写真实服务信息后再启用：
-
-- 评论系统：`comment.enable`
-- Google Analytics：`global.google_analytics`
-- 网站访问计数：`global.website_counter`
-- CDN：`cdn`
-- 本地搜索：安装搜索生成插件后启用 `navbar.search`
-
-更完整的说明见 [`CONFIGURATION.md`](CONFIGURATION.md)。
-
-## 项目结构
-
-```text
-.
-├── .edgeone/config.json
-├── .github/workflows/build.yml
-├── _config.yml
-├── _config.edg-one-page.yml
-├── CONFIGURATION.md
-├── package.json
-├── source/
-└── themes/edg-one-page/
-```
+连接仓库的 `master` 分支后即可部署。
 
 ## License
 
