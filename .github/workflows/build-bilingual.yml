@@ -1,0 +1,65 @@
+name: Build bilingual Hexo site
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hexo-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate EdgeOne configuration
+        run: |
+          node -e "const c=require('./edgeone.json');if(c.installCommand!=='npm ci'||c.buildCommand!=='npm run build:production'||c.outputDirectory!=='public')process.exit(1)"
+          node --check scripts/pwa-runtime.js
+
+      - name: Validate bilingual content
+        run: npm run check:content
+
+      - name: Generate Chinese and English sites
+        run: npm run build:production
+
+      - name: Verify localized output
+        run: |
+          test -f public/index.html
+          test -f public/zh-CN/index.html
+          test -f public/en/index.html
+          test -f public/zh-CN/posts/hello-world/index.html
+          test -f public/en/posts/hello-world/index.html
+          test -f public/zh-CN/manifest.webmanifest
+          test -f public/en/manifest.webmanifest
+          test -f public/zh-CN/offline.html
+          test -f public/en/offline.html
+          test -f public/service-worker.js
+          test -f public/icons/edgeone-icon.svg
+          grep -q 'application/ld+json' public/zh-CN/index.html
+          grep -q 'BlogPosting' public/zh-CN/posts/hello-world/index.html
+          grep -q 'BlogPosting' public/en/posts/hello-world/index.html
+          grep -q 'serviceWorker.register' public/zh-CN/index.html
+          node --check public/service-worker.js
