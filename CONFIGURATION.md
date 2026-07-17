@@ -1,98 +1,222 @@
-# EdgeOne Page 配置指南
+# EdgeOne Page 双语配置指南
 
-## 1. 站点地址与身份
+## 1. 支持的语言
 
-编辑 `_config.yml`：
+项目只支持两个语言代码：
 
-```yaml
-title: EdgeOne Page
-author: FukunHennan
-url: https://your-domain.example
-root: /
+```text
+zh-CN
+ en
 ```
 
-绑定自定义域名后，必须将 `url` 修改为最终 HTTPS 地址。站点部署在子目录时，同时修改 `root`。
+不再支持繁体中文，也不在浏览器中即时翻译文章正文。
 
-## 2. 主题品牌
+## 2. 配置分层
 
-编辑 `_config.edg-one-page.yml` 中的 `info`、`defaults` 和 `home_banner`。项目专属配置不应写回 `themes/edg-one-page/_config.yml`，否则后续同步主题代码时容易产生冲突。
+项目配置分为四层：
 
-## 3. 导航栏
-
-`navbar.links` 支持站内路径和完整外部地址：
-
-```yaml
-navbar:
-  links:
-    Home:
-      path: /
-      icon: fa-regular fa-house
-    GitHub:
-      path: https://github.com/FukunHennan/edgeone-page
-      icon: fa-brands fa-github
+```text
+_config.yml
+_config.zh-CN.yml
+_config.en.yml
+_config.edg-one-page.yml
 ```
 
-名称会尝试从语言包中查找翻译。自定义名称没有翻译时会显示配置名称。
+- `_config.yml`：永久链接、分页、代码高亮等共享设置。
+- `_config.zh-CN.yml`：简体中文站点标题、描述、目录和本地化文字。
+- `_config.en.yml`：英文站点标题、描述、目录和本地化文字。
+- `_config.edg-one-page.yml`：颜色、图片、排版、评论、导航结构等共享主题设置。
 
-## 4. 多语言
-
-站点默认语言由 `_config.yml` 的 `language` 决定。页面右上角可在以下语言间切换：
-
-- `zh-CN`
-- `zh-TW`
-- `en`
-
-浏览器会在本地保存用户选择。新增界面文案时，应同步维护 `themes/edg-one-page/languages/` 下对应语言文件，并为模板元素添加 `data-i18n` 属性。
-
-## 5. 评论系统
-
-评论默认关闭。启用 Giscus 前，需要在 GitHub Discussions 中创建分类，然后填写：
+修改域名时，需要同步更新两个语言配置中的 `url`：
 
 ```yaml
-comment:
-  enable: true
-  system: giscus
-  config:
-    giscus:
-      repo: owner/repository
-      repo_id: your-repository-id
-      category: Announcements
-      category_id: your-category-id
+# _config.zh-CN.yml
+url: https://your-domain.example/zh-CN
+root: /zh-CN/
+
+# _config.en.yml
+url: https://your-domain.example/en
+root: /en/
 ```
 
-不要提交私钥、客户端密钥或其他敏感凭据。
+## 3. 双语文章目录
 
-## 6. 统计和分析
+简体中文文章：
 
-访问计数和 Google Analytics 默认关闭。启用分析时，仅提交公开的 Measurement ID；其他密钥应通过部署平台环境变量管理。
+```text
+source/zh-CN/_posts/
+```
 
-## 7. CDN
+英文文章：
 
-默认使用仓库内静态资源：
+```text
+source/en/_posts/
+```
+
+同一篇文章必须拥有相同的相对路径。例如：
+
+```text
+source/zh-CN/_posts/guides/install.md
+source/en/_posts/guides/install.md
+```
+
+这样构建后会得到：
+
+```text
+/zh-CN/posts/guides/install/
+/en/posts/guides/install/
+```
+
+语言切换时可以直接替换 URL 中的语言代码。
+
+## 4. Front Matter 要求
+
+中文版本：
 
 ```yaml
-cdn:
-  enable: false
+---
+title: 安装指南
+date: 2026-07-17 12:00:00
+lang: zh-CN
+translation_key: install-guide
+categories:
+  - 指南
+tags:
+  - 安装
+---
 ```
 
-只有在资源已发布到稳定 CDN 后才启用。自定义 CDN 地址必须能映射到主题 `source/` 目录结构。
+英文版本：
 
-## 8. 构建命令
+```yaml
+---
+title: Installation Guide
+date: 2026-07-17 12:00:00
+lang: en
+translation_key: install-guide
+categories:
+  - Guides
+tags:
+  - Installation
+---
+```
+
+`title`、分类、标签和正文可以分别翻译，但两个文件的 `translation_key` 必须完全一致。
+
+## 5. 创建新文章
+
+推荐使用双语文章生成器：
+
+```bash
+npm run new:post -- install-guide
+```
+
+文章标识只允许小写字母、数字和连字符。命令会同时创建中英文模板，避免忘记其中一个版本。
+
+## 6. 内容校验
+
+运行：
+
+```bash
+npm run check:content
+```
+
+检查内容包括：
+
+1. 每篇中文文章都有英文版本。
+2. 每篇英文文章都有中文版本。
+3. 两个版本相对路径相同。
+4. `lang` 与所在目录一致。
+5. `translation_key` 存在且相同。
+6. 同一语言内不能重复使用 `translation_key`。
+
+校验失败时，生产构建和 GitHub Actions 都会失败。
+
+## 7. 本地开发
+
+简体中文：
+
+```bash
+npm run server:zh-CN
+```
+
+英文：
+
+```bash
+npm run server:en
+```
+
+两个命令分别读取对应语言配置，界面、首页介绍和文章内容都会使用相应语言。
+
+## 8. 生产构建
 
 ```bash
 npm ci
 npm run build:production
 ```
 
-部署输出为 `public/`。`npm run check` 会使用调试日志执行一次完整构建，适合排查模板和配置错误。
+构建器会依次生成两个站点：
 
-## 9. EdgeOne Pages
+```text
+public/zh-CN/
+public/en/
+```
 
-`.edgeone/config.json` 是平台构建入口。通常无需修改输出目录。更换构建脚本时，应同步更新 `package.json` 和 `.edgeone/config.json`，避免本地与云端行为不一致。
+同时生成 `public/index.html` 作为语言入口。入口优先读取用户上一次选择，没有记录时再根据浏览器语言跳转。
 
-## 10. 安全建议
+## 9. 导航与语言切换
 
-- 不要提交 `.env`、令牌、私钥或评论服务密钥。
-- 外部链接使用 HTTPS。
-- 修改依赖后同时提交更新后的 `package-lock.json`。
-- 合并到 `master` 前确认 GitHub Actions 构建通过。
+语言选择器只保留：
+
+```text
+简体中文
+English
+```
+
+切换程序会：
+
+- 保存用户选择
+- 保留查询参数和锚点
+- 将 `/zh-CN/` 替换为 `/en/`，或反向替换
+- 在对应文章不存在时回退到目标语言首页
+- 输出 `hreflang="zh-CN"`、`hreflang="en"` 和 `x-default`
+
+## 10. 界面翻译
+
+主题界面语言文件只保留：
+
+```text
+themes/edg-one-page/languages/zh-CN.yml
+themes/edg-one-page/languages/en.yml
+```
+
+新增菜单或界面文案时，需要同时维护这两个文件。
+
+文章正文不要写入语言包，应分别写在双语 Markdown 文件中。
+
+## 11. 评论系统
+
+评论默认关闭。启用 Giscus 后，`scripts/localized-theme.js` 会根据当前站点语言设置评论界面语言。
+
+```yaml
+comment:
+  enable: true
+  system: giscus
+```
+
+不要把密钥、令牌或其他敏感信息提交到仓库。
+
+## 12. EdgeOne Pages
+
+`.edgeone/config.json` 应保持：
+
+```json
+{
+  "build": {
+    "command": "npm run build:production",
+    "output": "public"
+  }
+}
+```
+
+GitHub Actions 也会检查中文首页、英文首页和示例文章的两个语言版本是否成功生成。
