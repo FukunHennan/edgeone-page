@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const { spawnSync } = require("child_process");
 const { validateBilingualContent } = require("./validate-bilingual");
+const { postprocessBilingualSite } = require("./postprocess-bilingual");
 
 const PROJECT_ROOT = path.resolve(__dirname, "..");
 const PUBLIC_ROOT = path.join(PROJECT_ROOT, "public");
@@ -20,6 +21,19 @@ const FORBIDDEN_OUTPUT = [
   "EdgeOneLanguage.apply",
   "data-i18n-upper",
   "data-i18n-placeholder",
+];
+const REQUIRED_FEATURES = [
+  "robots.txt",
+  "sitemap.xml",
+  "404.html",
+  "zh-CN/search.json",
+  "en/search.json",
+  "zh-CN/feed.xml",
+  "en/feed.xml",
+  "zh-CN/sitemap.xml",
+  "en/sitemap.xml",
+  "zh-CN/404.html",
+  "en/404.html",
 ];
 
 function removeIfPresent(target) {
@@ -90,11 +104,22 @@ function walkHtml(directory) {
 }
 
 function verifyBuild() {
+  for (const relativePath of REQUIRED_FEATURES) {
+    if (!fs.existsSync(path.join(PUBLIC_ROOT, relativePath))) {
+      throw new Error(`Missing generated feature: public/${relativePath}`);
+    }
+  }
+
   for (const build of BUILDS) {
     const outputRoot = path.join(PUBLIC_ROOT, build.language);
     const indexFile = path.join(outputRoot, "index.html");
     if (!fs.existsSync(indexFile)) {
       throw new Error(`Missing generated entry: public/${build.language}/index.html`);
+    }
+
+    const indexHtml = fs.readFileSync(indexFile, "utf8");
+    if (!indexHtml.includes('hreflang="zh-CN"') || !indexHtml.includes('hreflang="en"')) {
+      throw new Error(`public/${build.language}/index.html is missing bilingual hreflang links`);
     }
 
     for (const filePath of walkHtml(outputRoot)) {
@@ -127,9 +152,11 @@ function main() {
   }
 
   writeLanguageEntry();
+  const features = postprocessBilingualSite();
+  console.log(`[bilingual] Generated feature set: ${JSON.stringify(features)}`);
   verifyBuild();
   removeIfPresent(DATABASE_FILE);
-  console.log("[bilingual] Production output passed language audit.");
+  console.log("[bilingual] Production output passed language and feature audits.");
 }
 
 try {
