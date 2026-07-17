@@ -87,11 +87,24 @@ hexo.extend.filter.register(
       theme.articles.author_label.auto = false;
       theme.articles.author_label.list = [localized.author_label];
     }
+    theme.articles.share = theme.articles.share || {};
+    assignDefined(theme.articles.share, {
+      title: localized.share_title,
+      native: localized.share_native,
+      copy: localized.share_copy,
+      email: localized.share_email,
+      copied: localized.share_copied,
+      failed: localized.share_failed,
+    });
 
     theme.comment = theme.comment || {};
     theme.comment.config = theme.comment.config || {};
     theme.comment.config.giscus = theme.comment.config.giscus || {};
     theme.comment.config.giscus.lang = language;
+    const giscus = theme.comment.config.giscus;
+    theme.comment.enable = Boolean(
+      theme.comment.enable && giscus.repo && giscus.repo_id && giscus.category && giscus.category_id,
+    );
 
     theme.footer = theme.footer || {};
     if (localized.footer_html) theme.footer.customize = localized.footer_html;
