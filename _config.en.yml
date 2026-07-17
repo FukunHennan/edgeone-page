@@ -18,4 +18,5 @@ localized_theme:
     - Optimized for Tencent EdgeOne Pages.
   announcement: You are reading the English site. Switch to 简体中文 from the navigation bar.
   recommendation_title: Recommended reading
+  author_label: Maintainer
   footer_html: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">View EdgeOne Page on GitHub</a>'
