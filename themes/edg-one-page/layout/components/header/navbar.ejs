@@ -181,3 +181,129 @@
 
 </header>
 
+<script data-swup-reload-script>
+(() => {
+  const STORAGE_KEY = "EDGEONE-LANG";
+  const SUPPORTED_LANGS = ["zh-CN", "zh-TW", "en"];
+
+  const normalizeLanguage = (value) => {
+    if (!value) return null;
+    const normalized = String(value).replace("_", "-");
+    if (SUPPORTED_LANGS.includes(normalized)) return normalized;
+    const lower = normalized.toLowerCase();
+    if (lower.startsWith("zh")) {
+      return lower.includes("tw") || lower.includes("hk") || lower.includes("hant")
+        ? "zh-TW"
+        : "zh-CN";
+    }
+    if (lower.startsWith("en")) return "en";
+    return null;
+  };
+
+  const getNestedValue = (source, key) => {
+    if (!source || !key) return undefined;
+    return key.split(".").reduce((value, part) => {
+      if (value == null || typeof value !== "object") return undefined;
+      return value[part];
+    }, source);
+  };
+
+  const updateElements = (selector, attribute, updater) => {
+    document.querySelectorAll(selector).forEach((element) => {
+      const key = element.getAttribute(attribute);
+      const value = getNestedValue(window.i18n, key);
+      if (typeof value === "string") updater(element, value);
+    });
+  };
+
+  const syncSelectors = (language) => {
+    document.querySelectorAll(".lang-select").forEach((selector) => {
+      selector.value = language;
+      selector.setAttribute("aria-label", language === "en" ? "Language" : "语言");
+    });
+  };
+
+  const applyLanguage = (requestedLanguage, persist = true) => {
+    const language = normalizeLanguage(requestedLanguage);
+    const pack = language && window.allLangs?.[language];
+    if (!language || !pack) return false;
+
+    window.i18n = pack;
+    window.lang_ago = pack.ago || {};
+    window.currentLang = language;
+    if (window.config) window.config.language = language;
+
+    document.documentElement.lang = language;
+    document.documentElement.dir = "ltr";
+
+    updateElements("[data-i18n]", "data-i18n", (element, value) => {
+      element.textContent = value;
+    });
+    updateElements("[data-i18n-upper]", "data-i18n-upper", (element, value) => {
+      element.textContent = value.toUpperCase();
+    });
+    updateElements("[data-i18n-html]", "data-i18n-html", (element, value) => {
+      element.innerHTML = value;
+    });
+    updateElements("[data-i18n-placeholder]", "data-i18n-placeholder", (element, value) => {
+      element.setAttribute("placeholder", value);
+    });
+    updateElements("[data-i18n-aria]", "data-i18n-aria", (element, value) => {
+      element.setAttribute("aria-label", value);
+    });
+    updateElements("[data-i18n-title]", "data-i18n-title", (element, value) => {
+      element.setAttribute("title", value);
+    });
+
+    syncSelectors(language);
+
+    if (persist) {
+      try {
+        localStorage.setItem(STORAGE_KEY, language);
+        localStorage.setItem("REDEFINE-LANG", language);
+      } catch (error) {
+        console.warn("[edgeone-page] Unable to save language preference:", error);
+      }
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("edgeone:language-change", { detail: { language } }),
+    );
+    return true;
+  };
+
+  const getInitialLanguage = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY) || localStorage.getItem("REDEFINE-LANG");
+      if (normalizeLanguage(saved)) return normalizeLanguage(saved);
+    } catch (error) {
+      console.warn("[edgeone-page] Unable to read language preference:", error);
+    }
+
+    return (
+      normalizeLanguage(window.currentLang) ||
+      normalizeLanguage(window.config?.language) ||
+      normalizeLanguage(navigator.language) ||
+      "zh-CN"
+    );
+  };
+
+  if (!window.EdgeOneLanguage) {
+    window.EdgeOneLanguage = {
+      apply: applyLanguage,
+      refresh: () => applyLanguage(window.currentLang || getInitialLanguage(), false),
+    };
+
+    document.addEventListener("change", (event) => {
+      const selector = event.target.closest?.(".lang-select");
+      if (selector) applyLanguage(selector.value, true);
+    });
+
+    window.addEventListener("redefine:page:refresh", () => {
+      window.EdgeOneLanguage.refresh();
+    });
+  }
+
+  window.EdgeOneLanguage.apply(getInitialLanguage(), false);
+})();
+</script>
