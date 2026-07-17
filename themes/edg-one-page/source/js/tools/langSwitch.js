@@ -1,127 +1,57 @@
-const LANG_STORAGE_KEY = "REDEFINE-LANG";
+const STORAGE_KEY = "EDGEONE-LANG";
+const SUPPORTED_LANGUAGES = ["zh-CN", "en"];
+const LANGUAGE_PATH_PATTERN = /^\/(zh-CN|en)(?=\/|$)/;
 
-const getSavedLang = () => {
+const currentLanguage = () => {
+  const pathMatch = window.location.pathname.match(LANGUAGE_PATH_PATTERN);
+  if (pathMatch) return pathMatch[1];
+
+  const configured = Array.isArray(window.config?.language)
+    ? window.config.language[0]
+    : window.config?.language;
+  return SUPPORTED_LANGUAGES.includes(configured) ? configured : "zh-CN";
+};
+
+const persistLanguage = (language) => {
   try {
-    return localStorage.getItem(LANG_STORAGE_KEY);
-  } catch (e) {
-    return null;
+    localStorage.setItem(STORAGE_KEY, language);
+    localStorage.removeItem("REDEFINE-LANG");
+  } catch (error) {
+    console.warn("[edgeone-page] Unable to save language preference:", error);
   }
 };
 
-const saveLang = (lang) => {
-  try {
-    localStorage.setItem(LANG_STORAGE_KEY, lang);
-  } catch (e) {
-    console.warn("[redefine] Failed to save language preference:", e);
-  }
+const syncSelectors = () => {
+  const language = currentLanguage();
+  document.documentElement.lang = language;
+  document.querySelectorAll(".lang-select").forEach((selector) => {
+    selector.value = language;
+    selector.setAttribute("aria-label", language === "en" ? "Language" : "语言");
+  });
+  persistLanguage(language);
 };
 
-const getNestedValue = (obj, key) => {
-  if (!obj || !key) {
-    return undefined;
-  }
+const switchLanguage = (language) => {
+  if (!SUPPORTED_LANGUAGES.includes(language)) return;
 
-  const parts = key.split(".");
-  let current = obj;
-  for (const part of parts) {
-    if (current == null || typeof current !== "object") {
-      return undefined;
-    }
-    current = current[part];
-  }
-  return current;
-};
+  const current = currentLanguage();
+  if (language === current) return;
+  persistLanguage(language);
 
-const applyLang = (lang) => {
-  const langData = window.allLangs?.[lang];
-  if (!langData) {
-    return;
-  }
+  const pathname = LANGUAGE_PATH_PATTERN.test(window.location.pathname)
+    ? window.location.pathname.replace(LANGUAGE_PATH_PATTERN, `/${language}`)
+    : `/${language}/`;
 
-  window.i18n = langData;
-  window.lang_ago = langData.ago || {};
-  window.currentLang = lang;
-  document.documentElement.setAttribute("lang", lang);
-
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    const value = getNestedValue(langData, key);
-    if (value !== undefined && typeof value === "string") {
-      el.textContent = value;
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-html]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-html");
-    const value = getNestedValue(langData, key);
-    if (value !== undefined && typeof value === "string") {
-      el.innerHTML = value;
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-placeholder");
-    const value = getNestedValue(langData, key);
-    if (value !== undefined && typeof value === "string") {
-      el.setAttribute("placeholder", value);
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-aria]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-aria");
-    const value = getNestedValue(langData, key);
-    if (value !== undefined && typeof value === "string") {
-      el.setAttribute("aria-label", value);
-    }
-  });
-
-  document.querySelectorAll("[data-i18n-upper]").forEach((el) => {
-    const key = el.getAttribute("data-i18n-upper");
-    const value = getNestedValue(langData, key);
-    if (value !== undefined && typeof value === "string") {
-      el.textContent = value.toUpperCase();
-    }
-  });
-
-  syncAllSelects(lang);
-};
-
-const syncAllSelects = (lang) => {
-  document.querySelectorAll(".lang-select").forEach((sel) => {
-    if (sel.value !== lang) {
-      sel.value = lang;
-    }
-  });
+  window.location.assign(`${pathname}${window.location.search}${window.location.hash}`);
 };
 
 const initLangSwitch = ({ signal } = {}) => {
-  const selects = document.querySelectorAll(".lang-select");
-  if (!selects.length) {
-    return;
-  }
+  const selectors = document.querySelectorAll(".lang-select");
+  if (!selectors.length) return;
 
-  if (!window.allLangs || Object.keys(window.allLangs).length < 2) {
-    selects.forEach((sel) => { sel.style.display = "none"; });
-    return;
-  }
-
-  const savedLang = getSavedLang();
-  if (savedLang && window.allLangs[savedLang]) {
-    applyLang(savedLang);
-  }
-
-  selects.forEach((sel) => {
-    const handler = () => {
-      const lang = sel.value;
-      saveLang(lang);
-      applyLang(lang);
-    };
-
-    if (signal) {
-      sel.addEventListener("change", handler, { signal });
-    } else {
-      sel.addEventListener("change", handler);
-    }
+  syncSelectors();
+  selectors.forEach((selector) => {
+    selector.addEventListener("change", () => switchLanguage(selector.value), signal ? { signal } : undefined);
   });
 };
 
