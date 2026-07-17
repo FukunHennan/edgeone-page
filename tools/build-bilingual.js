@@ -2,7 +2,7 @@
 const fs=require("fs"),path=require("path"),{spawnSync}=require("child_process");
 const {validateBilingualContent}=require("./validate-bilingual");
 const {postprocessBilingualSite}=require("./postprocess-bilingual");
-const {finalizeServiceWorker}=require("../scripts/pwa-runtime");
+const {finalizeServiceWorker}=require("./finalize-service-worker");
 const ROOT=path.resolve(__dirname,".."),PUBLIC=path.join(ROOT,"public"),DB=path.join(ROOT,"db.json"),HEXO=path.join(ROOT,"node_modules","hexo","bin","hexo");
 const BUILDS=[{language:"zh-CN",config:"_config.zh-CN.yml"},{language:"en",config:"_config.en.yml"}];
 const FORBIDDEN=["zh-TW","繁體中文","window.allLangs","EdgeOneLanguage.apply","data-i18n-upper","data-i18n-placeholder"];
