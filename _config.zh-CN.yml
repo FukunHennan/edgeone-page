@@ -1,0 +1,21 @@
+title: EdgeOne Page
+subtitle: 现代双语 Hexo 站点
+description: 面向腾讯云 EdgeOne Pages 的简体中文和英文双语站点。
+language: zh-CN
+url: https://edgeone-page.edgeone.app/zh-CN
+root: /zh-CN/
+source_dir: source/zh-CN
+public_dir: public/zh-CN
+
+localized_theme:
+  title: EdgeOne Page
+  subtitle: 现代双语内容发布
+  description: 面向腾讯云 EdgeOne Pages 的简体中文和英文双语站点。
+  home_banner_title: EdgeOne Page
+  home_banner_subtitles:
+    - 快速、现代、支持中英双语。
+    - 中文和英文文章分别保存，切换时直接打开对应版本。
+    - 为腾讯云 EdgeOne Pages 优化。
+  announcement: 当前显示简体中文内容，可在导航栏切换到 English。
+  recommendation_title: 推荐阅读
+  footer_html: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">在 GitHub 查看 EdgeOne Page</a>'
