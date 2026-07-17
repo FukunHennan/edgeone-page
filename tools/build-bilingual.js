@@ -13,6 +13,14 @@ const BUILDS = [
   { language: "zh-CN", config: "_config.zh-CN.yml" },
   { language: "en", config: "_config.en.yml" },
 ];
+const FORBIDDEN_OUTPUT = [
+  "zh-TW",
+  "繁體中文",
+  "window.allLangs",
+  "EdgeOneLanguage.apply",
+  "data-i18n-upper",
+  "data-i18n-placeholder",
+];
 
 function removeIfPresent(target) {
   fs.rmSync(target, { recursive: true, force: true });
@@ -46,7 +54,10 @@ function writeLanguageEntry() {
     (() => {
       const supported = ["zh-CN", "en"];
       let saved = null;
-      try { saved = localStorage.getItem("EDGEONE-LANG"); } catch (_) {}
+      try {
+        saved = localStorage.getItem("EDGEONE-LANG");
+        localStorage.removeItem("REDEFINE-LANG");
+      } catch (_) {}
       const browser = (navigator.language || "").toLowerCase();
       const language = supported.includes(saved) ? saved : (browser.startsWith("zh") ? "zh-CN" : "en");
       location.replace("/" + language + "/");
@@ -68,11 +79,35 @@ function writeLanguageEntry() {
   );
 }
 
+function walkHtml(directory) {
+  const files = [];
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const absolutePath = path.join(directory, entry.name);
+    if (entry.isDirectory()) files.push(...walkHtml(absolutePath));
+    else if (entry.isFile() && entry.name.endsWith(".html")) files.push(absolutePath);
+  }
+  return files;
+}
+
 function verifyBuild() {
   for (const build of BUILDS) {
-    const indexFile = path.join(PUBLIC_ROOT, build.language, "index.html");
+    const outputRoot = path.join(PUBLIC_ROOT, build.language);
+    const indexFile = path.join(outputRoot, "index.html");
     if (!fs.existsSync(indexFile)) {
       throw new Error(`Missing generated entry: public/${build.language}/index.html`);
+    }
+
+    for (const filePath of walkHtml(outputRoot)) {
+      const html = fs.readFileSync(filePath, "utf8");
+      const expectedLang = `lang="${build.language}"`;
+      if (!html.includes(expectedLang)) {
+        throw new Error(`${path.relative(PROJECT_ROOT, filePath)} does not declare ${expectedLang}`);
+      }
+      for (const forbidden of FORBIDDEN_OUTPUT) {
+        if (html.includes(forbidden)) {
+          throw new Error(`${path.relative(PROJECT_ROOT, filePath)} still contains forbidden legacy language token: ${forbidden}`);
+        }
+      }
     }
   }
 }
@@ -94,7 +129,7 @@ function main() {
   writeLanguageEntry();
   verifyBuild();
   removeIfPresent(DATABASE_FILE);
-  console.log("[bilingual] Production output is ready in public/.");
+  console.log("[bilingual] Production output passed language audit.");
 }
 
 try {
