@@ -42,7 +42,7 @@ for (const language of LANGUAGE_CODES) {
   const search = JSON.parse(read(`${language}/search.json`));
   const feed = read(`${language}/feed.xml`);
   if (search.length !== published.length) fail(`${language} search index count does not match published posts`);
-  if (count(feed, /<item>/g) !== published.length) fail(`${language} RSS count does not match published posts`);
+  if (count(feed, /<item>/g) !== Math.min(published.length, 30)) fail(`${language} RSS count does not match the feed limit`);
 
   for (const record of published) {
     const relativeHtml = record.url.replace(/^\//, "").replace(/\/$/, "/index.html");
@@ -62,7 +62,7 @@ for (const language of LANGUAGE_CODES) {
     if (/Hexo Theme Redefine|Redefine Team|Redefine Your Hexo Journey/.test(html)) fail(`${relativeHtml} contains legacy theme branding`);
     const searchRecord = search.find((item) => item.url === record.url);
     if (!searchRecord || searchRecord.title !== record.data.title) fail(`${language} search index is missing ${record.relativePath}`);
-    if (!feed.includes(`<guid isPermaLink="true">https://edgeone-page.edgeone.app${record.url}</guid>`)) {
+    if (published.indexOf(record) < 30 && !feed.includes(`<guid isPermaLink="true">https://edgeone-page.edgeone.app${record.url}</guid>`)) {
       fail(`${language} feed is missing ${record.relativePath}`);
     }
   }
