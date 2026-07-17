@@ -1,8 +1,8 @@
 {
   "name": "edg-one-page",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": false,
-  "description": "EdgeOne Page theme for Hexo.",
+  "description": "A modern multilingual Hexo theme optimized for Tencent EdgeOne Pages.",
   "scripts": {
     "build": "npm run build:css && npm run build:js",
     "build:css": "npx @tailwindcss/cli -i source/css/tailwind.source.css -o source/css/build/tailwind.css --minify",
@@ -12,22 +12,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitee.com/chenfukun/edg-one-page.git"
+    "url": "git+https://github.com/FukunHennan/edgeone-page.git"
   },
   "keywords": [
     "hexo",
     "theme",
     "edgeone",
-    "onepage",
-    "simple",
+    "edgeone-pages",
+    "multilingual",
+    "responsive",
     "hexo-theme"
   ],
-  "author": "chenfukun",
+  "author": "FukunHennan",
   "license": "GPL-3.0",
   "bugs": {
-    "url": "https://gitee.com/chenfukun/edg-one-page/issues"
+    "url": "https://github.com/FukunHennan/edgeone-page/issues"
   },
-  "homepage": "https://gitee.com/chenfukun/edg-one-page",
+  "homepage": "https://github.com/FukunHennan/edgeone-page#readme",
   "devDependencies": {
     "eslint": "^8.47.0",
     "glob-promise": "^6.0.7",
