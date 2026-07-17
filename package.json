@@ -1,6 +1,6 @@
 {
-  "name": "edgeone-page",
-  "version": "1.2.0",
+  "name": "hexo-site",
+  "version": "0.0.0",
   "private": true,
   "description": "A modern multilingual Hexo site optimized for Tencent EdgeOne Pages.",
   "scripts": {
