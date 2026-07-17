@@ -1,0 +1,24 @@
+# EdgeOne Page theme overrides
+# This file keeps project-specific branding separate from the vendored theme defaults.
+
+info:
+  title: EdgeOne Page
+  subtitle: A modern multilingual Hexo theme for EdgeOne Pages.
+  author: FukunHennan
+  url: https://edgeone-page.edgeone.app
+
+global:
+  open_graph:
+    enable: true
+    image: /images/redefine-og.webp
+    description: A modern multilingual Hexo theme optimized for Tencent EdgeOne Pages.
+
+home_banner:
+  title: EdgeOne Page
+  subtitle:
+    text:
+      - Fast, modern and multilingual.
+      - Built for Tencent EdgeOne Pages.
+
+footer:
+  customize: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener">Open source on GitHub</a>'
