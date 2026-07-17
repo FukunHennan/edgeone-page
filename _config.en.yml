@@ -19,4 +19,10 @@ localized_theme:
   announcement: You are reading the English site. Switch to 简体中文 from the navigation bar.
   recommendation_title: Recommended reading
   author_label: Maintainer
+  share_title: Share this article
+  share_native: Share
+  share_copy: Copy link
+  share_email: Email
+  share_copied: Link copied
+  share_failed: Unable to share. Please try again.
   footer_html: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">View EdgeOne Page on GitHub</a>'
