@@ -1,18 +1,22 @@
 ---
 title: 你好，EdgeOne Page
+description: 介绍 EdgeOne Page 的中英双语内容结构、文章配对规则和日常发布检查流程。
 date: 2026-07-17 13:30:00
+updated: 2026-07-18 01:30:00
 lang: zh-CN
 translation_key: hello-world
+published: true
 categories:
   - 指南
 tags:
   - Hexo
   - EdgeOne Pages
+  - 双语网站
 ---
 
 欢迎使用 EdgeOne Page。
 
-这个项目现在采用真正的中英双语结构。简体中文文章和英文文章分别保存，构建时生成两套独立的静态站点，因此访问者切换语言后，导航、页面文字和文章正文都会切换到对应语言。
+这个项目采用真正的中英双语内容结构。简体中文文章和英文文章分别保存，并在构建时生成两套独立静态站点。因此，访问者切换语言后，导航、界面文字、文章正文、搜索索引和订阅源都会打开对应语言版本，而不是在浏览器中临时翻译当前页面。
 
 ## 双语文章如何保存
 
@@ -28,6 +32,7 @@ source/en/_posts/hello-world.md
 ```yaml
 lang: zh-CN
 translation_key: hello-world
+published: true
 ```
 
 英文版本声明：
@@ -35,9 +40,10 @@ translation_key: hello-world
 ```yaml
 lang: en
 translation_key: hello-world
+published: true
 ```
 
-以后只需要维护这两个 Markdown 文件，不需要访问者每次打开页面时临时翻译。
+两个版本必须成对存在，并保持相同发布状态。构建系统会在生成站点前检查标题、摘要、日期、分类、标签、正文长度和翻译键，防止缺少翻译或仍含占位内容的文章进入生产环境。
 
 ## 创建新文章
 
@@ -47,10 +53,16 @@ translation_key: hello-world
 npm run new:post -- my-new-article
 ```
 
-项目会同时创建中文和英文两个文章模板。完成两种语言的内容后，运行：
+项目会同时创建中文和英文两个文章模板。新模板默认为：
+
+```yaml
+published: false
+```
+
+完成两个语言版本后，将它们一起改为 `published: true`，然后运行：
 
 ```bash
 npm run check
 ```
 
-构建校验会检查两个版本是否成对存在，以及 `translation_key` 是否一致。
+这个命令会执行双语内容验证、完整生产构建和 EdgeOne 产物审计。草稿不会进入搜索、RSS、Sitemap 或推荐系统。
