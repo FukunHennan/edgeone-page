@@ -1,0 +1,38 @@
+<%
+  const share = theme.articles?.share || {};
+%>
+<% if (share.enable !== false) { %>
+<section class="article-share mx-2 sm:mx-6 md:mx-8 my-8" aria-label="<%= share.title || 'Share' %>"
+  data-share-title="<%= page.title %>"
+  data-copied="<%= share.copied || 'Link copied' %>"
+  data-failed="<%= share.failed || 'Unable to share' %>">
+  <style>
+    .article-share{padding:1rem;border:1px solid var(--border-color);border-radius:12px;background:var(--background-color)}
+    .article-share-heading{display:flex;align-items:center;gap:.55rem;font-weight:700;color:var(--default-text-color)}
+    .article-share-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.85rem}
+    .article-share-button{display:inline-flex;align-items:center;gap:.45rem;padding:.65rem .9rem;border:1px solid var(--border-color);border-radius:10px;background:var(--second-background-color);color:var(--default-text-color);cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+    .article-share-button:hover{transform:translateY(-1px);box-shadow:var(--redefine-box-shadow-flat)}
+    .article-share-status{min-height:1.4em;margin:.65rem 0 0;color:var(--primary-color);font-size:.9rem}
+    .article-share-status.is-error{color:#dc2626}
+  </style>
+  <div class="article-share-heading">
+    <i class="fa-solid fa-share-nodes" aria-hidden="true"></i>
+    <span><%= share.title || 'Share this article' %></span>
+  </div>
+  <div class="article-share-actions">
+    <button type="button" class="article-share-button" data-share-action="native">
+      <i class="fa-solid fa-arrow-up-from-bracket" aria-hidden="true"></i>
+      <span><%= share.native || 'Share' %></span>
+    </button>
+    <button type="button" class="article-share-button" data-share-action="copy">
+      <i class="fa-regular fa-copy" aria-hidden="true"></i>
+      <span><%= share.copy || 'Copy link' %></span>
+    </button>
+    <button type="button" class="article-share-button" data-share-action="email">
+      <i class="fa-regular fa-envelope" aria-hidden="true"></i>
+      <span><%= share.email || 'Email' %></span>
+    </button>
+  </div>
+  <p class="article-share-status" role="status" aria-live="polite"></p>
+</section>
+<% } %>
