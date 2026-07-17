@@ -1,78 +1,87 @@
 "use strict";
 
-const SUPPORTED_LANGUAGES = ["zh-CN", "en"];
+const SUPPORTED_LANGUAGES = Object.freeze(["zh-CN", "en"]);
+const LANGUAGE_PATH_PATTERN = /^\/(zh-CN|en)(?=\/|$)/;
 
-function currentLanguageFromPath(pathname) {
-  const match = String(pathname || "").match(/^\/(zh-CN|en)(?:\/|$)/);
-  return match ? match[1] : "zh-CN";
+function normalizeLanguage(value) {
+  return SUPPORTED_LANGUAGES.includes(value) ? value : "zh-CN";
 }
 
-hexo.extend.filter.register("after_render:html", function injectBilingualRuntime(html) {
+function languageFromConfig(config) {
+  const language = Array.isArray(config.language) ? config.language[0] : config.language;
+  return normalizeLanguage(language);
+}
+
+hexo.extend.filter.register("after_render:html", function injectBilingualNavigation(html) {
   if (typeof html !== "string") return html;
 
-  const language = currentLanguageFromPath(this.config.root || "");
-  const bootstrap = `<script data-bilingual-bootstrap>
+  const buildLanguage = languageFromConfig(this.config);
+  const runtime = `<script data-bilingual-navigation>
 (() => {
-  const current = ${JSON.stringify(language)};
-  try {
-    localStorage.setItem("EDGEONE-LANG", current);
-    localStorage.setItem("REDEFINE-LANG", current);
-  } catch (_) {}
-  document.documentElement.lang = current;
-})();
-</script>`;
-
-  const runtime = `<script data-bilingual-runtime>
-(() => {
-  const supported = ${JSON.stringify(SUPPORTED_LANGUAGES)};
+  const supported = ["zh-CN", "en"];
   const storageKey = "EDGEONE-LANG";
-  const currentMatch = location.pathname.match(/^\\/(zh-CN|en)(?:\\/|$)/);
-  const current = currentMatch ? currentMatch[1] : ${JSON.stringify(language)};
+  const pathPattern = /^\\/(zh-CN|en)(?=\\/|$)/;
 
-  document.documentElement.lang = current;
-  document.querySelectorAll(".lang-select").forEach((select) => {
-    Array.from(select.options).forEach((option) => {
-      if (!supported.includes(option.value)) option.remove();
+  const getCurrentLanguage = () => {
+    const match = location.pathname.match(pathPattern);
+    return match ? match[1] : ${JSON.stringify(buildLanguage)};
+  };
+
+  const syncLanguageControls = () => {
+    const current = getCurrentLanguage();
+    document.documentElement.lang = current;
+
+    document.querySelectorAll(".lang-select").forEach((select) => {
+      select.value = current;
+      select.setAttribute("aria-label", current === "en" ? "Language" : "语言");
     });
-    select.value = current;
-    select.setAttribute("aria-label", current === "en" ? "Language" : "语言");
-  });
 
-  if (window.EdgeOneLanguage?.apply) {
-    window.EdgeOneLanguage.apply(current, false);
+    try {
+      localStorage.setItem(storageKey, current);
+      localStorage.removeItem("REDEFINE-LANG");
+    } catch (_) {}
+  };
+
+  if (!window.__EDGEONE_BILINGUAL_NAVIGATION__) {
+    window.__EDGEONE_BILINGUAL_NAVIGATION__ = true;
+
+    document.addEventListener("change", (event) => {
+      const select = event.target.closest?.(".lang-select");
+      if (!select || !supported.includes(select.value)) return;
+
+      const current = getCurrentLanguage();
+      const target = select.value;
+      if (target === current) return;
+
+      try {
+        localStorage.setItem(storageKey, target);
+        localStorage.removeItem("REDEFINE-LANG");
+      } catch (_) {}
+
+      const targetPath = pathPattern.test(location.pathname)
+        ? location.pathname.replace(pathPattern, "/" + target)
+        : "/" + target + "/";
+
+      location.assign(targetPath + location.search + location.hash);
+    }, true);
+
+    window.addEventListener("redefine:page:refresh", syncLanguageControls);
   }
 
-  document.addEventListener("change", (event) => {
-    const select = event.target.closest?.(".lang-select");
-    if (!select || !supported.includes(select.value)) return;
-
-    event.preventDefault();
-    event.stopImmediatePropagation();
-
-    const targetLanguage = select.value;
-    try {
-      localStorage.setItem(storageKey, targetLanguage);
-      localStorage.setItem("REDEFINE-LANG", targetLanguage);
-    } catch (_) {}
-
-    if (targetLanguage === current) return;
-
-    let targetPath = location.pathname.replace(
-      /^\\/(?:zh-CN|en)(?=\\/|$)/,
-      "/" + targetLanguage,
-    );
-    if (targetPath === location.pathname) targetPath = "/" + targetLanguage + "/";
-    location.assign(targetPath + location.search + location.hash);
-  }, true);
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncLanguageControls, { once: true });
+  } else {
+    syncLanguageControls();
+  }
 })();
 </script>`;
 
-  let output = html.replace(
-    /<option\s+value=["']zh-TW["'][^>]*>[^<]*<\/option>/gi,
-    "",
-  );
-
-  if (output.includes("</head>")) output = output.replace("</head>", `${bootstrap}</head>`);
-  if (output.includes("</body>")) output = output.replace("</body>", `${runtime}</body>`);
+  let output = html;
+  output = output.replace(/<html(?:\s+lang=["'][^"']*["'])?/i, `<html lang="${buildLanguage}"`);
+  if (!output.includes("data-bilingual-navigation") && output.includes("</body>")) {
+    output = output.replace("</body>", `${runtime}</body>`);
+  }
   return output;
 });
+
+module.exports = { SUPPORTED_LANGUAGES };
