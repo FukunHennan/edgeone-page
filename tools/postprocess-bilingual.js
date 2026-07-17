@@ -2,10 +2,14 @@
 
 const fs = require("fs");
 const path = require("path");
-const yaml = require("js-yaml");
+const {
+  LANGUAGE_CODES,
+  PROJECT_ROOT,
+  collectLanguagePosts,
+  validDate,
+} = require("./content-records");
 
-const ROOT = path.resolve(__dirname, "..");
-const PUBLIC = path.join(ROOT, "public");
+const PUBLIC = path.join(PROJECT_ROOT, "public");
 const ORIGIN = "https://edgeone-page.edgeone.app";
 const LOCALES = {
   "zh-CN": {
@@ -24,7 +28,7 @@ const LOCALES = {
   },
 };
 
-const mkdir = (dir) => fs.mkdirSync(dir, { recursive: true });
+const mkdir = (directory) => fs.mkdirSync(directory, { recursive: true });
 const escapeXml = (value) => String(value ?? "")
   .replace(/&/g, "&amp;")
   .replace(/</g, "&lt;")
@@ -33,67 +37,60 @@ const escapeXml = (value) => String(value ?? "")
   .replace(/'/g, "&apos;");
 const escapeHtml = (value) => escapeXml(value).replace(/&apos;/g, "&#39;");
 
-function walk(dir, predicate) {
-  if (!fs.existsSync(dir)) return [];
+function walk(directory, predicate) {
+  if (!fs.existsSync(directory)) return [];
   const files = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    const target = path.join(dir, entry.name);
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const target = path.join(directory, entry.name);
     if (entry.isDirectory()) files.push(...walk(target, predicate));
     else if (entry.isFile() && predicate(target)) files.push(target);
   }
   return files.sort();
 }
 
-function parsePost(file) {
-  const source = fs.readFileSync(file, "utf8");
-  const end = source.indexOf("\n---", 3);
-  if (!source.startsWith("---") || end < 0) throw new Error(`${file}: invalid front matter`);
-  const data = yaml.load(source.slice(3, end).trim()) || {};
-  const body = source.slice(end + 4)
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/`([^`]+)`/g, "$1")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
-    .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
-    .replace(/^#{1,6}\s+/gm, "")
-    .replace(/[>*_~|]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  return { data, body };
+function publishedPosts(language) {
+  return collectLanguagePosts(language)
+    .filter((record) => record.published)
+    .map((record) => {
+      const date = validDate(record.data.date);
+      const updated = validDate(record.data.updated || record.data.date);
+      if (!date || !updated) throw new Error(`${record.filePath}: published article requires valid dates`);
+      return {
+        title: String(record.data.title),
+        description: String(record.data.description || record.body.slice(0, 220)),
+        content: record.body,
+        date,
+        updated,
+        url: record.url,
+        absoluteUrl: `${ORIGIN}${record.url}`,
+        tags: Array.isArray(record.data.tags) ? record.data.tags.map(String) : [],
+      };
+    })
+    .sort((left, right) => right.date - left.date);
 }
 
-function validDate(value) {
-  const date = value ? new Date(value) : new Date();
-  return Number.isNaN(date.getTime()) ? new Date() : date;
-}
-
-function collectPosts(language) {
-  const postsRoot = path.join(ROOT, "source", language, "_posts");
-  return walk(postsRoot, (file) => /\.md$/i.test(file)).map((file) => {
-    const { data, body } = parsePost(file);
-    const relative = path.relative(postsRoot, file).split(path.sep).join("/");
-    const slug = relative.replace(/\.md$/i, "");
-    const url = `/${language}/posts/${slug}/`;
-    return {
-      title: String(data.title || slug),
-      content: body,
-      description: String(data.description || body.slice(0, 220)),
-      date: validDate(data.date),
-      updated: validDate(data.updated || data.date),
-      url,
-      absoluteUrl: `${ORIGIN}${url}`,
-    };
-  }).sort((left, right) => right.date - left.date);
+function latestDate(posts) {
+  if (!posts.length) return new Date(0);
+  return new Date(Math.max(...posts.map((post) => post.updated.getTime())));
 }
 
 function writeSearch(language, posts) {
-  const payload = posts.map(({ title, content, url }) => ({ title, content, url }));
+  mkdir(path.join(PUBLIC, language));
+  const payload = posts.map(({ title, description, content, url, tags }) => ({
+    title,
+    description,
+    content,
+    url,
+    tags,
+  }));
   fs.writeFileSync(path.join(PUBLIC, language, "search.json"), `${JSON.stringify(payload)}\n`, "utf8");
 }
 
 function writeFeed(language, posts) {
   const locale = LOCALES[language];
+  const feedUrl = `${ORIGIN}/${language}/feed.xml`;
   const items = posts.slice(0, 30).map((post) => `    <item>\n      <title>${escapeXml(post.title)}</title>\n      <link>${escapeXml(post.absoluteUrl)}</link>\n      <guid isPermaLink="true">${escapeXml(post.absoluteUrl)}</guid>\n      <pubDate>${post.date.toUTCString()}</pubDate>\n      <description>${escapeXml(post.description)}</description>\n    </item>`).join("\n");
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>${escapeXml(locale.title)}</title>\n    <link>${ORIGIN}/${language}/</link>\n    <description>${escapeXml(locale.description)}</description>\n    <language>${language}</language>\n    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>\n${items}\n  </channel>\n</rss>\n`;
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n  <channel>\n    <title>${escapeXml(locale.title)}</title>\n    <link>${ORIGIN}/${language}/</link>\n    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>\n    <description>${escapeXml(locale.description)}</description>\n    <language>${language}</language>\n    <lastBuildDate>${latestDate(posts).toUTCString()}</lastBuildDate>\n${items}\n  </channel>\n</rss>\n`;
   fs.writeFileSync(path.join(PUBLIC, language, "feed.xml"), xml, "utf8");
 }
 
@@ -122,7 +119,7 @@ function write404() {
 }
 
 function injectAlternates() {
-  for (const language of Object.keys(LOCALES)) {
+  for (const language of LANGUAGE_CODES) {
     const other = language === "zh-CN" ? "en" : "zh-CN";
     const currentRoot = path.join(PUBLIC, language);
     const otherRoot = path.join(PUBLIC, other);
@@ -144,14 +141,19 @@ function injectAlternates() {
 }
 
 function writeSitemaps(postsByLanguage) {
-  for (const language of Object.keys(LOCALES)) {
+  for (const language of LANGUAGE_CODES) {
+    const posts = postsByLanguage[language];
+    const fallback = latestDate(posts).toISOString();
     const urls = new Map();
     for (const file of htmlFiles(language)) {
-      if (file.endsWith("404.html")) continue;
-      urls.set(`${ORIGIN}${htmlUrl(language, file)}`, fs.statSync(file).mtime.toISOString());
+      if (/\/(?:404|offline)\.html$/i.test(file)) continue;
+      urls.set(`${ORIGIN}${htmlUrl(language, file)}`, fallback);
     }
-    for (const post of postsByLanguage[language]) urls.set(post.absoluteUrl, post.updated.toISOString());
-    const body = [...urls.entries()].sort(([a], [b]) => a.localeCompare(b)).map(([url, lastmod]) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${lastmod}</lastmod></url>`).join("\n");
+    for (const post of posts) urls.set(post.absoluteUrl, post.updated.toISOString());
+    const body = [...urls.entries()]
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([url, lastmod]) => `  <url><loc>${escapeXml(url)}</loc><lastmod>${lastmod}</lastmod></url>`)
+      .join("\n");
     fs.writeFileSync(path.join(PUBLIC, language, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${body}\n</urlset>\n`, "utf8");
   }
   fs.writeFileSync(path.join(PUBLIC, "sitemap.xml"), `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <sitemap><loc>${ORIGIN}/zh-CN/sitemap.xml</loc></sitemap>\n  <sitemap><loc>${ORIGIN}/en/sitemap.xml</loc></sitemap>\n</sitemapindex>\n`, "utf8");
@@ -174,8 +176,8 @@ function verify() {
 function postprocessBilingualSite() {
   mkdir(PUBLIC);
   const posts = {};
-  for (const language of Object.keys(LOCALES)) {
-    posts[language] = collectPosts(language);
+  for (const language of LANGUAGE_CODES) {
+    posts[language] = publishedPosts(language);
     writeSearch(language, posts[language]);
     writeFeed(language, posts[language]);
   }
@@ -189,11 +191,11 @@ function postprocessBilingualSite() {
 if (require.main === module) {
   try {
     const counts = postprocessBilingualSite();
-    console.log(`[features] Generated bilingual search, RSS, sitemap, robots, 404 and hreflang: ${JSON.stringify(counts)}`);
+    console.log(`[features] Generated published bilingual features: ${JSON.stringify(counts)}`);
   } catch (error) {
     console.error(`[features] ${error.message}`);
     process.exitCode = 1;
   }
 }
 
-module.exports = { postprocessBilingualSite };
+module.exports = { postprocessBilingualSite, publishedPosts };
