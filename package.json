@@ -2,14 +2,17 @@
   "name": "hexo-site",
   "version": "0.0.0",
   "private": true,
-  "description": "A modern multilingual Hexo site optimized for Tencent EdgeOne Pages.",
+  "description": "A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.",
   "scripts": {
-    "clean": "hexo clean",
+    "clean": "node -e \"require('fs').rmSync('public',{recursive:true,force:true});require('fs').rmSync('db.json',{force:true})\"",
     "build": "npm run build:production",
-    "build:production": "hexo clean && hexo generate",
-    "check": "hexo clean && hexo generate --debug",
-    "server": "hexo server",
-    "server:draft": "hexo server --draft",
+    "build:production": "node tools/build-bilingual.js",
+    "check": "node tools/validate-bilingual.js && npm run build:production",
+    "check:content": "node tools/validate-bilingual.js",
+    "new:post": "node tools/new-bilingual-post.js",
+    "server": "npm run server:zh-CN",
+    "server:zh-CN": "hexo server --config _config.yml,_config.zh-CN.yml",
+    "server:en": "hexo server --config _config.yml,_config.en.yml",
     "deploy": "hexo deploy"
   },
   "repository": {
