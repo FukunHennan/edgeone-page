@@ -1,93 +1,106 @@
 "use strict";
 
-const fs = require("fs");
-const path = require("path");
-const yaml = require("js-yaml");
+const {
+  LANGUAGE_CODES,
+  collectLanguagePosts,
+  validDate,
+} = require("./content-records");
 
-const PROJECT_ROOT = path.resolve(__dirname, "..");
-const LANGUAGE_CODES = ["zh-CN", "en"];
+const PLACEHOLDER_PATTERNS = [
+  /请填写|在这里编写|待补充|todo|tbd/i,
+  /enter the english title|write the english version/i,
+];
 
-function walkMarkdown(directory) {
-  if (!fs.existsSync(directory)) return [];
-  const files = [];
-  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-    const absolutePath = path.join(directory, entry.name);
-    if (entry.isDirectory()) files.push(...walkMarkdown(absolutePath));
-    else if (entry.isFile() && /\.md$/i.test(entry.name)) files.push(absolutePath);
-  }
-  return files.sort();
+function hasPlaceholder(value) {
+  return PLACEHOLDER_PATTERNS.some((pattern) => pattern.test(String(value || "")));
 }
 
-function readFrontMatter(filePath) {
-  const source = fs.readFileSync(filePath, "utf8");
-  if (!source.startsWith("---")) throw new Error(`${filePath}: missing front matter`);
-  const closing = source.indexOf("\n---", 3);
-  if (closing === -1) throw new Error(`${filePath}: unclosed front matter`);
-  return yaml.load(source.slice(3, closing).trim()) || {};
-}
-
-function collectLanguagePosts(language) {
-  const postsRoot = path.join(PROJECT_ROOT, "source", language, "_posts");
-  const records = new Map();
-  for (const filePath of walkMarkdown(postsRoot)) {
-    const relativePath = path.relative(postsRoot, filePath).split(path.sep).join("/");
-    records.set(relativePath, { filePath, frontMatter: readFrontMatter(filePath) });
+function validateRecord(record, errors) {
+  const data = record.data;
+  const label = `${record.relativePath}: ${record.language}`;
+  if (data.lang !== record.language) errors.push(`${label} must declare lang: ${record.language}`);
+  if (typeof data.title !== "string" || !data.title.trim()) errors.push(`${label} requires a title`);
+  if (typeof data.translation_key !== "string" || !data.translation_key.trim()) {
+    errors.push(`${label} requires translation_key`);
+  } else if (data.translation_key !== record.slug) {
+    errors.push(`${label} translation_key must match slug '${record.slug}'`);
   }
-  return records;
+
+  const date = validDate(data.date);
+  const updated = data.updated ? validDate(data.updated) : date;
+  if (!date) errors.push(`${label} requires a valid date`);
+  if (data.updated && !updated) errors.push(`${label} has an invalid updated date`);
+  if (date && updated && updated < date) errors.push(`${label} updated date cannot be earlier than date`);
+
+  if (data.categories !== undefined && !Array.isArray(data.categories)) errors.push(`${label} categories must be an array`);
+  if (data.tags !== undefined && !Array.isArray(data.tags)) errors.push(`${label} tags must be an array`);
+
+  if (!record.published) return;
+  const description = typeof data.description === "string" ? data.description.trim() : "";
+  if (description.length < 20 || description.length > 240) {
+    errors.push(`${label} published article description must contain 20-240 characters`);
+  }
+  if (!Array.isArray(data.categories) || data.categories.length === 0) errors.push(`${label} published article requires a category`);
+  if (!Array.isArray(data.tags) || data.tags.length < 2) errors.push(`${label} published article requires at least two tags`);
+  if (record.body.length < 120) errors.push(`${label} published article body is too short`);
+  if (hasPlaceholder(data.title) || hasPlaceholder(description) || hasPlaceholder(record.rawBody)) {
+    errors.push(`${label} published article still contains placeholder content`);
+  }
 }
 
 function validateBilingualContent() {
   const errors = [];
   const postsByLanguage = Object.fromEntries(
-    LANGUAGE_CODES.map((language) => [language, collectLanguagePosts(language)]),
+    LANGUAGE_CODES.map((language) => [language, new Map(
+      collectLanguagePosts(language).map((record) => [record.relativePath, record]),
+    )]),
   );
-  const allRelativePaths = new Set();
-  Object.values(postsByLanguage).forEach((records) => {
-    records.forEach((_, relativePath) => allRelativePaths.add(relativePath));
-  });
+  const paths = new Set();
+  for (const records of Object.values(postsByLanguage)) {
+    for (const relativePath of records.keys()) paths.add(relativePath);
+  }
   const seenKeys = Object.fromEntries(LANGUAGE_CODES.map((language) => [language, new Map()]));
+  let publishedPairs = 0;
 
-  for (const relativePath of [...allRelativePaths].sort()) {
+  for (const relativePath of [...paths].sort()) {
     const pair = Object.fromEntries(
       LANGUAGE_CODES.map((language) => [language, postsByLanguage[language].get(relativePath)]),
     );
-
     for (const language of LANGUAGE_CODES) {
       const record = pair[language];
       if (!record) {
         errors.push(`${relativePath}: missing ${language} article`);
         continue;
       }
-      const data = record.frontMatter;
-      if (data.lang !== language) errors.push(`${relativePath}: ${language} file must declare lang: ${language}`);
-      if (typeof data.title !== "string" || !data.title.trim()) errors.push(`${relativePath}: ${language} file requires a title`);
-      if (typeof data.translation_key !== "string" || !data.translation_key.trim()) {
-        errors.push(`${relativePath}: ${language} file requires translation_key`);
-      } else {
-        const previous = seenKeys[language].get(data.translation_key);
-        if (previous && previous !== relativePath) {
-          errors.push(`${relativePath}: duplicate translation_key '${data.translation_key}' in ${language}`);
-        }
-        seenKeys[language].set(data.translation_key, relativePath);
+      validateRecord(record, errors);
+      const key = record.data.translation_key;
+      if (typeof key === "string" && key.trim()) {
+        const previous = seenKeys[language].get(key);
+        if (previous && previous !== relativePath) errors.push(`${relativePath}: duplicate translation_key '${key}' in ${language}`);
+        seenKeys[language].set(key, relativePath);
       }
     }
 
     if (pair["zh-CN"] && pair.en) {
-      const zhKey = pair["zh-CN"].frontMatter.translation_key;
-      const enKey = pair.en.frontMatter.translation_key;
-      if (zhKey && enKey && zhKey !== enKey) errors.push(`${relativePath}: translation_key values do not match`);
+      if (pair["zh-CN"].data.translation_key !== pair.en.data.translation_key) {
+        errors.push(`${relativePath}: translation_key values do not match`);
+      }
+      if (pair["zh-CN"].published !== pair.en.published) {
+        errors.push(`${relativePath}: both language versions must share the same publication state`);
+      }
+      if (pair["zh-CN"].published && pair.en.published) publishedPairs += 1;
     }
   }
 
-  if (allRelativePaths.size === 0) errors.push("No bilingual posts were found");
+  if (paths.size === 0) errors.push("No bilingual posts were found");
   if (errors.length) throw new Error(`Bilingual content validation failed:\n- ${errors.join("\n- ")}`);
-  return { languages: LANGUAGE_CODES, pairedPosts: allRelativePaths.size };
+  return { languages: LANGUAGE_CODES, pairedPosts: paths.size, publishedPairs };
 }
 
 if (require.main === module) {
   try {
     const result = validateBilingualContent();
-    console.log(`[bilingual] Validated ${result.pairedPosts} paired article(s) for ${result.languages.join(" and ")}.`);
+    console.log(`[bilingual] Validated ${result.pairedPosts} paired article(s), ${result.publishedPairs} published.`);
   } catch (error) {
     console.error(error.message);
     process.exitCode = 1;
