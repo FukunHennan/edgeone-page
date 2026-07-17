@@ -33,8 +33,14 @@ jobs:
 
       - name: Validate JavaScript entrypoints
         run: |
+          node --check scripts/head-hygiene.js
           node --check scripts/pwa-runtime.js
+          node --check tools/content-records.js
+          node --check tools/validate-bilingual.js
+          node --check tools/new-bilingual-post.js
+          node --check tools/postprocess-bilingual.js
           node --check tools/output-hash.js
+          node --check tools/finalize-service-worker.js
           node --check tools/build-bilingual.js
           node --check tools/audit-production.js
 
