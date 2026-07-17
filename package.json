@@ -1,12 +1,28 @@
 {
-  "name": "hexo-site",
-  "version": "0.0.0",
+  "name": "edgeone-page",
+  "version": "1.2.0",
   "private": true,
+  "description": "A modern multilingual Hexo site optimized for Tencent EdgeOne Pages.",
   "scripts": {
-    "build": "hexo generate",
     "clean": "hexo clean",
-    "deploy": "hexo deploy",
-    "server": "hexo server"
+    "build": "npm run build:production",
+    "build:production": "hexo clean && hexo generate",
+    "check": "hexo clean && hexo generate --debug",
+    "server": "hexo server",
+    "server:draft": "hexo server --draft",
+    "deploy": "hexo deploy"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FukunHennan/edgeone-page.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FukunHennan/edgeone-page/issues"
+  },
+  "homepage": "https://github.com/FukunHennan/edgeone-page#readme",
+  "engines": {
+    "node": ">=20",
+    "npm": ">=10"
   },
   "hexo": {
     "version": "8.1.1"
