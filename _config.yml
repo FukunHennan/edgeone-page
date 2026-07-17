@@ -1,42 +1,40 @@
-# EdgeOne Page - Hexo site configuration
-# Documentation: https://hexo.io/docs/configuration.html
+# EdgeOne Page - shared Hexo configuration
+# Language-specific values are defined in _config.zh-CN.yml and _config.en.yml.
 
-# Site identity
+# Default local development language
 title: EdgeOne Page
-subtitle: Modern multilingual Hexo theme for EdgeOne Pages
-description: A fast, responsive and multilingual Hexo site optimized for Tencent EdgeOne Pages.
+subtitle: 现代双语 Hexo 站点
+description: 面向腾讯云 EdgeOne Pages 的简体中文和英文双语站点。
 keywords:
   - Hexo
   - EdgeOne Pages
-  - multilingual
-  - responsive
-  - blog
+  - 简体中文
+  - English
 author: FukunHennan
 language: zh-CN
 timezone: Asia/Shanghai
 
-# Public URL
-url: https://edgeone-page.edgeone.app
-root: /
-permalink: posts/:year/:month/:title/
+# Default localized path. Production builds override these values per language.
+url: https://edgeone-page.edgeone.app/zh-CN
+root: /zh-CN/
+permalink: posts/:title/
 permalink_defaults:
 pretty_urls:
   trailing_index: false
   trailing_html: false
 
-# Directories
-source_dir: source
-public_dir: public
+# Content directories
+source_dir: source/zh-CN
+public_dir: public/zh-CN
 tag_dir: tags
 archive_dir: archives
 category_dir: categories
 code_dir: downloads/code
 i18n_dir: :lang
-skip_render:
-  - README.md
+skip_render: []
 
 # Writing
-new_post_name: :year/:month/:title.md
+new_post_name: :title.md
 default_layout: post
 titlecase: false
 external_link:
