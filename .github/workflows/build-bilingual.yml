@@ -55,3 +55,9 @@ jobs:
           path: public
           if-no-files-found: error
           retention-days: 7
+
+      - name: Deploy to EdgeOne Global
+        if: github.event_name != 'pull_request'
+        env:
+          EDGEONE_GLOBAL_TOKEN: ${{ secrets.EDGEONE_GLOBAL_TOKEN }}
+        run: npx --yes edgeone@1.6.39 makers deploy public -n edgeone-page -e production -a global -t "$EDGEONE_GLOBAL_TOKEN" --json
