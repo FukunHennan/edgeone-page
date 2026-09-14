@@ -2,7 +2,7 @@ title: EdgeOne Page
 subtitle: 现代双语 Hexo 站点
 description: 面向腾讯云 EdgeOne Pages 的简体中文和英文双语站点。
 language: zh-CN
-url: https://edgeone-page.edgeone.app/zh-CN
+url: https://edgeone.chenfukun.space/zh-CN
 root: /zh-CN/
 source_dir: source/zh-CN
 public_dir: public/zh-CN

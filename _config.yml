@@ -15,7 +15,7 @@ language: zh-CN
 timezone: Asia/Shanghai
 
 # Default localized path. Production builds override these values per language.
-url: https://edgeone-page.edgeone.app/zh-CN
+url: https://edgeone.chenfukun.space/zh-CN
 root: /zh-CN/
 permalink: posts/:title/
 permalink_defaults:
@@ -41,7 +41,7 @@ external_link:
   enable: true
   field: site
   exclude:
-    - edgeone-page.edgeone.app
+    - edgeone.chenfukun.space
 filename_case: 1
 render_drafts: false
 post_asset_folder: false

@@ -10,11 +10,13 @@ const fail = (message) => { throw new Error(message); };
 const exists = (relative) => fs.existsSync(path.join(PUBLIC, relative));
 const read = (relative) => fs.readFileSync(path.join(PUBLIC, relative), "utf8");
 const count = (value, pattern) => (value.match(pattern) || []).length;
+const [nodeMajor, nodeMinor] = String(config.nodeVersion).split(".").map(Number);
+const supportsHexo = nodeMajor > 20 || (nodeMajor === 20 && nodeMinor >= 19);
 
 if (config.installCommand !== "npm ci") fail("EdgeOne installCommand must remain npm ci");
 if (config.buildCommand !== "npm run build:production") fail("Unexpected EdgeOne build command");
 if (config.outputDirectory !== "public") fail("Unexpected EdgeOne output directory");
-if (!/^20\./.test(String(config.nodeVersion))) fail("EdgeOne must use Node.js 20");
+if (!supportsHexo) fail("EdgeOne must use Node.js >=20.19.0");
 
 const languageManifest = JSON.parse(read("language-manifest.json"));
 if (languageManifest.default !== "zh-CN" || JSON.stringify(languageManifest.supported) !== JSON.stringify(LANGUAGE_CODES)) {
@@ -62,7 +64,7 @@ for (const language of LANGUAGE_CODES) {
     if (/Hexo Theme Redefine|Redefine Team|Redefine Your Hexo Journey/.test(html)) fail(`${relativeHtml} contains legacy theme branding`);
     const searchRecord = search.find((item) => item.url === record.url);
     if (!searchRecord || searchRecord.title !== record.data.title) fail(`${language} search index is missing ${record.relativePath}`);
-    if (published.indexOf(record) < 30 && !feed.includes(`<guid isPermaLink="true">https://edgeone-page.edgeone.app${record.url}</guid>`)) {
+    if (published.indexOf(record) < 30 && !feed.includes(`<guid isPermaLink="true">https://edgeone.chenfukun.space${record.url}</guid>`)) {
       fail(`${language} feed is missing ${record.relativePath}`);
     }
   }

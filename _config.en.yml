@@ -2,7 +2,7 @@ title: EdgeOne Page
 subtitle: Modern bilingual Hexo publishing
 description: A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.
 language: en
-url: https://edgeone-page.edgeone.app/en
+url: https://edgeone.chenfukun.space/en
 root: /en/
 source_dir: source/en
 public_dir: public/en

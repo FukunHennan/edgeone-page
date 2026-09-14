@@ -10,7 +10,7 @@ const {
 } = require("./content-records");
 
 const PUBLIC = path.join(PROJECT_ROOT, "public");
-const ORIGIN = "https://edgeone-page.edgeone.app";
+const ORIGIN = "https://edgeone.chenfukun.space";
 const LOCALES = {
   "zh-CN": {
     title: "EdgeOne Page",
