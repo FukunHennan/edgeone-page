@@ -41,6 +41,7 @@ jobs:
           node --check tools/new-bilingual-post.js
           node --check tools/postprocess-bilingual.js
           node --check tools/output-hash.js
+          node --check tools/preview-public.js
           node --check tools/finalize-service-worker.js
           node --check tools/build-bilingual.js
           node --check tools/audit-production.js

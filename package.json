@@ -13,6 +13,7 @@
     "check:content": "node tools/check-runtime.js && node tools/validate-bilingual.js",
     "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
+    "preview:production": "node tools/check-runtime.js && npm run build:production && node tools/preview-public.js",
     "server": "npm run server:zh-CN",
     "server:zh-CN": "hexo server --config _config.yml,_config.zh-CN.yml",
     "server:en": "hexo server --config _config.yml,_config.en.yml",
