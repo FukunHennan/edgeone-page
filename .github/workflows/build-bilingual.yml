@@ -36,6 +36,7 @@ jobs:
           node --check scripts/head-hygiene.js
           node --check scripts/pwa-runtime.js
           node --check tools/content-records.js
+          node --check tools/check-runtime.js
           node --check tools/validate-bilingual.js
           node --check tools/new-bilingual-post.js
           node --check tools/postprocess-bilingual.js
