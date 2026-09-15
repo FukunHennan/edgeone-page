@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "description": "A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.",
-  "packageManager": "npm@10.9.0",
+  "packageManager": "npm@10.9.8",
   "scripts": {
     "clean": "node -e \"require('fs').rmSync('public',{recursive:true,force:true});require('fs').rmSync('db.json',{force:true})\"",
     "build": "npm run build:production",
@@ -27,8 +27,8 @@
   },
   "homepage": "https://github.com/FukunHennan/edgeone-page#readme",
   "engines": {
-    "node": "22.11.0",
-    "npm": "10.9.0"
+    "node": "22.23.2",
+    "npm": "10.9.8"
   },
   "hexo": {
     "version": "8.1.1"

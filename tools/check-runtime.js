@@ -18,7 +18,7 @@ if (expectedNpm && actualNpm && actualNpm !== expectedNpm) failures.push(`npm mu
 
 if (failures.length) {
   console.error(`[runtime] ${failures.join("; ")}`);
-  console.error("[runtime] Use Node.js 22.11.0 before running local checks or builds.");
+  console.error(`[runtime] Use Node.js ${expectedNode} before running local checks or builds.`);
   process.exitCode = 1;
 } else {
   console.log(`[runtime] Node.js ${actualNode}${actualNpm ? `, npm ${actualNpm}` : ""} matches EdgeOne cloud runtime.`);
