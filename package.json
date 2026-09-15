@@ -3,13 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "description": "A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.",
+  "packageManager": "npm@10.9.0",
   "scripts": {
     "clean": "node -e \"require('fs').rmSync('public',{recursive:true,force:true});require('fs').rmSync('db.json',{force:true})\"",
     "build": "npm run build:production",
-    "build:production": "node tools/build-bilingual.js",
+    "build:production": "node tools/check-runtime.js && node tools/build-bilingual.js",
     "audit:production": "node tools/audit-production.js",
-    "check": "node tools/validate-bilingual.js && npm run build:production && npm run audit:production",
-    "check:content": "node tools/validate-bilingual.js",
+    "check": "node tools/check-runtime.js && node tools/validate-bilingual.js && npm run build:production && npm run audit:production",
+    "check:content": "node tools/check-runtime.js && node tools/validate-bilingual.js",
+    "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
     "server": "npm run server:zh-CN",
     "server:zh-CN": "hexo server --config _config.yml,_config.zh-CN.yml",
@@ -25,8 +27,8 @@
   },
   "homepage": "https://github.com/FukunHennan/edgeone-page#readme",
   "engines": {
-    "node": ">=20.19.0",
-    "npm": ">=10"
+    "node": "22.11.0",
+    "npm": "10.9.0"
   },
   "hexo": {
     "version": "8.1.1"
