@@ -72,7 +72,10 @@ for (const language of LANGUAGE_CODES) {
 
 const serviceWorker = read("service-worker.js");
 if (!serviceWorker.includes("edgeone-page-") || serviceWorker.includes("Date.now")) fail("Service worker cache version is not deterministic");
-for (const relative of ["robots.txt", "sitemap.xml", "404.html", "icons/edgeone-icon.svg"]) {
+for (const relative of ["edgeone.json", "robots.txt", "sitemap.xml", "404.html", "icons/edgeone-icon.svg"]) {
   if (!exists(relative)) fail(`Missing public/${relative}`);
+}
+if (read("edgeone.json") !== fs.readFileSync(path.join(PROJECT_ROOT, "edgeone.json"), "utf8")) {
+  fail("public/edgeone.json is not synchronized with the project EdgeOne config");
 }
 console.log("[audit] EdgeOne production output and published articles passed.");
