@@ -6,6 +6,8 @@
   "packageManager": "npm@10.9.8",
   "scripts": {
     "clean": "node -e \"require('fs').rmSync('public',{recursive:true,force:true});require('fs').rmSync('db.json',{force:true})\"",
+    "dev": "node tools/dev-preview.js",
+    "dev:en": "node tools/dev-preview.js --en",
     "build": "npm run build:production",
     "build:production": "node tools/check-runtime.js && node tools/build-bilingual.js",
     "audit:production": "node tools/audit-production.js",
@@ -14,7 +16,7 @@
     "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
     "preview:production": "node tools/check-runtime.js && npm run build:production && node tools/preview-public.js",
-    "server": "npm run server:zh-CN",
+    "server": "npm run dev",
     "server:zh-CN": "hexo server --config _config.yml,_config.zh-CN.yml",
     "server:en": "hexo server --config _config.yml,_config.en.yml",
     "deploy": "hexo deploy"
@@ -27,13 +29,8 @@
     "url": "https://github.com/FukunHennan/edgeone-page/issues"
   },
   "homepage": "https://github.com/FukunHennan/edgeone-page#readme",
-  "engines": {
-    "node": "22.23.2",
-    "npm": "10.9.8"
-  },
-  "hexo": {
-    "version": "8.1.1"
-  },
+  "engines": {"node": "22.23.2", "npm": "10.9.8"},
+  "hexo": {"version": "8.1.1"},
   "dependencies": {
     "hexo": "^8.0.0",
     "hexo-generator-archive": "^2.0.0",
@@ -48,7 +45,5 @@
     "hexo-wordcount": "^6.0.1",
     "js-yaml": "^4.1.1"
   },
-  "overrides": {
-    "strip-ansi": "6.0.1"
-  }
+  "overrides": {"strip-ansi": "6.0.1"}
 }
