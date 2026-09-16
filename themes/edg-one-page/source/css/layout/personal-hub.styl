@@ -1,0 +1,237 @@
+:root
+  --hub-bg #f6f8fc
+  --hub-card rgba(255,255,255,.78)
+  --hub-text #101828
+  --hub-muted #667085
+  --hub-line rgba(16,24,40,.09)
+  --hub-blue #2563eb
+  --hub-cyan #06b6d4
+
+.dark
+  --hub-bg #080d18
+  --hub-card rgba(17,25,40,.76)
+  --hub-text #f5f7fb
+  --hub-muted #98a2b3
+  --hub-line rgba(255,255,255,.09)
+
+body
+  background var(--hub-bg)
+
+.hub-shell
+  width min(1180px, calc(100% - 40px))
+  margin 0 auto
+  padding 42px 0 96px
+  color var(--hub-text)
+
+.hub-hero
+  position relative
+  overflow hidden
+  min-height 490px
+  padding 92px 64px 58px
+  border 1px solid var(--hub-line)
+  border-radius 32px
+  background linear-gradient(135deg, rgba(37,99,235,.10), var(--hub-card) 45%, rgba(6,182,212,.08))
+  box-shadow 0 24px 80px rgba(15,23,42,.08)
+
+.hub-orb
+  position absolute
+  width 360px
+  height 360px
+  border-radius 50%
+  filter blur(70px)
+  opacity .22
+  pointer-events none
+  animation hubFloat 9s ease-in-out infinite
+.hub-orb-a
+  right -80px
+  top -120px
+  background #2563eb
+.hub-orb-b
+  right 180px
+  bottom -250px
+  background #06b6d4
+  animation-delay -4s
+
+.hub-kicker,.hub-eyebrow,.hub-card-tag
+  font-size 12px
+  font-weight 800
+  letter-spacing .15em
+  color var(--hub-blue)
+.hub-kicker span
+  display inline-block
+  width 24px
+  height 2px
+  margin 0 10px 3px 0
+  background var(--hub-blue)
+
+.hub-hero h1
+  position relative
+  max-width 760px
+  margin 25px 0 20px
+  font-size clamp(48px, 7vw, 86px)
+  line-height 1.02
+  letter-spacing -.055em
+  font-weight 850
+.hub-hero p
+  position relative
+  max-width 650px
+  font-size 19px
+  line-height 1.8
+  color var(--hub-muted)
+
+.hub-actions
+  position relative
+  display flex
+  gap 12px
+  margin-top 34px
+.hub-btn
+  display inline-flex
+  gap 20px
+  align-items center
+  padding 13px 20px
+  border 1px solid var(--hub-line)
+  border-radius 14px
+  color var(--hub-text)
+  background var(--hub-card)
+  font-weight 700
+  transition .25s ease
+.hub-btn:hover
+  transform translateY(-3px)
+  box-shadow 0 14px 30px rgba(15,23,42,.12)
+.hub-btn-primary
+  color white
+  border-color transparent
+  background linear-gradient(135deg, #2563eb, #0891b2)
+
+.hub-tech
+  position absolute
+  right 45px
+  bottom 34px
+  display flex
+  gap 18px
+  font-size 10px
+  letter-spacing .14em
+  color var(--hub-muted)
+
+.hub-section-head
+  display flex
+  align-items end
+  justify-content space-between
+  gap 30px
+  margin 76px 4px 24px
+.hub-section-head h2
+  margin 7px 0 0
+  font-size 34px
+  letter-spacing -.03em
+.hub-section-head p,.hub-section-head a
+  color var(--hub-muted)
+
+.hub-grid
+  display grid
+  gap 16px
+.hub-grid-main
+  grid-template-columns repeat(2,1fr)
+.hub-card,.hub-post-card
+  position relative
+  overflow hidden
+  padding 30px
+  min-height 250px
+  border 1px solid var(--hub-line)
+  border-radius 22px
+  background var(--hub-card)
+  color var(--hub-text)
+  backdrop-filter blur(14px)
+  transition transform .28s ease, box-shadow .28s ease, border-color .28s ease
+.hub-card:hover,.hub-post-card:hover
+  transform translateY(-7px)
+  border-color rgba(37,99,235,.35)
+  box-shadow 0 24px 55px rgba(15,23,42,.11)
+.hub-card:after
+  content ''
+  position absolute
+  width 150px
+  height 150px
+  right -70px
+  bottom -80px
+  border-radius 50%
+  background var(--hub-blue)
+  opacity .05
+  transition .35s ease
+.hub-card:hover:after
+  transform scale(1.5)
+.hub-icon
+  display grid
+  place-items center
+  width 46px
+  height 46px
+  margin-bottom 25px
+  border-radius 13px
+  background rgba(37,99,235,.10)
+  color var(--hub-blue)
+  font-size 20px
+  font-weight 800
+.hub-card h3,.hub-post-card h3
+  margin 9px 0 10px
+  font-size 24px
+  letter-spacing -.025em
+.hub-card p,.hub-post-card p
+  color var(--hub-muted)
+  line-height 1.7
+.hub-card b
+  position absolute
+  left 30px
+  bottom 26px
+  font-size 13px
+  color var(--hub-blue)
+
+.hub-post-grid
+  grid-template-columns repeat(3,1fr)
+.hub-post-card
+  min-height 285px
+.hub-post-no
+  position absolute
+  right 24px
+  top 20px
+  font-size 34px
+  font-weight 900
+  color rgba(100,116,139,.12)
+.hub-post-card div
+  position absolute
+  left 30px
+  right 30px
+  bottom 25px
+  display flex
+  justify-content space-between
+  color var(--hub-muted)
+
+@keyframes hubFloat
+  0%,100% { transform: translate3d(0,0,0) scale(1) }
+  50% { transform: translate3d(-30px,25px,0) scale(1.08) }
+
+@media (max-width: 760px)
+  .hub-shell
+    width min(100% - 24px, 1180px)
+    padding-top 20px
+  .hub-hero
+    min-height 520px
+    padding 70px 25px 40px
+    border-radius 24px
+  .hub-hero h1
+    font-size 48px
+  .hub-tech
+    left 25px
+    right auto
+    flex-wrap wrap
+  .hub-grid-main,.hub-post-grid
+    grid-template-columns 1fr
+  .hub-section-head
+    align-items start
+    flex-direction column
+  .hub-actions
+    flex-direction column
+    align-items stretch
+
+@media (prefers-reduced-motion: reduce)
+  .hub-orb,.hub-card,.hub-post-card,.hub-btn
+    animation none
+    transition none
