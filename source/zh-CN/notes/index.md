@@ -4,17 +4,18 @@ layout: page
 comments: false
 ---
 
-# 笔记 · Notes
-
-> 构建属于自己的长期知识库。这里用于沉淀 Linux、Python、ESP32、STM32、KiCad、计算机视觉、网络与开发环境等技术笔记。
-
-<div class="hub-grid">
-<a class="hub-card" href="../archives/"><strong>Linux</strong><span>systemd · 网络 · Docker · 开发环境</span></a>
-<div class="hub-card"><strong>ESP32</strong><span>Wi‑Fi · OTA · BLE · 嵌入式开发</span></div>
-<div class="hub-card"><strong>STM32</strong><span>外设 · 控制 · 通信 · 调试</span></div>
-<div class="hub-card"><strong>KiCad</strong><span>原理图 · PCB · 电源与保护</span></div>
-<div class="hub-card"><strong>Python</strong><span>工具脚本 · 自动化 · 视觉处理</span></div>
-<div class="hub-card"><strong>Computer Vision</strong><span>DVS · RGB · 标定 · 多模态视觉</span></div>
+<div class="workspace-page notes-workspace">
+  <header class="workspace-hero"><span class="workspace-kicker">KNOWLEDGE BASE · NOTES</span><h1>笔记与知识库</h1><p>把零散的学习记录整理成可以长期检索、复用和关联项目的工程知识库。</p><div class="workspace-search"><span>⌕</span><input id="note-search" placeholder="搜索 Linux、ESP32、KiCad、视觉……"><kbd>⌘ K</kbd></div></header>
+  <div class="workspace-layout">
+    <aside class="workspace-sidebar"><b>知识分类</b><button class="active" data-note-filter="all">全部笔记 <span>24</span></button><button data-note-filter="linux">Linux / 系统 <span>7</span></button><button data-note-filter="embedded">ESP32 / 嵌入式 <span>6</span></button><button data-note-filter="hardware">KiCad / 硬件 <span>4</span></button><button data-note-filter="vision">计算机视觉 <span>4</span></button><button data-note-filter="network">网络 <span>3</span></button><div class="workspace-side-card"><small>QUICK LINK</small><strong>从项目进入知识</strong><p>项目页面会逐步关联相关笔记。</p><a href="../projects/">查看项目 →</a></div></aside>
+    <main class="workspace-content"><div class="workspace-content-head"><div><small>RECENTLY UPDATED</small><h2>最近整理</h2></div><span id="note-count">6 个主题</span></div><div class="note-list">
+      <article data-kind="linux network" data-search="linux systemd service network ubuntu"><span class="note-icon">⌘</span><div><small>LINUX · SYSTEM</small><h3>systemd 服务管理与调试</h3><p>服务注册、自启动、日志、状态检查以及常用排障流程。</p><div><em>#systemd</em><em>#Ubuntu</em><em>#service</em></div></div><b>→</b></article>
+      <article data-kind="embedded network" data-search="esp32 ota wifi wireless programmer"><span class="note-icon">◈</span><div><small>ESP32 · OTA</small><h3>ESP32 无线 OTA 设计记录</h3><p>设备配对、版本识别、固件转发与稳定升级方案。</p><div><em>#ESP32</em><em>#OTA</em><em>#Wi-Fi</em></div></div><b>→</b></article>
+      <article data-kind="hardware embedded" data-search="kicad pcb power battery bms"><span class="note-icon">▧</span><div><small>HARDWARE · PCB</small><h3>KiCad 与电源保护设计</h3><p>原理图、PCB、电池保护、MOS 与电源器件的设计记录。</p><div><em>#KiCad</em><em>#PCB</em><em>#Power</em></div></div><b>→</b></article>
+      <article data-kind="vision" data-search="dvs rgb camera calibration opencv vision"><span class="note-icon">◎</span><div><small>VISION · CALIBRATION</small><h3>DVS + RGB 双目标定</h3><p>事件相机与 RGB 相机的标定、同步、FOV 映射和融合。</p><div><em>#DVS</em><em>#OpenCV</em><em>#Calibration</em></div></div><b>→</b></article>
+      <article data-kind="network linux" data-search="frp webdav nas ipv6 tailscale"><span class="note-icon">⌁</span><div><small>NETWORK · HOMELAB</small><h3>远程访问与家庭网络</h3><p>FRP、IPv6、WebDAV、NAS 与多设备远程连接方案。</p><div><em>#FRP</em><em>#IPv6</em><em>#NAS</em></div></div><b>→</b></article>
+      <article data-kind="embedded hardware" data-search="sensor ina226 mpu6050 uart crc"><span class="note-icon">⚙</span><div><small>EMBEDDED · LAB</small><h3>嵌入式实验记录</h3><p>传感器、串口、CRC、供电和常见硬件模块的使用笔记。</p><div><em>#Sensor</em><em>#UART</em><em>#CRC</em></div></div><b>→</b></article>
+    </div></main>
+  </div>
 </div>
-
-<style>.hub-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:24px 0}.hub-card{display:flex;flex-direction:column;gap:8px;padding:22px;border:1px solid rgba(100,160,255,.2);border-radius:18px;background:linear-gradient(145deg,rgba(37,99,235,.08),rgba(20,184,166,.04));transition:.25s transform,.25s box-shadow;text-decoration:none!important}.hub-card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(37,99,235,.14)}.hub-card strong{font-size:1.15rem}.hub-card span{opacity:.72;font-size:.92rem}</style>
+<script>(function(){function init(){var r=document.querySelector('.notes-workspace');if(!r||r.dataset.ready)return;r.dataset.ready=1;var input=r.querySelector('#note-search'),btns=r.querySelectorAll('[data-note-filter]'),items=r.querySelectorAll('.note-list article'),count=r.querySelector('#note-count'),filter='all';function run(){var q=(input.value||'').toLowerCase(),n=0;items.forEach(function(x){var ok=(filter==='all'||x.dataset.kind.split(' ').includes(filter))&&(!q||x.dataset.search.toLowerCase().includes(q)||x.innerText.toLowerCase().includes(q));x.hidden=!ok;if(ok)n++});count.textContent=n+' 个主题'}btns.forEach(function(b){b.onclick=function(){btns.forEach(function(x){x.classList.remove('active')});b.classList.add('active');filter=b.dataset.noteFilter;run()}});input.oninput=run;run()}document.addEventListener('DOMContentLoaded',init);document.addEventListener('swup:contentReplaced',init);init()})();</script>
