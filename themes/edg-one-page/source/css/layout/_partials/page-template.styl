@@ -34,6 +34,40 @@ $friend-link-item-border-radius = 9px
     img:hover
       cursor zoom-in
 
+/* Personal Hub workspace pages intentionally bypass the legacy generic page card. */
+.page-template-container.hub-workspace-container
+  width 100%
+  max-width none
+  margin 0
+  padding 0
+  border 0
+  border-radius 0
+  background transparent
+  box-shadow none
+  overflow visible
+
+  &:hover
+    box-shadow none
+
+  .page-template-content.hub-workspace-content
+    width 100%
+    max-width none
+    margin 0
+    padding 0
+    color var(--hub-text)
+
+    > h1:first-child
+      display none
+
+    > .workspace-page,
+    > .hub-shell
+      margin-top 0
+
+  .page-template-comments:empty
+    display none
+
+  +redefine-mobile()
+    padding 0
 
 #masonry-container
   position relative
@@ -114,7 +148,6 @@ $friend-link-item-border-radius = 9px
   100%
     transform rotate(360deg)
 
-/* Images */
 .image-container
   position relative
 
