@@ -1,12 +1,13 @@
-<div class="page-template-container">
-	<% const pageData = getPageData(page); %>
-
+<% const pageData = getPageData(page); %>
+<% const rawContent = page.content || ''; %>
+<% const isHubWorkspace = /class=["'][^"']*(workspace-page|hub-shell|projects-workspace|toolbox-workspace|notes-workspace)[^"']*["']/.test(rawContent); %>
+<div class="page-template-container<%= isHubWorkspace ? ' hub-workspace-container' : '' %>">
 	<% if (pageData) { %>
 	<%- partial(pageData.partial) %>
 	<% } %>
 
-	<div class="page-template-content markdown-body">
-		<% if (!pageData) { %>
+	<div class="page-template-content markdown-body<%= isHubWorkspace ? ' hub-workspace-content' : '' %>">
+		<% if (!pageData && !isHubWorkspace) { %>
 		<h1><%- page.title %></h1>
 		<% } %>
 
