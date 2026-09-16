@@ -1,62 +1,29 @@
-<div class="home-content-container">
-    <ul class="home-article-list">
-        <% page.posts.forEach(post => { %>
-            <li class="home-article-item">
-
-                <% if (post.sticky) { %>
-                    <div class="absolute top-[12px] right-[12px] text-[0.7rem] text-third-text-color rounded-medium bg-background-color-transparent-15 backdrop-blur-sm py-[2px] px-[10px] border border-border-color z-3 hover:text-first-text-color cursor-default">
-                        <i class="fa-regular fa-thumbtack mr-[3px] text-[0.65rem]"></i><span data-i18n="sticky"><%- __('sticky') %></span>
-                    </div>
-                <% } %>
-
-                <%  let articleThumbnail = "";
-                if (post.cover || post.banner || (post.thumbnail && post.thumbnail !== false)) { %>
-                    <%
-                    if (post.thumbnail && post.thumbnail !== null) {
-                      articleThumbnail = post.thumbnail;
-                    } else if (post.cover && post.cover.includes("/")) {
-                      articleThumbnail = post.cover;
-                    } else if (post.banner && post.banner.includes("/")) {
-                      articleThumbnail = post.banner;
-                    } else if (config.marked.postAsset && config.marked.postAsset == true) {
-                      articleThumbnail = [post.path, post.cover || post.banner].join("/");
-                    }
-                    %>
-                <% } %>
-
-                <% if (post.thumbnail !== false && (post.thumbnail || post.cover || post.banner)) { %>
-                    <div id="home-article-thumbnail" class="home-article-thumbnail relative h-[150px] overflow-hidden rounded-t-large">
-                        <a href="<%- url_for(post.path) %>">
-                            <img src="<%- url_for(articleThumbnail) %>" alt="<%= post.title %>" class="w-full h-full object-cover dark:brightness-75 transition-all" />
-                        </a>
-                    </div>
-                <% } %>
-                <div class="flex flex-col gap-5 px-7 pb-7 <%= post.thumbnail !== false && (post.thumbnail || post.cover || post.banner) ? "pt-5" : "pt-7" %>">
-                    <h3 class="home-article-title">
-                        <a href="<%- url_for(post.path) %>">
-                            <%= post.title %>
-                        </a>
-                    </h3>
-
-                    <div class="home-article-content markdown-body">
-                        <% if (post.excerpt && post.excerpt == "false") { %>
-                        <% } else if (post.excerpt && post.excerpt !== "false") { %>
-                            <%- render(post.excerpt, "markdown") %>
-                        <% } else { %>
-                            <%
-                                const excerptLength = theme.home.excerpt_length || 200;
-                            %>
-                            <%- truncate(strip_html(post.content), {length: excerptLength}) %>
-                        <% } %>
-                    </div>
-
-                    <%- partial('pages/home/home-article', {post: post}) %>
-                </div>
-            </li>
-        <% }) %>
-    </ul>
-
-    <div class="home-paginator px-7 py-5">
-        <%- partial('utils/paginator', {pageObject: page}) %>
+<% const zh = config.language === 'zh-CN'; %>
+<section class="hub-shell">
+  <div class="hub-hero">
+    <div class="hub-orb hub-orb-a"></div><div class="hub-orb hub-orb-b"></div>
+    <div class="hub-kicker"><span></span> PERSONAL HUB · BUILD / LEARN / CREATE</div>
+    <h1><%= zh ? '我的数字工作空间' : 'My digital workspace' %></h1>
+    <p><%= zh ? '记录技术、项目与知识，也把真正有用的小工具放在这里。' : 'A home for engineering notes, projects, writing and useful tools.' %></p>
+    <div class="hub-actions">
+      <a class="hub-btn hub-btn-primary" href="<%- url_for('/projects/') %>"><%= zh ? '探索项目' : 'Explore projects' %> <span>↗</span></a>
+      <a class="hub-btn" href="<%- url_for('/tools/') %>"><%= zh ? '打开工具箱' : 'Open toolbox' %> <span>→</span></a>
     </div>
-</div>
+    <div class="hub-tech"><span>ESP32</span><span>LINUX</span><span>ROBOTICS</span><span>VISION</span><span>PCB</span></div>
+  </div>
+
+  <div class="hub-section-head"><div><span class="hub-eyebrow">EXPLORE</span><h2><%= zh ? '从这里开始' : 'Start here' %></h2></div><p><%= zh ? '不同内容拥有独立界面，并保持统一的交互体验。' : 'Independent spaces, one consistent experience.' %></p></div>
+  <div class="hub-grid hub-grid-main">
+    <a class="hub-card hub-card-feature" href="<%- url_for('/notes/') %>"><div class="hub-icon">⌘</div><span class="hub-card-tag">KNOWLEDGE</span><h3><%= zh ? '笔记 / 知识库' : 'Notes / Knowledge' %></h3><p><%= zh ? 'Linux、ESP32、KiCad、网络、视觉与研究笔记。' : 'Linux, ESP32, KiCad, networking, vision and research notes.' %></p><b><%= zh ? '进入知识库' : 'Open knowledge base' %> →</b></a>
+    <a class="hub-card" href="<%- url_for('/projects/') %>"><div class="hub-icon">◇</div><span class="hub-card-tag">MAKING</span><h3><%= zh ? '项目' : 'Projects' %></h3><p><%= zh ? '持续记录正在构建的硬件、软件和实验项目。' : 'Hardware, software and experiments I am building.' %></p><b><%= zh ? '查看项目' : 'View projects' %> →</b></a>
+    <a class="hub-card" href="<%- url_for('/tools/') %>"><div class="hub-icon">{ }</div><span class="hub-card-tag">UTILITY</span><h3><%= zh ? '工具箱' : 'Toolbox' %></h3><p><%= zh ? '面向开发、网络和嵌入式工作的在线小工具。' : 'Small utilities for development, networking and embedded work.' %></p><b><%= zh ? '打开工具箱' : 'Open toolbox' %> →</b></a>
+    <a class="hub-card" href="<%- url_for('/experience/') %>"><div class="hub-icon">◎</div><span class="hub-card-tag">JOURNEY</span><h3><%= zh ? '个人经历' : 'Experience' %></h3><p><%= zh ? '在线 HTML 简历、技能、经历与成长时间线。' : 'HTML resume, skills, experience and a growing timeline.' %></p><b><%= zh ? '了解我的经历' : 'See my experience' %> →</b></a>
+  </div>
+
+  <div class="hub-section-head hub-latest-head"><div><span class="hub-eyebrow">LATEST</span><h2><%= zh ? '最近更新' : 'Latest writing' %></h2></div><a href="<%- url_for('/archives/') %>"><%= zh ? '查看全部文章' : 'All posts' %> →</a></div>
+  <div class="hub-grid hub-post-grid">
+    <% page.posts.slice(0, 3).forEach((post, index) => { %>
+      <a class="hub-post-card" href="<%- url_for(post.path) %>"><span class="hub-post-no">0<%= index + 1 %></span><span class="hub-card-tag"><%= post.categories && post.categories.length ? post.categories.data[0].name : 'LOG' %></span><h3><%= post.title %></h3><p><%- truncate(strip_html(post.content), {length: 90}) %></p><div><time><%= date(post.date, 'YYYY-MM-DD') %></time><b>→</b></div></a>
+    <% }) %>
+  </div>
+</section>

@@ -1,9 +1,7 @@
-# EdgeOne Page theme overrides
-# Project-specific settings live here so the vendored theme defaults remain reusable.
-
+# EdgeOne Page / Personal Hub theme overrides
 info:
-  title: EdgeOne Page
-  subtitle: Modern multilingual publishing for EdgeOne Pages
+  title: Personal Hub
+  subtitle: Build · Learn · Create
   author: FukunHennan
   url: https://edgeone.chenfukun.space
 
@@ -14,11 +12,11 @@ defaults:
 
 colors:
   primary: "#2563eb"
-  secondary: "#14b8a6"
+  secondary: "#06b6d4"
   default_mode: light
 
 global:
-  content_max_width: 1120px
+  content_max_width: 1220px
   sidebar_width: 230px
   hover:
     shadow: true
@@ -35,30 +33,28 @@ global:
   single_page: true
   preloader:
     enable: false
-    custom_message: EdgeOne Page
+    custom_message: Personal Hub
   side_tools:
     gear_rotation: true
     auto_expand: false
   open_graph:
     enable: true
     image: /images/redefine-og.webp
-    description: A fast, responsive and multilingual Hexo site optimized for Tencent EdgeOne Pages.
+    description: Personal digital workspace for projects, notes, writing and tools.
   google_analytics:
     enable: false
     id:
 
 home_banner:
-  enable: true
+  enable: false
   style: fixed
   image:
     light: /images/wallhaven-wqery6-light.webp
     dark: /images/wallhaven-wqery6-dark.webp
-  title: EdgeOne Page
+  title: Personal Hub
   subtitle:
     text:
-      - Fast, modern and multilingual.
-      - Designed for Tencent EdgeOne Pages.
-      - Open source and easy to customize.
+      - Build · Learn · Create
     hitokoto:
       enable: false
       show_author: false
@@ -88,27 +84,36 @@ home_banner:
         url: https://github.com/FukunHennan/edgeone-page
 
 navbar:
-  auto_hide: true
+  auto_hide: false
   color:
     left: "#2563eb"
-    right: "#14b8a6"
-    transparency: 18
+    right: "#06b6d4"
+    transparency: 10
   width:
-    home: 1280px
-    pages: 1120px
+    home: 1220px
+    pages: 1180px
   links:
     Home:
       path: /
       icon: fa-regular fa-house
-    Archives:
+    Blog:
       path: /archives/
-      icon: fa-regular fa-box-archive
-    Tags:
-      path: /tags/
-      icon: fa-regular fa-tags
-    Categories:
-      path: /categories/
-      icon: fa-regular fa-folder
+      icon: fa-regular fa-pen-to-square
+    Notes:
+      path: /notes/
+      icon: fa-regular fa-note-sticky
+    Projects:
+      path: /projects/
+      icon: fa-regular fa-folder-open
+    Toolbox:
+      path: /tools/
+      icon: fa-solid fa-screwdriver-wrench
+    Experience:
+      path: /experience/
+      icon: fa-regular fa-id-card
+    About:
+      path: /about/
+      icon: fa-regular fa-user
     GitHub:
       path: https://github.com/FukunHennan/edgeone-page
       icon: fa-brands fa-github
@@ -118,23 +123,14 @@ navbar:
 
 home:
   sidebar:
-    enable: true
+    enable: false
     position: left
     first_item: info
-    announcement: Open-source Hexo publishing for EdgeOne Pages.
-    show_on_mobile: true
-    links:
-      Archives:
-        path: /archives/
-        icon: fa-regular fa-box-archive
-      Tags:
-        path: /tags/
-        icon: fa-regular fa-tags
-      Categories:
-        path: /categories/
-        icon: fa-regular fa-folder
+    announcement: Personal Hub
+    show_on_mobile: false
+    links: {}
   article_date_format: YYYY-MM-DD
-  excerpt_length: 220
+  excerpt_length: 180
   categories:
     enable: true
     limit: 3
@@ -220,7 +216,7 @@ footer:
   icon: '<i class="fa-solid fa-heart fa-beat" style="--fa-animation-duration: 0.8s; color: #ef4444"></i>'
   start: 2026/04/20 00:00:00
   statistics: true
-  customize: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">EdgeOne Page on GitHub</a>'
+  customize: '<a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">Personal Hub on GitHub</a>'
   icp:
     enable: false
     number:
@@ -230,7 +226,6 @@ inject:
   enable: false
   head: []
   footer: []
-
 plugins:
   feed:
     enable: true
@@ -244,18 +239,15 @@ plugins:
     theme:
       light: default
       dark: dark
-
 page_templates:
   friends_column: 2
   tags_style: blur
   masonry:
     batch_size: 12
     initial_batch_size: 24
-
 cdn:
   enable: false
   provider: npmmirror
   custom_url:
-
 developer:
   enable: false
