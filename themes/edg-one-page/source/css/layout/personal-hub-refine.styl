@@ -1,0 +1,258 @@
+@css {
+/* ==========================================================================
+   沉静蓝紫 · 全站质感增强
+   仅做叠加优化，不改动 personal-hub.styl 的结构
+   ========================================================================== */
+
+:root{
+  --hub-violet:#8b5cf6;
+  --hub-lilac:#a5b4fc;
+  --hub-deep:#3730a3;
+  --hub-ring:rgba(99,102,241,.45);
+  --hub-ease:cubic-bezier(.22,1,.36,1);
+}
+.dark{
+  --hub-ring:rgba(165,180,252,.55);
+}
+
+/* ---------- 字体与文字渲染 ---------- */
+body,.markdown-body,.hub-shell{
+  font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+.hub-shell h1,.hub-shell h2,.hub-shell h3,.workspace-hero h1,.tool-panel-head h2{
+  letter-spacing:-.025em;
+}
+
+/* ---------- 选中 / 焦点 ---------- */
+::selection{background:rgba(79,70,229,.2);color:inherit}
+:focus-visible{outline:2px solid var(--hub-violet);outline-offset:3px;border-radius:8px}
+
+/* ---------- 滚动条 ---------- */
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{
+  background:linear-gradient(180deg,#a5b4fc,#8b5cf6);
+  background-clip:padding-box;
+  border:3px solid transparent;
+  border-radius:99px;
+}
+::-webkit-scrollbar-thumb:hover{
+  background:linear-gradient(180deg,#8b8cf7,#7c3aed);
+  background-clip:padding-box;
+}
+html{scrollbar-color:#a5b4fc transparent}
+
+/* ---------- Hero ---------- */
+.hub-hero-v2{border-radius:30px}
+.hub-hero-copy h1{text-shadow:0 14px 44px rgba(99,102,241,.3)}
+.hub-kicker,.hub-eyebrow{color:#9db2d8!important}
+.hub-actions .hub-btn{
+  transition:transform .26s var(--hub-ease),box-shadow .26s,border-color .26s,background .26s,color .26s;
+}
+.hub-actions .hub-btn:hover{transform:translateY(-3px)}
+.hub-actions .hub-btn-primary:hover{box-shadow:0 18px 38px rgba(99,102,241,.36)}
+.hub-actions .hub-btn>span{transition:transform .26s var(--hub-ease)}
+.hub-actions .hub-btn:hover>span{transform:translateX(4px)}
+.hub-stats>div{transition:transform .28s var(--hub-ease)}
+.hub-stats>div:hover{transform:translateY(-3px)}
+
+/* ---------- 快速入口卡片 ---------- */
+.hub-quick-card{
+  transition:transform .3s var(--hub-ease),box-shadow .3s,border-color .3s,background .3s;
+}
+.hub-quick-card:hover{
+  transform:translateY(-5px);
+  border-color:rgba(139,92,246,.4);
+  box-shadow:0 20px 44px rgba(79,70,229,.16);
+}
+.hub-quick-card .hub-icon{
+  transition:transform .32s var(--hub-ease),background .3s,color .3s;
+}
+.hub-quick-card:hover .hub-icon{
+  transform:scale(1.09) rotate(-4deg);
+  background:rgba(139,92,246,.16);
+  color:#8b8cf7;
+}
+.hub-quick-card>b{transition:transform .3s var(--hub-ease),color .3s}
+.hub-quick-card:hover>b{transform:translateX(6px);color:#8b8cf7}
+
+/* ---------- 文章列表 / 精选项目 / 工具列表 ---------- */
+.hub-writing-list a,.hub-tool-list a,.hub-feature-project{
+  transition:transform .28s var(--hub-ease),box-shadow .28s,border-color .28s,background .28s;
+}
+.hub-writing-list a:hover,.hub-tool-list a:hover{
+  transform:translateX(5px);
+  border-color:rgba(139,92,246,.38);
+  box-shadow:0 14px 34px rgba(79,70,229,.12);
+}
+.hub-writing-list a:hover .hub-writing-icon{
+  background:rgba(139,92,246,.16);
+  color:#8b8cf7;
+  transform:scale(1.06);
+}
+.hub-writing-icon{transition:transform .3s var(--hub-ease),background .3s,color .3s}
+.hub-tool-list a:hover>b{background:rgba(139,92,246,.16);color:#8b8cf7}
+.hub-tool-list a>b{transition:background .3s,color .3s}
+.hub-feature-project:hover{
+  transform:translateY(-4px);
+  box-shadow:0 24px 52px rgba(79,70,229,.18);
+}
+.hub-mini-tags span{
+  transition:background .28s,color .28s,border-color .28s;
+}
+.hub-mini-tags span:hover{background:rgba(139,92,246,.18);color:#8b8cf7}
+
+/* ---------- 入场动效（backwards 避免锁死 hover 变换） ---------- */
+@keyframes hubRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.hub-hero-copy>*{animation:hubRise .72s var(--hub-ease) backwards}
+.hub-hero-copy>*:nth-child(1){animation-delay:.04s}
+.hub-hero-copy>*:nth-child(2){animation-delay:.12s}
+.hub-hero-copy>*:nth-child(3){animation-delay:.2s}
+.hub-hero-copy>*:nth-child(4){animation-delay:.28s}
+.hub-hero-copy>*:nth-child(5){animation-delay:.36s}
+.hub-stats{animation:hubRise .8s var(--hub-ease) .44s backwards}
+.hub-section-head{animation:hubRise .62s var(--hub-ease) .1s backwards}
+.hub-quick-card{animation:hubRise .58s var(--hub-ease) backwards}
+.hub-quick-card:nth-child(1){animation-delay:.06s}
+.hub-quick-card:nth-child(2){animation-delay:.12s}
+.hub-quick-card:nth-child(3){animation-delay:.18s}
+.hub-quick-card:nth-child(4){animation-delay:.24s}
+.hub-quick-card:nth-child(5){animation-delay:.3s}
+.hub-quick-card:nth-child(6){animation-delay:.36s}
+.hub-dashboard-grid>section{animation:hubRise .66s var(--hub-ease) backwards}
+.hub-dashboard-grid>section:nth-child(1){animation-delay:.1s}
+.hub-dashboard-grid>section:nth-child(2){animation-delay:.18s}
+.hub-dashboard-grid>section:nth-child(3){animation-delay:.26s}
+
+/* ---------- 文章页排版 ---------- */
+.markdown-body h1,.markdown-body h2,.markdown-body h3{
+  letter-spacing:-.02em;
+}
+.markdown-body h2{
+  position:relative;
+  padding-left:15px;
+}
+.markdown-body h2::before{
+  content:'';
+  position:absolute;
+  left:0;top:.42em;bottom:.42em;
+  width:4px;border-radius:4px;
+  background:linear-gradient(180deg,#6366f1,#8b5cf6);
+}
+.markdown-body h3{color:#312e81}
+.dark .markdown-body h3{color:#c7d2fe}
+.markdown-body blockquote{
+  border-left:3px solid transparent;
+  border-image:linear-gradient(180deg,#6366f1,#8b5cf6) 1;
+  border-radius:0 12px 12px 0;
+  background:rgba(99,102,241,.06);
+  padding:12px 18px;
+}
+.dark .markdown-body blockquote{background:rgba(165,180,252,.09)}
+.markdown-body :not(pre)>code{
+  background:rgba(99,102,241,.1);
+  color:#4338ca;
+  padding:2px 6px;
+  border-radius:6px;
+  font-size:.9em;
+}
+.dark .markdown-body :not(pre)>code{background:rgba(165,180,252,.15);color:#c7d2fe}
+.markdown-body table{
+  border-radius:12px;
+  overflow:hidden;
+  border-collapse:separate;
+  border-spacing:0;
+}
+.markdown-body table thead th{
+  background:rgba(99,102,241,.09);
+  font-weight:650;
+}
+.dark .markdown-body table thead th{background:rgba(165,180,252,.12)}
+.markdown-body table tbody tr{transition:background .22s}
+.markdown-body table tbody tr:hover{background:rgba(99,102,241,.055)}
+.dark .markdown-body table tbody tr:hover{background:rgba(165,180,252,.08)}
+.markdown-body img{
+  border-radius:12px;
+  box-shadow:0 12px 32px rgba(15,23,42,.09);
+  transition:transform .34s var(--hub-ease),box-shadow .34s;
+}
+.markdown-body img:hover{transform:scale(1.008)}
+.markdown-body p>a,.markdown-body li>a{
+  background-image:linear-gradient(90deg,rgba(99,102,241,.55),rgba(139,92,246,.55));
+  background-size:0 1.5px;
+  background-repeat:no-repeat;
+  background-position:0 100%;
+  transition:background-size .34s var(--hub-ease),color .24s;
+}
+.markdown-body p>a:hover,.markdown-body li>a:hover{
+  background-size:100% 1.5px;
+  color:#4f46e5;
+}
+.dark .markdown-body p>a:hover,.dark .markdown-body li>a:hover{color:#c4b5fd}
+.markdown-body hr{
+  height:1px;border:0;
+  background:linear-gradient(90deg,transparent,rgba(99,102,241,.32),transparent);
+}
+
+/* ---------- 代码块 ---------- */
+.highlight,.highlight-container{
+  border-radius:14px;
+  box-shadow:0 12px 30px rgba(15,23,42,.06);
+}
+.dark .highlight,.dark .highlight-container{box-shadow:0 14px 34px rgba(0,0,0,.32)}
+
+/* ---------- 页脚 ---------- */
+footer.footer{
+  position:relative;
+  border-top:1px solid transparent;
+  border-image:linear-gradient(90deg,transparent,rgba(99,102,241,.28),transparent) 1;
+}
+footer.footer a{transition:color .24s}
+footer.footer a:hover{color:#8b8cf7}
+
+/* ---------- 右下角工具 / 分页 ---------- */
+.right-bottom-tools,.right-bottom-tools>div{
+  transition:transform .26s var(--hub-ease),background .26s,color .26s,box-shadow .26s;
+}
+.right-bottom-tools>div:hover{transform:translateY(-2px)}
+a.page-number,a.extend{
+  transition:transform .24s var(--hub-ease),background .24s,color .24s;
+}
+a.page-number:hover,a.extend:hover{transform:translateY(-2px)}
+
+/* ---------- 尊重系统「减少动效」 ---------- */
+@media (prefers-reduced-motion:reduce){
+  *{
+    animation-duration:.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:.01ms!important;
+    scroll-behavior:auto!important;
+  }
+}
+
+/* ==========================================================================
+   布局修复 · 2026-09-17
+   - Hero 写死数据条（数据树）已移出 HTML；此处做安全兜底与排版修复
+   - 三栏等宽对齐 / Hero 文案放宽 / 整体留白更舒展
+   ========================================================================== */
+
+/* 全局：留白与间距（不区分断点） */
+.hub-shell{padding:30px 0 100px}
+.hub-section-head{margin:64px 2px 20px}
+.hub-row-head{margin-top:52px}
+.hub-quick-grid{gap:16px}
+.hub-stats{display:none!important}
+.hub-dashboard-grid>section{display:flex;flex-direction:column}
+.hub-dashboard-grid>section .hub-writing-list,
+.hub-dashboard-grid>section .hub-tool-list{flex:1 1 auto}
+.hub-feature-project{height:100%}
+
+/* 桌面端：等宽三栏 + 放宽 Hero 文案，修复数据条移除后的重叠/拥挤 */
+@media(min-width:1101px){
+  .hub-dashboard-grid{grid-template-columns:repeat(3,1fr);gap:28px;align-items:stretch}
+  .hub-hero-copy{width:62%}
+  .hub-hero-sign{top:14%;right:6%}
+}
+}

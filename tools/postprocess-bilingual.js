@@ -111,7 +111,7 @@ function write404() {
     const font = language === "en"
       ? '"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif'
       : '"PingFang SC","Microsoft YaHei","Noto Sans CJK SC",system-ui,sans-serif';
-    const html = `<!doctype html>\n<html lang="${language}">\n<head>\n<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">\n<title>${escapeHtml(locale.notFound)} | ${escapeHtml(locale.title)}</title>\n<style>:root{color-scheme:light dark;font-family:${font}}body{min-height:100vh;margin:0;display:grid;place-items:center;background:#f8fafc;color:#0f172a}main{max-width:640px;padding:48px;text-align:center}h1{font-size:clamp(5rem,20vw,10rem);margin:0;color:#2563eb}h2{font-size:2rem;margin:.5rem 0}p{color:#64748b;line-height:1.8}a{display:inline-block;margin-top:1rem;padding:.8rem 1.2rem;border-radius:.75rem;background:#2563eb;color:#fff;text-decoration:none}@media(prefers-color-scheme:dark){body{background:#020617;color:#e2e8f0}p{color:#94a3b8}}</style>\n</head>\n<body><main><h1>404</h1><h2>${escapeHtml(locale.notFound)}</h2><p>${escapeHtml(locale.message)}</p><a href="/${language}/">${escapeHtml(locale.home)}</a></main></body>\n</html>\n`;
+    const html = `<!doctype html>\n<html lang="${language}">\n<head>\n<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">\n<title>${escapeHtml(locale.notFound)} | ${escapeHtml(locale.title)}</title>\n<style>:root{color-scheme:light dark;font-family:${font}}body{min-height:100vh;margin:0;display:grid;place-items:center;background:#f8fafc;color:#0f172a}main{max-width:640px;padding:48px;text-align:center}h1{font-size:clamp(5rem,20vw,10rem);margin:0;color:#4f46e5}h2{font-size:2rem;margin:.5rem 0}p{color:#64748b;line-height:1.8}a{display:inline-block;margin-top:1rem;padding:.8rem 1.2rem;border-radius:.75rem;background:#4f46e5;color:#fff;text-decoration:none}@media(prefers-color-scheme:dark){body{background:#020617;color:#e2e8f0}p{color:#94a3b8}}</style>\n</head>\n<body><main><h1>404</h1><h2>${escapeHtml(locale.notFound)}</h2><p>${escapeHtml(locale.message)}</p><a href="/${language}/">${escapeHtml(locale.home)}</a></main></body>\n</html>\n`;
     fs.writeFileSync(path.join(PUBLIC, language, "404.html"), html, "utf8");
   }
   const root404 = '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>404 | EdgeOne Page</title><script>(()=>{let saved=null;try{saved=localStorage.getItem("EDGEONE-LANG")}catch(_){}const lang=saved==="en"||(!saved&&!(navigator.language||"").toLowerCase().startsWith("zh"))?"en":"zh-CN";location.replace("/"+lang+"/404.html")})()</script></head><body><a href="/zh-CN/404.html">简体中文</a> · <a href="/en/404.html">English</a></body></html>';
@@ -173,6 +173,39 @@ function verify() {
   }
 }
 
+// PWA assets (web manifest, offline page, app icon) are emitted by the build
+// pipeline with their own hard-coded brand colors. Re-align them with the site
+// palette so every surface keeps the same calm indigo/violet identity.
+const BRAND_COLOR_MAP = [
+  ["#2563eb", "#4f46e5"],
+  ["#14b8a6", "#8b5cf6"],
+  ["#06b6d4", "#8b5cf6"],
+  ["#2dd4bf", "#8b5cf6"],
+  ["#60a5fa", "#a5b4fc"],
+  ["rgba(37,99,235,", "rgba(79,70,229,"],
+  ["rgba(96,165,250,", "rgba(165,180,252,"],
+];
+
+function alignPwaBrandColors() {
+  const targets = [path.join(PUBLIC, "icons", "edgeone-icon.svg")];
+  for (const language of LANGUAGE_CODES) {
+    targets.push(path.join(PUBLIC, language, "manifest.webmanifest"));
+    targets.push(path.join(PUBLIC, language, "offline.html"));
+  }
+  for (const file of targets) {
+    if (!fs.existsSync(file)) continue;
+    let text = fs.readFileSync(file, "utf8");
+    let changed = false;
+    for (const [from, to] of BRAND_COLOR_MAP) {
+      if (text.includes(from)) {
+        text = text.split(from).join(to);
+        changed = true;
+      }
+    }
+    if (changed) fs.writeFileSync(file, text, "utf8");
+  }
+}
+
 function postprocessBilingualSite() {
   mkdir(PUBLIC);
   const posts = {};
@@ -184,6 +217,7 @@ function postprocessBilingualSite() {
   write404();
   injectAlternates();
   writeSitemaps(posts);
+  alignPwaBrandColors();
   verify();
   return Object.fromEntries(Object.entries(posts).map(([language, list]) => [language, list.length]));
 }

@@ -11,8 +11,8 @@ defaults:
   avatar: /images/redefine-avatar.svg
 
 colors:
-  primary: "#2563eb"
-  secondary: "#06b6d4"
+  primary: "#4f46e5"
+  secondary: "#8b5cf6"
   default_mode: light
 
 global:
@@ -86,8 +86,8 @@ home_banner:
 navbar:
   auto_hide: false
   color:
-    left: "#2563eb"
-    right: "#06b6d4"
+    left: "#4f46e5"
+    right: "#8b5cf6"
     transparency: 10
   width:
     home: 1220px
