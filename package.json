@@ -13,6 +13,7 @@
     "audit:production": "node tools/audit-production.js",
     "check": "node tools/check-runtime.js && node tools/validate-bilingual.js && npm run build:production && npm run audit:production",
     "check:content": "node tools/check-runtime.js && node tools/validate-bilingual.js",
+    "check:articles": "node tools/check-articles.js",
     "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
     "preview:production": "node tools/check-runtime.js && npm run build:production && node tools/preview-public.js",

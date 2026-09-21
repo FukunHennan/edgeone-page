@@ -94,6 +94,7 @@ async function processFile(file) {
 
 async function minifyJS() {
   try {
+    await fs.rm(BUILD_DIR, { recursive: true, force: true });
     await ensureDirectoryExists(BUILD_DIR);
 
     // Get lib files to copy

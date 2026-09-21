@@ -143,7 +143,6 @@ npm run build:production
 _config.yml                 # 两种语言共享的 Hexo 配置
 _config.zh-CN.yml           # 简体中文站点配置
 _config.en.yml              # 英文站点配置
-_config.edg-one-page.yml    # 共享主题外观配置
 scripts/localized-theme.js  # 将语言配置应用到主题
 scripts/bilingual-runtime.js# 语言切换与 hreflang
 ```

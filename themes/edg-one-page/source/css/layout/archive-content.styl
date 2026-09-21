@@ -1,8 +1,144 @@
-.archive-container
-  redefine-container(
-    false,
-    0,
-    0,
-    30px,
-    30px
-  )
+.archive-reader
+  display grid
+  grid-template-columns minmax(190px, 230px) minmax(0, 1fr)
+  gap 12px
+  width 100%
+  height calc(100dvh - 150px)
+  min-height 620px
+  padding 12px
+  border 1px solid var(--hub-line)
+  border-radius 20px
+  background var(--hub-surface)
+  box-shadow 0 16px 45px rgba(15, 23, 42, 0.05)
+  transition grid-template-columns 0.2s ease
+
+  &.is-list-collapsed
+    grid-template-columns 42px minmax(0, 1fr)
+
+.archive-reader-list
+  position relative
+  min-width 0
+  overflow auto
+  padding 34px 5px 5px
+
+.archive-reader-heading
+  display flex
+  justify-content space-between
+  align-items flex-end
+  gap 8px
+  padding 8px 10px 12px
+  border-bottom 1px solid var(--hub-line)
+
+  span
+    color #8b5cf6
+    font-size 10px
+    font-weight 800
+    letter-spacing 0.12em
+
+  strong
+    font-size 12px
+    white-space nowrap
+
+.archive-reader-item
+  display flex
+  flex-direction column
+  gap 5px
+  width 100%
+  margin-top 3px
+  padding 10px
+  border 0
+  border-radius 12px
+  background transparent
+  color var(--hub-text)
+  text-align left
+  cursor pointer
+
+  time
+    color var(--hub-muted)
+    font-size 10px
+
+  span
+    font-size 12px
+    line-height 1.45
+
+  &:hover,
+  &.active
+    background rgba(79, 70, 229, 0.11)
+
+.archive-reader-toggle
+  position absolute
+  top 4px
+  right 5px
+  padding 5px 8px
+  border 1px solid var(--hub-line)
+  border-radius 8px
+  background var(--hub-bg)
+  color var(--hub-muted)
+  font-size 10px
+  cursor pointer
+
+.archive-reader-list.collapsed
+  overflow hidden
+  padding-right 0
+  padding-left 0
+
+  .archive-reader-heading,
+  .archive-reader-item
+    display none
+
+  .archive-reader-toggle
+    position static
+    display block
+    margin 0 auto
+    writing-mode vertical-rl
+
+.archive-reader-preview
+  min-width 0
+  height 100%
+  overflow hidden
+  border 1px solid var(--hub-line)
+  border-radius 14px
+  background var(--hub-bg)
+
+  iframe
+    display block
+    width 100%
+    height 100%
+    border 0
+    background var(--hub-bg)
+
+/* Embedded articles must not render a second global navbar inside the reader. */
+html.archive-embed
+  .main-content-header,
+  .right-side-tools-container,
+  .post-tools
+    display none !important
+
+  .page-container,
+  .main-content-container
+    min-height 0 !important
+
+  .main-content-container
+    padding-top 0 !important
+
+  .main-content-body
+    padding 0 !important
+
+  .main-content
+    width 100% !important
+    max-width none !important
+    padding 0 !important
+
+@media (max-width: 800px)
+  .archive-reader
+    grid-template-columns minmax(150px, 190px) minmax(0, 1fr)
+    height calc(100dvh - 112px)
+    min-height 560px
+    padding 8px
+    gap 8px
+
+    &.is-list-collapsed
+      grid-template-columns 38px minmax(0, 1fr)
+
+  .archive-reader-list.collapsed .archive-reader-toggle
+    font-size 9px

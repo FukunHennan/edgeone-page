@@ -2,7 +2,7 @@
 # Language-specific values are defined in _config.zh-CN.yml and _config.en.yml.
 
 # Default local development language
-title: EdgeOne Page
+title: chenfukun.space
 subtitle: 现代双语 Hexo 站点
 description: 面向腾讯云 EdgeOne Pages 的简体中文和英文双语站点。
 keywords:
@@ -15,7 +15,7 @@ language: zh-CN
 timezone: Asia/Shanghai
 
 # Default localized path. Production builds override these values per language.
-url: https://edgeone.chenfukun.space/zh-CN
+url: https://chenfukun.space/zh-CN
 root: /zh-CN/
 permalink: posts/:title/
 permalink_defaults:
@@ -41,7 +41,7 @@ external_link:
   enable: true
   field: site
   exclude:
-    - edgeone.chenfukun.space
+    - chenfukun.space
 filename_case: 1
 render_drafts: false
 post_asset_folder: false

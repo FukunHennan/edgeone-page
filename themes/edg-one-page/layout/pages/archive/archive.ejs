@@ -1,3 +1,67 @@
-<div class="archive-container shadow-none hover:shadow-none sm:shadow-redefine sm:hover:shadow-redefine-hover">
-	<%- partial('utils/posts-list', {posts: site.posts}) %>
+<% const archivePosts = site.posts.toArray().sort((a, b) => b.date - a.date); %>
+<% const previewUrl = (path) => `${url_for(path)}?archive_reader=1`; %>
+<div class="archive-reader" data-archive-reader>
+  <aside class="archive-reader-list" data-archive-list>
+    <button class="archive-reader-toggle" type="button" data-archive-toggle aria-expanded="true">收起列表</button>
+    <div class="archive-reader-heading">
+      <span>文章目录</span>
+      <strong><%= archivePosts.length %> 篇文章</strong>
+    </div>
+    <% archivePosts.forEach((post, index) => { %>
+      <button class="archive-reader-item<%= index === 0 ? ' active' : '' %>" type="button" data-preview-url="<%- previewUrl(post.path) %>">
+        <time><%= date(post.date, 'MM-DD') %></time>
+        <span><%= post.title %></span>
+      </button>
+    <% }) %>
+  </aside>
+  <section class="archive-reader-preview">
+    <iframe title="文章预览" src="<%- archivePosts.length ? previewUrl(archivePosts[0].path) : url_for('/') %>" data-archive-frame></iframe>
+  </section>
 </div>
+<script>
+(() => {
+  const root = document.querySelector('[data-archive-reader]');
+  if (!root || root.dataset.ready) return;
+  root.dataset.ready = '1';
+
+  const frame = root.querySelector('[data-archive-frame]');
+  const toggle = root.querySelector('[data-archive-toggle]');
+  const list = root.querySelector('[data-archive-list]');
+
+  const prepareFrame = () => {
+    try {
+      const doc = frame.contentDocument;
+      if (!doc) return;
+      const style = doc.createElement('style');
+      style.dataset.archivePreview = 'true';
+      style.textContent = [
+        '.main-content-header,.right-side-tools-container,.post-tools{display:none!important}',
+        '.page-container,.main-content-container{min-height:0!important}',
+        '.main-content-container{padding-top:0!important}',
+        '.main-content-body{padding:0!important}',
+        '.main-content{width:100%!important;max-width:none!important;padding:0!important}'
+      ].join('');
+      doc.head.appendChild(style);
+      doc.defaultView?.scrollTo(0, 0);
+    } catch (_) {}
+  };
+
+  frame.addEventListener('load', prepareFrame);
+  if (frame.contentDocument?.readyState === 'complete') prepareFrame();
+
+  toggle.addEventListener('click', () => {
+    const collapsed = root.classList.toggle('is-list-collapsed');
+    list.classList.toggle('collapsed', collapsed);
+    toggle.textContent = collapsed ? '展开列表' : '收起列表';
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+  });
+
+  root.querySelectorAll('[data-preview-url]').forEach((item) => {
+    item.addEventListener('click', () => {
+      root.querySelectorAll('.archive-reader-item').forEach((entry) => entry.classList.remove('active'));
+      item.classList.add('active');
+      frame.src = item.dataset.previewUrl;
+    });
+  });
+})();
+</script>

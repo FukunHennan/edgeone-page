@@ -1,0 +1,36 @@
+- key: json
+  kind: developer
+  icon: "{ }"
+  title: JSON Formatter
+  description: 格式化 · 压缩 · 校验
+  search: json formatter format minify
+- key: base64
+  kind: developer text
+  icon: "64"
+  title: Base64
+  description: UTF-8 编码 · 解码
+  search: base64 encode decode 编码 解码
+- key: radix
+  kind: embedded developer
+  icon: "0x"
+  title: 进制转换
+  description: BIN · DEC · HEX
+  search: hex dec bin radix 进制 十六 二进制
+- key: timestamp
+  kind: developer
+  icon: "◷"
+  title: 时间戳
+  description: Unix · 本地时间
+  search: timestamp unix time 时间戳
+- key: crc
+  kind: embedded
+  icon: CRC
+  title: CRC-16
+  description: CCITT-FALSE
+  search: crc16 ccitt embedded 校验
+- key: diff
+  kind: text developer
+  icon: "≠"
+  title: 文本 Diff
+  description: 逐行快速对比
+  search: diff text compare 文本 对比
