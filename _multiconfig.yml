@@ -68,6 +68,18 @@ exclude: null
 ignore:
   - '**/*.tmp'
   - '**/.DS_Store'
+feed:
+  type: atom
+  path: feed.xml
+  limit: 20
+  hub: null
+  content: true
+  content_limit: 140
+  content_limit_delim: ' '
+  order_by: '-date'
+  icon: icon.png
+  autodiscovery: true
+  template: null
 theme: edg-one-page
 deploy:
   type: ''

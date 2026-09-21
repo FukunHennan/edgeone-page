@@ -87,6 +87,20 @@ ignore:
   - "**/*.tmp"
   - "**/.DS_Store"
 
+# RSS Feed
+feed:
+  type: atom
+  path: feed.xml
+  limit: 20
+  hub:
+  content: true
+  content_limit: 140
+  content_limit_delim: ' '
+  order_by: -date
+  icon: icon.png
+  autodiscovery: true
+  template:
+
 # Theme
 theme: edg-one-page
 
