@@ -6,14 +6,11 @@ comments: false
 
 <div class="resume-page">
   <div class="resume-toolbar">
-    <div class="resume-toolbar-info">
-      <h1>简历 · 可直接导出 PDF</h1>
-      <p>点击「编辑内容」可直接修改下方简历，改动自动保存在本机浏览器；点击「导出 PDF」立即生成并下载 A4 简历文件，可直接发送给 HR。</p>
-    </div>
+    <p class="resume-toolbar-note">可编辑内容并导出 A4 PDF</p>
     <div class="resume-toolbar-actions">
-      <button type="button" class="resume-btn ghost" id="resume-edit">编辑内容</button>
-      <button type="button" class="resume-btn ghost" id="resume-reset">重置内容</button>
-      <button type="button" class="resume-btn primary" id="resume-print">导出 PDF</button>
+      <button type="button" class="resume-btn ghost" id="resume-edit" title="直接点击简历文字即可修改，改动自动保存在本机浏览器">编辑内容</button>
+      <button type="button" class="resume-btn ghost" id="resume-reset" title="清空本机保存的修改，恢复默认简历">重置内容</button>
+      <button type="button" class="resume-btn primary" id="resume-print" title="生成并下载 A4 简历 PDF 文件">导出 PDF</button>
     </div>
   </div>
   <div class="resume-sheet-wrap">
@@ -86,17 +83,17 @@ comments: false
 
 <style>
 /* ===== 屏幕显示样式 ===== */
-.resume-page{padding:8px 0 60px}
-.resume-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin:0 auto 28px;max-width:920px;border:1px solid var(--border-color,#e5e7eb);border-radius:16px;background:var(--card-bg,rgba(255,255,255,.6))}
-.resume-toolbar-info h1{margin:0 0 4px;font-size:1.15rem;font-weight:700}
-.resume-toolbar-info p{margin:0;font-size:.85rem;opacity:.75;line-height:1.5;max-width:560px}
-.resume-toolbar-actions{display:flex;gap:10px;flex-wrap:wrap}
-.resume-btn{appearance:none;border:none;cursor:pointer;padding:9px 18px;border-radius:10px;font-size:.9rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s}
+.resume-page{padding:6px 0 48px}
+.resume-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;width:fit-content;max-width:100%;margin:0 auto 18px;padding:5px 6px 5px 16px;border:1px solid var(--border-color,#e5e7eb);border-radius:999px;background:var(--card-bg,rgba(255,255,255,.72))}
+.resume-toolbar-note{margin:0;font-size:.76rem;opacity:.62;white-space:nowrap}
+.resume-toolbar-actions{display:flex;gap:6px;flex-wrap:wrap}
+.resume-btn{appearance:none;border:none;cursor:pointer;padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s}
 .resume-btn:active{transform:translateY(1px)}
 .resume-btn:disabled{opacity:.6;cursor:wait}
-.resume-btn.primary{background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:#fff;box-shadow:0 8px 20px rgba(79,70,229,.3)}
+.resume-btn.primary{background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:#fff;box-shadow:0 6px 16px rgba(79,70,229,.28)}
 .resume-btn.ghost{background:transparent;border:1px solid var(--border-color,#d1d5db);color:inherit}
 .resume-btn.is-on{background:#4f46e5;color:#fff;border-color:#4f46e5}
+@media(max-width:600px){.resume-toolbar{padding:5px 6px;border-radius:16px}.resume-toolbar-note{display:none}}
 
 .resume-sheet-wrap{display:flex;justify-content:center}
 .resume-sheet{width:210mm;flex:0 0 auto;min-height:297mm;background:#fff;color:#1f2937;padding:14mm 15mm;box-sizing:border-box;box-shadow:0 18px 50px rgba(15,23,42,.18);border-radius:2px;font-size:10pt;line-height:1.55;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
