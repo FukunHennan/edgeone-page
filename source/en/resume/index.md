@@ -6,14 +6,11 @@ comments: false
 
 <div class="resume-page">
   <div class="resume-toolbar">
-    <div class="resume-toolbar-info">
-      <h1>Resume · One-click PDF Export</h1>
-      <p>Click "Edit" to change the resume below; changes are saved automatically in this browser. Click "Export PDF" to instantly generate and download an A4 resume ready to send to recruiters.</p>
-    </div>
+    <p class="resume-toolbar-note">Editable, one-click A4 PDF export</p>
     <div class="resume-toolbar-actions">
-      <button type="button" class="resume-btn ghost" id="resume-edit">Edit</button>
-      <button type="button" class="resume-btn ghost" id="resume-reset">Reset</button>
-      <button type="button" class="resume-btn primary" id="resume-print">Export PDF</button>
+      <button type="button" class="resume-btn ghost" id="resume-edit" title="Click any text in the resume to edit it; changes are saved in this browser">Edit</button>
+      <button type="button" class="resume-btn ghost" id="resume-reset" title="Clear locally saved changes and restore the default resume">Reset</button>
+      <button type="button" class="resume-btn primary" id="resume-print" title="Generate and download the A4 resume PDF">Export PDF</button>
     </div>
   </div>
   <div class="resume-sheet-wrap">
@@ -86,17 +83,17 @@ comments: false
 
 <style>
 /* ===== On-screen styles ===== */
-.resume-page{padding:8px 0 60px}
-.resume-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;margin:0 auto 28px;max-width:920px;border:1px solid var(--border-color,#e5e7eb);border-radius:16px;background:var(--card-bg,rgba(255,255,255,.6))}
-.resume-toolbar-info h1{margin:0 0 4px;font-size:1.15rem;font-weight:700}
-.resume-toolbar-info p{margin:0;font-size:.85rem;opacity:.75;line-height:1.5;max-width:560px}
-.resume-toolbar-actions{display:flex;gap:10px;flex-wrap:wrap}
-.resume-btn{appearance:none;border:none;cursor:pointer;padding:9px 18px;border-radius:10px;font-size:.9rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s}
+.resume-page{padding:6px 0 48px}
+.resume-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;width:fit-content;max-width:100%;margin:0 auto 18px;padding:5px 6px 5px 16px;border:1px solid var(--border-color,#e5e7eb);border-radius:999px;background:var(--card-bg,rgba(255,255,255,.72))}
+.resume-toolbar-note{margin:0;font-size:.76rem;opacity:.62;white-space:nowrap}
+.resume-toolbar-actions{display:flex;gap:6px;flex-wrap:wrap}
+.resume-btn{appearance:none;border:none;cursor:pointer;padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s}
 .resume-btn:active{transform:translateY(1px)}
 .resume-btn:disabled{opacity:.6;cursor:wait}
-.resume-btn.primary{background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:#fff;box-shadow:0 8px 20px rgba(79,70,229,.3)}
+.resume-btn.primary{background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:#fff;box-shadow:0 6px 16px rgba(79,70,229,.28)}
 .resume-btn.ghost{background:transparent;border:1px solid var(--border-color,#d1d5db);color:inherit}
 .resume-btn.is-on{background:#4f46e5;color:#fff;border-color:#4f46e5}
+@media(max-width:600px){.resume-toolbar{padding:5px 6px;border-radius:16px}.resume-toolbar-note{display:none}}
 
 .resume-sheet-wrap{display:flex;justify-content:center}
 .resume-sheet{width:210mm;flex:0 0 auto;min-height:297mm;background:#fff;color:#1f2937;padding:14mm 15mm;box-sizing:border-box;box-shadow:0 18px 50px rgba(15,23,42,.18);border-radius:2px;font-size:10pt;line-height:1.55;font-family:Arial,Helvetica,sans-serif}
