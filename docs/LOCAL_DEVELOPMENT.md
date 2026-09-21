@@ -4,7 +4,7 @@
 
 ## 1. 第一次准备
 
-要求 Node.js 22.23.2、npm 10.9.8。克隆仓库后只需要安装一次依赖：
+要求 Node.js 22.11.0 或更新的 22.x 版本、npm 10.9.8。EdgeOne 云端使用官方预装的 Node.js 22.11.0；本地可以使用兼容的更新补丁版本。克隆仓库后只需要安装一次依赖：
 
 ```bash
 git clone https://github.com/FukunHennan/edgeone-page.git

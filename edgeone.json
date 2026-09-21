@@ -3,7 +3,7 @@
   "installCommand": "npm ci",
   "buildCommand": "npm run build:production",
   "outputDirectory": "public",
-  "nodeVersion": "22.23.2",
+  "nodeVersion": "22.11.0",
   "redirects": [
     {
       "source": "/zh",
