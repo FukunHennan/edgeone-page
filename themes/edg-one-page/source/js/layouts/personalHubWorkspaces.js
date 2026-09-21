@@ -1,12 +1,12 @@
 const bindFilter = ({ root, buttonSelector, itemSelector, countSelector, filterData, suffix, searchable = false }) => {
   if (!root || root.dataset.workspaceBound === "true") return;
   root.dataset.workspaceBound = "true";
-  const buttons = [...root.querySelectorAll(buttonSelector)];
-  const items = [...root.querySelectorAll(itemSelector)];
   const count = root.querySelector(countSelector);
   const input = searchable ? root.querySelector(".workspace-search input") : null;
   let filter = "all";
   const render = () => {
+    const items = [...root.querySelectorAll(itemSelector)];
+    const buttons = [...root.querySelectorAll(buttonSelector)];
     const query = (input?.value || "").trim().toLowerCase();
     let visible = 0;
     items.forEach((item) => {
@@ -16,14 +16,17 @@ const bindFilter = ({ root, buttonSelector, itemSelector, countSelector, filterD
       item.hidden = !show;
       if (show) visible += 1;
     });
+    buttons.forEach((button) => {
+      button.classList.toggle("active", (button.dataset[filterData] || "all") === filter);
+    });
     if (count) count.textContent = `${visible} ${suffix}`;
   };
-  buttons.forEach((button) => button.addEventListener("click", () => {
-    buttons.forEach((item) => item.classList.remove("active"));
-    button.classList.add("active");
+  root.addEventListener("click", (event) => {
+    const button = event.target.closest(buttonSelector);
+    if (!button) return;
     filter = button.dataset[filterData] || "all";
     render();
-  }));
+  });
   input?.addEventListener("input", render);
   render();
 };
