@@ -1,0 +1,36 @@
+- key: json
+  kind: developer
+  icon: "{ }"
+  title: JSON Formatter
+  description: Format · Minify · Validate
+  search: json formatter format minify
+- key: base64
+  kind: developer text
+  icon: "64"
+  title: Base64
+  description: UTF-8 Encode · Decode
+  search: base64 encode decode
+- key: radix
+  kind: embedded developer
+  icon: "0x"
+  title: Radix Converter
+  description: BIN · DEC · HEX
+  search: hex dec bin radix
+- key: timestamp
+  kind: developer
+  icon: "◷"
+  title: Timestamp
+  description: Unix · Local time
+  search: timestamp unix time
+- key: crc
+  kind: embedded
+  icon: CRC
+  title: CRC-16
+  description: CCITT-FALSE
+  search: crc16 ccitt embedded
+- key: diff
+  kind: text developer
+  icon: "≠"
+  title: Text Diff
+  description: Quick line comparison
+  search: diff text compare

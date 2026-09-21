@@ -13,19 +13,18 @@ zh-CN
 
 ## 2. 配置分层
 
-项目配置分为四层：
+项目配置分为三层：
 
 ```text
 _config.yml
 _config.zh-CN.yml
 _config.en.yml
-_config.edg-one-page.yml
 ```
 
 - `_config.yml`：永久链接、分页、代码高亮等共享设置。
 - `_config.zh-CN.yml`：简体中文站点标题、描述、目录和本地化文字。
 - `_config.en.yml`：英文站点标题、描述、目录和本地化文字。
-- `_config.edg-one-page.yml`：颜色、图片、排版、评论、导航结构等共享主题设置。
+- `themes/edg-one-page/_config.yml`：主题默认设置；站点语言文件中的 `localized_theme` 会在构建时覆盖需要本地化的主题值。
 
 修改域名时，需要同步更新两个语言配置中的 `url`：
 

@@ -64,7 +64,7 @@ for (const language of LANGUAGE_CODES) {
     if (/Hexo Theme Redefine|Redefine Team|Redefine Your Hexo Journey/.test(html)) fail(`${relativeHtml} contains legacy theme branding`);
     const searchRecord = search.find((item) => item.url === record.url);
     if (!searchRecord || searchRecord.title !== record.data.title) fail(`${language} search index is missing ${record.relativePath}`);
-    if (published.indexOf(record) < 30 && !feed.includes(`<guid isPermaLink="true">https://edgeone.chenfukun.space${record.url}</guid>`)) {
+    if (published.indexOf(record) < 30 && !feed.includes(`<guid isPermaLink="true">https://chenfukun.space${record.url}</guid>`)) {
       fail(`${language} feed is missing ${record.relativePath}`);
     }
   }

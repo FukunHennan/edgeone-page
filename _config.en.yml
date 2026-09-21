@@ -1,21 +1,19 @@
-title: EdgeOne Page
+title: 稻田鼠
 subtitle: Modern bilingual Hexo publishing
 description: A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.
 language: en
-url: https://edgeone.chenfukun.space/en
+url: https://chenfukun.space/en
 root: /en/
 source_dir: source/en
 public_dir: public/en
 
 localized_theme:
-  title: EdgeOne Page
+  title: 稻田鼠
   subtitle: Modern bilingual publishing
   description: A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.
-  home_banner_title: EdgeOne Page
+  home_banner_title: 稻田鼠
   home_banner_subtitles:
-    - Fast, modern, and bilingual.
-    - Chinese and English articles are stored separately and linked together.
-    - Optimized for Tencent EdgeOne Pages.
+    - Daotian Mouse's space
   announcement: You are reading the English site. Switch to 简体中文 from the navigation bar.
   recommendation_title: Recommended reading
   author_label: Maintainer

@@ -1,0 +1,81 @@
+- key: fish-robot-platform
+  status: active
+  category: embedded
+  label: ACTIVE · ROBOTICS
+  title: Fish Robot Platform
+  description: ESP32 机器人鱼控制平台：Go 中央控制器、WebSocket、HMAC 认证、OTA、舵机/RGB 控制和 React Web UI。
+  tags: [ESP32, Go, WebSocket, OTA]
+  github: https://github.com/FukunHennan/fish
+  post: ../posts/fish-robot-platform/
+- key: dvsense-rgb
+  status: active
+  category: research
+  label: RESEARCH · VISION
+  title: DVS + RGB Multimodal Vision
+  description: DVSense 事件相机与 Hikrobot RGB 相机的多模态视觉工作站，包含 MATLAB、C++ MEX 和 Fusion 数据流。
+  tags: [DVS, RGB, MATLAB, Fusion]
+  github: https://github.com/FukunHennan/DVSenseRealtime_RGB_Hikrobot
+  post: ../posts/dvsense-rgb-hikrobot-workstation/
+- key: openai-agents
+  status: active
+  category: software
+  label: ACTIVE · SOFTWARE
+  title: OpenAI Agents Starter
+  description: 基于 Agents SDK 的流式对话 Agent 模板，包含 SSE、自定义工具、会话持久化与取消。
+  tags: [Python, SSE, EdgeOne, Agents]
+  github: https://github.com/FukunHennan/openai-agents-starter-python
+  post: ../posts/openai-agents-starter-python/
+- key: underwater-robot
+  status: lab
+  category: embedded
+  label: LAB · EMBEDDED
+  title: STM32 Underwater Robot
+  description: STM32F407 水下机器人控制系统，包含 Modbus RTU、姿态融合、卡尔曼滤波和舵机补偿。
+  tags: [STM32, Modbus, Kalman, React]
+  github: https://github.com/FukunHennan/underwater-robot-steering-control-system
+  post: ../posts/underwater-robot-steering-control/
+- key: esp32-collection
+  status: lab
+  category: embedded
+  label: LAB · EMBEDDED
+  title: ESP32 Development Collection
+  description: ESP32-C6 学习与项目开发集合，覆盖 Display、Wireless、Sensors、IoT 和 Audio。
+  tags: [ESP32-C6, ESP-IDF, LVGL, ST7789]
+  github: https://github.com/FukunHennan/ESP32
+  post: ../posts/esp32-development-collection/
+- key: dvs-research
+  status: research
+  category: research
+  label: RESEARCH · VISION
+  title: DVS Event Camera Research
+  description: 事件相机 SDK 封装、事件数据流、录制回放以及与 RGB 相机的时间同步研究。
+  tags: [DVS, Python, Event Stream, Research]
+  github: https://github.com/FukunHennan/DVS-Eventcrame
+  post: ../posts/dvs-eventcamera-research/
+- key: kicad-library
+  status: lab
+  category: software
+  label: LAB · HARDWARE
+  title: KiCad Library Builder Skill
+  description: 面向 KiCad 元件库的可复用 Codex Skill，包含数据手册解析、符号封装生成和 CLI 校验。
+  tags: [KiCad, Codex Skill, 3D, CLI]
+  github: https://github.com/FukunHennan/kicadskill
+  post: ../posts/kicad-library-builder-skill/
+- key: xinjie-modbus
+  status: lab
+  category: software
+  label: LAB · INDUSTRIAL
+  title: XinJie Modbus C# Dashboard
+  description: 使用 C# 与 EasyModbus 操控信捷 PLC 的上位机，包含寄存器映射和异常恢复。
+  tags: [C#, Modbus, PLC, XinJie]
+  github: https://github.com/FukunHennan/XinJie_modbus_Csharp
+  post: ../posts/xinjie-modbus-csharp-dashboard/
+- key: csharp-ni
+  status: lab
+  category: software
+  label: LAB · MEASUREMENT
+  title: C# + NI Measurement Integration
+  description: C# 调用 NI 测量硬件，覆盖 NI-DAQmx 互操作、采样时钟、采集线程和异常恢复。
+  tags: [C#, NI-DAQmx, Acquisition, Interop]
+  github: https://github.com/FukunHennan/CSharp-NI
+  post: ../posts/csharp-ni-measurement-integration/

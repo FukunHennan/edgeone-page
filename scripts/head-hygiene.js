@@ -15,10 +15,6 @@ const escapeHtml = (value) => String(value || "")
 hexo.extend.filter.register("after_render:html", function cleanHead(html) {
   if (!html.includes("</head>")) return html;
   let output = html
-    .replace(/Hexo Theme Redefine/g, "EdgeOne Page")
-    .replace(/Redefine Team/g, "EdgeOne Page")
-    .replace(/Redefine Theme/g, "EdgeOne Page")
-    .replace(/Redefine Your Hexo Journey\.?/g, "Professional bilingual publishing on EdgeOne Pages.")
     .replace(/\s*<meta\s+name=["']revisit-after["'][^>]*>/gi, "");
 
   const robotsPattern = /<meta\s+name=["']robots["'][^>]*content=["']([^"']+)["'][^>]*>/gi;

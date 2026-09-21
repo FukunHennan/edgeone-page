@@ -10,17 +10,17 @@ const {
 } = require("./content-records");
 
 const PUBLIC = path.join(PROJECT_ROOT, "public");
-const ORIGIN = "https://edgeone.chenfukun.space";
+const ORIGIN = "https://chenfukun.space";
 const LOCALES = {
   "zh-CN": {
-    title: "EdgeOne Page",
+    title: "chenfukun.space",
     description: "面向腾讯云 EdgeOne Pages 的简体中文和英文双语站点。",
     notFound: "页面未找到",
     message: "你访问的页面不存在或已经移动。",
     home: "返回中文首页",
   },
   en: {
-    title: "EdgeOne Page",
+    title: "chenfukun.space",
     description: "A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.",
     notFound: "Page not found",
     message: "The page you requested does not exist or has moved.",
@@ -114,7 +114,7 @@ function write404() {
     const html = `<!doctype html>\n<html lang="${language}">\n<head>\n<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,follow">\n<title>${escapeHtml(locale.notFound)} | ${escapeHtml(locale.title)}</title>\n<style>:root{color-scheme:light dark;font-family:${font}}body{min-height:100vh;margin:0;display:grid;place-items:center;background:#f8fafc;color:#0f172a}main{max-width:640px;padding:48px;text-align:center}h1{font-size:clamp(5rem,20vw,10rem);margin:0;color:#4f46e5}h2{font-size:2rem;margin:.5rem 0}p{color:#64748b;line-height:1.8}a{display:inline-block;margin-top:1rem;padding:.8rem 1.2rem;border-radius:.75rem;background:#4f46e5;color:#fff;text-decoration:none}@media(prefers-color-scheme:dark){body{background:#020617;color:#e2e8f0}p{color:#94a3b8}}</style>\n</head>\n<body><main><h1>404</h1><h2>${escapeHtml(locale.notFound)}</h2><p>${escapeHtml(locale.message)}</p><a href="/${language}/">${escapeHtml(locale.home)}</a></main></body>\n</html>\n`;
     fs.writeFileSync(path.join(PUBLIC, language, "404.html"), html, "utf8");
   }
-  const root404 = '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>404 | EdgeOne Page</title><script>(()=>{let saved=null;try{saved=localStorage.getItem("EDGEONE-LANG")}catch(_){}const lang=saved==="en"||(!saved&&!(navigator.language||"").toLowerCase().startsWith("zh"))?"en":"zh-CN";location.replace("/"+lang+"/404.html")})()</script></head><body><a href="/zh-CN/404.html">简体中文</a> · <a href="/en/404.html">English</a></body></html>';
+  const root404 = '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>404 | chenfukun.space</title><script>(()=>{let saved=null;try{saved=localStorage.getItem("EDGEONE-LANG")}catch(_){}const lang=saved==="en"||(!saved&&!(navigator.language||"").toLowerCase().startsWith("zh"))?"en":"zh-CN";location.replace("/"+lang+"/404.html")})()</script></head><body><a href="/zh-CN/404.html">简体中文</a> · <a href="/en/404.html">English</a></body></html>';
   fs.writeFileSync(path.join(PUBLIC, "404.html"), root404, "utf8");
 }
 

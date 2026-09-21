@@ -25,11 +25,11 @@ info:
 # Docs: https://gitee.com/chenfukun/edg-one-page
 defaults:
   # Favicon
-  favicon: /images/redefine-favicon.svg
+  favicon: /images/稻田鼠.jpg
   # Site logo
   logo: 
   # Site avatar
-  avatar: /images/redefine-avatar.svg
+  avatar: /images/稻田鼠.jpg
 # IMAGE CONFIGURATION <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
 
 

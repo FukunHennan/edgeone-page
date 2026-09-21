@@ -1,0 +1,81 @@
+- key: fish-robot-platform
+  status: active
+  category: embedded
+  label: ACTIVE · ROBOTICS
+  title: Fish Robot Platform
+  description: ESP32 robot-fish platform with a Go controller, WebSocket, HMAC auth, OTA, servo/RGB control and a React UI.
+  tags: [ESP32, Go, WebSocket, OTA]
+  github: https://github.com/FukunHennan/fish
+  post: ../posts/fish-robot-platform/
+- key: dvsense-rgb
+  status: active
+  category: research
+  label: RESEARCH · VISION
+  title: DVS + RGB Multimodal Vision
+  description: A DVSense and Hikrobot RGB multimodal workstation with MATLAB, C++ MEX and Fusion data flow.
+  tags: [DVS, RGB, MATLAB, Fusion]
+  github: https://github.com/FukunHennan/DVSenseRealtime_RGB_Hikrobot
+  post: ../posts/dvsense-rgb-hikrobot-workstation/
+- key: openai-agents
+  status: active
+  category: software
+  label: ACTIVE · SOFTWARE
+  title: OpenAI Agents Starter
+  description: An Agents SDK streaming template with SSE, custom tools, conversation persistence and cancellation.
+  tags: [Python, SSE, EdgeOne, Agents]
+  github: https://github.com/FukunHennan/openai-agents-starter-python
+  post: ../posts/openai-agents-starter-python/
+- key: underwater-robot
+  status: lab
+  category: embedded
+  label: LAB · EMBEDDED
+  title: STM32 Underwater Robot
+  description: STM32F407 underwater robot control with Modbus RTU, attitude fusion, Kalman filtering and servo compensation.
+  tags: [STM32, Modbus, Kalman, React]
+  github: https://github.com/FukunHennan/underwater-robot-steering-control-system
+  post: ../posts/underwater-robot-steering-control/
+- key: esp32-collection
+  status: lab
+  category: embedded
+  label: LAB · EMBEDDED
+  title: ESP32 Development Collection
+  description: An ESP32-C6 collection covering Display, Wireless, Sensors, IoT and Audio projects.
+  tags: [ESP32-C6, ESP-IDF, LVGL, ST7789]
+  github: https://github.com/FukunHennan/ESP32
+  post: ../posts/esp32-development-collection/
+- key: dvs-research
+  status: research
+  category: research
+  label: RESEARCH · VISION
+  title: DVS Event Camera Research
+  description: Engineering foundations for event-camera SDK wrapping, event streams, recording, playback and RGB sync.
+  tags: [DVS, Python, Event Stream, Research]
+  github: https://github.com/FukunHennan/DVS-Eventcrame
+  post: ../posts/dvs-eventcamera-research/
+- key: kicad-library
+  status: lab
+  category: software
+  label: LAB · HARDWARE
+  title: KiCad Library Builder Skill
+  description: A reusable Codex Skill for datasheet parsing, symbol and footprint generation, 3D reconstruction and CLI verification.
+  tags: [KiCad, Codex Skill, 3D, CLI]
+  github: https://github.com/FukunHennan/kicadskill
+  post: ../posts/kicad-library-builder-skill/
+- key: xinjie-modbus
+  status: lab
+  category: software
+  label: LAB · INDUSTRIAL
+  title: XinJie Modbus C# Dashboard
+  description: A C# host for XinJie PLCs with register mapping, serial communication and recovery workflows.
+  tags: [C#, Modbus, PLC, XinJie]
+  github: https://github.com/FukunHennan/XinJie_modbus_Csharp
+  post: ../posts/xinjie-modbus-csharp-dashboard/
+- key: csharp-ni
+  status: lab
+  category: software
+  label: LAB · MEASUREMENT
+  title: C# + NI Measurement Integration
+  description: C# integration with NI measurement hardware, covering NI-DAQmx interop, clocks, acquisition threads and recovery.
+  tags: [C#, NI-DAQmx, Acquisition, Interop]
+  github: https://github.com/FukunHennan/CSharp-NI
+  post: ../posts/csharp-ni-measurement-integration/

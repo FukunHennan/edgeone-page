@@ -1,15 +1,22 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="keywords" content="<%= page.keywords || config.keywords || 'Hexo Theme Redefine' %>">
+    <meta name="keywords" content="<%= page.keywords || config.keywords || 'EdgeOne Pages' %>">
     <%
       const openGraphConfig = theme.global?.open_graph;
       const openGraphEnabled = openGraphConfig === true || openGraphConfig?.enable === true;
     %>
     <% if (!openGraphEnabled) { %>
-        <meta name="description" content="<%= page.description || config.description || 'Hexo Theme Redefine' %>">
+        <meta name="description" content="<%= page.description || config.description || 'EdgeOne Page' %>">
     <% }%>
-    <meta name="author" content="<%= theme.info.author || config.author || 'Redefine Team' %>">
+    <meta name="author" content="<%= theme.info.author || config.author || 'EdgeOne Page' %>">
+
+    <!-- The archive reader embeds post pages without their global chrome. -->
+    <script>
+        if (location.search.indexOf('archive_reader=1') !== -1) {
+            document.documentElement.classList.add('archive-embed');
+        }
+    </script>
     
     <!-- Completely eliminate flash of wrong theme -->
     <script>
@@ -103,7 +110,7 @@
         <% 
         let ogImage = page.og_image || openGraphConfig?.image;
         let ogDescription = page.og_description || openGraphConfig?.description || page.description || config.description;
-        let author = page.author || config.author || 'Redefine Team';
+        let author = page.author || config.author || 'EdgeOne Page';
         %>
         <%- open_graph({
             image: ogImage,
@@ -149,9 +156,9 @@
     %>
     <title>
         <% if (title) { %>
-            <%= title %> | <%= theme.info.title || config.title || 'Redefine Theme' %>
+            <%= title %> | <%= theme.info.title || config.title || 'EdgeOne Page' %>
         <% } else { %>
-            <%= theme.info.title || config.title || 'Redefine Theme' %> - <%= theme.info.subtitle || config.subtitle || 'Redefine Your Hexo Journey.' %>
+            <%= theme.info.title || config.title || 'EdgeOne Page' %> - <%= theme.info.subtitle || config.subtitle || 'Bilingual publishing on EdgeOne Pages.' %>
         <% } %>
     </title>
 

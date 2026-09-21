@@ -19,6 +19,12 @@ function validateRecord(record, errors) {
   const data = record.data;
   const label = `${record.relativePath}: ${record.language}`;
   if (data.lang !== record.language) errors.push(`${label} must declare lang: ${record.language}`);
+  if (data.content_type !== undefined && !["article", "showcase", "interactive"].includes(data.content_type)) {
+    errors.push(`${label} content_type must be article, showcase, or interactive`);
+  }
+  if (data.domain !== undefined && (typeof data.domain !== "string" || !data.domain.trim())) {
+    errors.push(`${label} domain must be a non-empty string`);
+  }
   if (typeof data.title !== "string" || !data.title.trim()) errors.push(`${label} requires a title`);
   if (typeof data.translation_key !== "string" || !data.translation_key.trim()) {
     errors.push(`${label} requires translation_key`);
@@ -84,6 +90,12 @@ function validateBilingualContent() {
     if (pair["zh-CN"] && pair.en) {
       if (pair["zh-CN"].data.translation_key !== pair.en.data.translation_key) {
         errors.push(`${relativePath}: translation_key values do not match`);
+      }
+      if ((pair["zh-CN"].data.content_type || "article") !== (pair.en.data.content_type || "article")) {
+        errors.push(`${relativePath}: content_type values do not match`);
+      }
+      if ((pair["zh-CN"].data.domain || "") !== (pair.en.data.domain || "")) {
+        errors.push(`${relativePath}: domain values do not match`);
       }
       if (pair["zh-CN"].published !== pair.en.published) {
         errors.push(`${relativePath}: both language versions must share the same publication state`);

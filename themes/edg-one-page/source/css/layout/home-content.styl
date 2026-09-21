@@ -112,3 +112,7 @@
 
           &:hover
             color var(--primary-color)
+/* The homepage is intentionally a single visual entry point. */
+body:has(.home-banner-container) .home-content-container,body:has(.home-banner-container) .home-sidebar-container{display:none!important}
+body:has(.home-banner-container) .main-content-body{min-height:0!important}
+body:has(.home-banner-container) .main-content-body{display:none!important}
