@@ -70,6 +70,17 @@ EdgeOne 控制台负责生成自定义域名验证要求和 CNAME 目标，Cloud
 
 当前 `chenfukun.space` 使用 Cloudflare DNS。绑定 EdgeOne 时应优先使用 `www.chenfukun.space` 等子域名，并保留现有 DNS 托管方式，除非明确决定迁移权威 DNS。
 
+### 国内版备案门禁
+
+国内版不是当前默认发布目标。中国大陆可用区或包含中国大陆的全球可用区需要 ICP 备案；办理备案还需要腾讯云认可的备案云资源，例如 CVM、Lighthouse、Serverless、负载均衡或备案授权码。当前没有备案资源，因此暂不创建或启用国内自定义域名。
+
+当前发布策略：
+
+- 海外版继续使用现有 `edgeone-page` 项目和 `edgeone.chenfukun.space`；
+- 国内版等 ICP 备案和备案云资源准备完成后再创建独立 EdgeOne 项目；
+- 两个版本共用 GitHub 源码，但分别部署到独立的 EdgeOne 项目；
+- 在国内版启用前，不修改现有 Cloudflare DNS 记录。
+
 ## 项目操作规则
 
 - 本地先执行 `npm run check`，再执行生产部署；
