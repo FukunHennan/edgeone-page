@@ -2,7 +2,7 @@
 <% if (theme.global.preloader === true || theme.global.preloader.enable === true) { %>
 <%- partial('components/header/preloader') %>
 <% } %>
-<main class="page-container" id="swup">
+<main class="page-container<%= is_home() ? ' home-mimo-page' : '' %>" id="swup">
 
 	<% if (theme.home_banner.enable === true && is_home() && !page.prev) { %>
 	<%- partial('pages/home/home-banner') %>
@@ -45,6 +45,14 @@
 
 	<% if (theme.navbar.search.enable) { %>
 	<%- partial('utils/local-search') %>
+	<% } %>
+
+	<% const pageBackLanguage = Array.isArray(config.language) ? config.language[0] : config.language; %>
+	<% if (!is_home()) { %>
+	<a class="page-back" href="<%= config.root %>" data-no-swup data-history-back>
+		<span class="page-back-icon" aria-hidden="true">&#8592;</span>
+		<span data-history-back-label><%= pageBackLanguage === 'zh-CN' ? '返回上一页' : 'Go back' %></span>
+	</a>
 	<% } %>
 
 </main>
