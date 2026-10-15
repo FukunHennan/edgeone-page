@@ -58,8 +58,14 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-      - name: Deploy to EdgeOne Global
-        if: github.event_name != 'pull_request'
+      # 线上项目 edgeone-page 是 GitHub 集成类型，由平台按仓库构建，不接受直传目录。
+      # 直传通道保留但默认关闭：把仓库变量 EDGEONE_DEPLOY_MODE 设为 upload 才会执行。
+      - name: Deploy to EdgeOne Global (direct upload, opt-in)
+        if: github.event_name != 'pull_request' && vars.EDGEONE_DEPLOY_MODE == 'upload'
         env:
           EDGEONE_GLOBAL_TOKEN: ${{ secrets.EDGEONE_GLOBAL_TOKEN }}
         run: npx --yes edgeone@1.6.39 makers deploy public -n edgeone-page -e production -a global -t "$EDGEONE_GLOBAL_TOKEN" --json
+
+      - name: Note publish path
+        if: github.event_name != 'pull_request' && vars.EDGEONE_DEPLOY_MODE != 'upload'
+        run: echo "EdgeOne 发布由 edgeone-page 项目的 GitHub 集成完成；CI 只负责构建与审计，构建产物见上方 artifact。如需 CI 直传，把仓库变量 EDGEONE_DEPLOY_MODE 设为 upload。"
