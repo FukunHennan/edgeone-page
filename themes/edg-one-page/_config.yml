@@ -244,7 +244,7 @@ navbar:
 home:
   # Sidebar settings
   sidebar:
-    enable: true # Whether to enable sidebar
+    enable: false # Whether to enable sidebar
     position: left # Sidebar position. left, right
     first_item: menu # First item in sidebar. menu, info
     announcement: # Announcement text
