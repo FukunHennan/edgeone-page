@@ -1,5 +1,14 @@
 # EdgeOne Page
 
+## Astro 迁移验证
+
+正在以独立入口验证 Astro + TypeScript。第一阶段接入现有双语项目数据和文章，
+当前生产站点仍使用下面说明的 Hexo 构建。
+
+运行 `npm run dev:astro` 预览，`npm run check:astro` 检查类型，
+`npm run build:astro` 构建到 `astro-dist/`。
+范围、目录和后续切换条件见 [Astro 迁移说明](docs/ASTRO_MIGRATION.md)。
+
 EdgeOne Page 是一个面向腾讯云 EdgeOne Pages 的 Hexo 双语站点项目，只支持：
 
 - 简体中文：`zh-CN`

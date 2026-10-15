@@ -1,5 +1,10 @@
 # Dependencies
 node_modules/
+.astro/
+astro-dist/
+astro-static/theme/
+astro-static/zh-CN/
+astro-static/en/
 
 # Hexo generated files
 public/

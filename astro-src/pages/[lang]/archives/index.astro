@@ -1,0 +1,11 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import { languages, postsFor, postPath, type Language } from '../../../lib/content';
+export function getStaticPaths() { return languages.map((lang) => ({ params: { lang } })); }
+const lang = Astro.params.lang as Language;
+const posts = await postsFor(lang);
+---
+<Shell lang={lang} title={lang === 'zh-CN' ? '文章' : 'Writing'}>
+  <section class="workspace-hero"><h1>{lang === 'zh-CN' ? '工程与学习记录' : 'Engineering and learning'}</h1></section>
+  <div class="astro-writing">{posts.map((post) => <article><time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10)}</time><h2><a href={postPath(post)}>{post.data.title}</a></h2><p>{post.data.description}</p></article>)}</div>
+</Shell>

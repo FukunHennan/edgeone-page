@@ -1,0 +1,40 @@
+---
+import '../styles/site.css';
+import { themePartial } from '../lib/theme';
+import type { Language } from '../lib/content';
+interface Props { lang: Language; title: string; description?: string; alternate?: string }
+const { lang, title, description = '', alternate } = Astro.props;
+const home = Astro.url.pathname === `/${lang}/`;
+const other = lang === 'zh-CN' ? 'en' : 'zh-CN';
+const otherPath = alternate || Astro.url.pathname.replace(`/${lang}/`, `/${other}/`);
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",system-ui,sans-serif' : '"Geist Variable","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · 稻田鼠</title><meta name="description" content={description} />
+    <link rel="canonical" href={canonical} /><link rel="alternate" hreflang={lang} href={canonical} /><link rel="alternate" hreflang={other} href={new URL(otherPath, Astro.site)} />
+    <link rel="stylesheet" href="/theme/tailwind.css" /><link rel="stylesheet" href="/theme/fontawesome/all.min.css" /><link rel="stylesheet" href="/theme/style.css" />
+    <style is:inline define:vars={{ fonts }}>body,input,button,select,textarea{font-family:var(--fonts)}code,pre{font-family:"Geist Mono","SFMono-Regular",Consolas,monospace}</style>
+    <script is:inline>
+      try { const stored = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS') || 'null'); const dark = stored ? stored.isDark : matchMedia('(prefers-color-scheme:dark)').matches; document.documentElement.classList.add(dark ? 'dark' : 'light'); document.documentElement.style.colorScheme = dark ? 'dark' : 'light'; } catch { document.documentElement.classList.add(matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'); }
+    </script>
+  </head>
+  <body>
+    <a class="astro-skip" href="#main">{lang === 'zh-CN' ? '跳至内容' : 'Skip to content'}</a>
+    <div id="swup" class:list={['page-container', { 'home-mimo-page': home }]}>
+      <Fragment set:html={themePartial('navbar', lang, Astro.url.pathname)} />
+      <slot name="hero" />
+      <div class="main-content-container flex flex-col justify-between min-h-dvh"><main id="main" class="main-content-body transition-fade-up"><div class="main-content"><slot /></div></main></div>
+      <a class="astro-language" href={otherPath} lang={other}>{lang === 'zh-CN' ? 'English' : '简体中文'}</a>
+      {!home && <a class="page-back" href={`/${lang}/`} data-no-swup data-history-back>
+        <span class="page-back-icon" aria-hidden="true">←</span><span data-history-back-label>{lang === 'zh-CN' ? '返回上一页' : 'Go back'}</span>
+      </a>}
+      <dialog id="astro-search"><form method="dialog"><button aria-label={lang === 'zh-CN' ? '关闭' : 'Close'}>×</button></form><label for="astro-search-input">{lang === 'zh-CN' ? '搜索文章' : 'Search articles'}</label><input id="astro-search-input" type="search" /><ul id="astro-search-results"></ul></dialog>
+    </div>
+    {['Swup','SwupSlideTheme','SwupProgressPlugin','SwupScrollPlugin','SwupPreloadPlugin'].map((name) => <script is:inline src={`/theme/js/${name}.min.js`}></script>)}
+    <script>import '../scripts/theme-runtime';</script>
+  </body>
+</html>

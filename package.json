@@ -5,6 +5,10 @@
   "description": "A Simplified Chinese and English Hexo site optimized for Tencent EdgeOne Pages.",
   "packageManager": "npm@10.9.8",
   "scripts": {
+    "dev:astro": "astro dev --host 127.0.0.1",
+    "check:astro": "node tools/validate-bilingual.js && astro check",
+    "build:astro": "npm run check:astro && astro build && node tools/audit-astro.cjs",
+    "preview:astro": "astro preview --host 127.0.0.1",
     "clean": "node -e \"require('fs').rmSync('public',{recursive:true,force:true});require('fs').rmSync('db.json',{force:true})\"",
     "dev": "node tools/dev-preview.js",
     "dev:en": "node tools/dev-preview.js --en",
@@ -57,5 +61,12 @@
   },
   "overrides": {
     "strip-ansi": "6.0.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@types/js-yaml": "4.0.9",
+    "@types/node": "22.20.5",
+    "astro": "7.3.8",
+    "typescript": "5.9.3"
   }
 }
