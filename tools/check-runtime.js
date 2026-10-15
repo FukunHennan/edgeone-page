@@ -26,14 +26,19 @@ const versionAtLeast = (actual, minimum) => {
 const failures = [];
 const expectedMajor = versionParts(expectedNode)[0];
 const actualMajor = versionParts(actualNode)[0];
+const expectedNpmMajor = versionParts(expectedNpm)[0];
 if (actualMajor !== expectedMajor || !versionAtLeast(actualNode, expectedNode)) {
   failures.push(`Node.js must be compatible with ${expectedNode} (${expectedMajor}.x), got ${actualNode}`);
 }
-if (expectedNpm && actualNpm && actualNpm !== expectedNpm) failures.push(`npm must be ${expectedNpm}, got ${actualNpm}`);
+if (expectedNpm && actualNpm && versionParts(actualNpm)[0] !== expectedNpmMajor) {
+  failures.push(`npm must be a ${expectedNpmMajor}.x release, got ${actualNpm}`);
+}
 
 if (failures.length) {
   console.error(`[runtime] ${failures.join("; ")}`);
-  console.error(`[runtime] Use Node.js ${expectedNode} or a newer ${expectedMajor}.x release before running local checks or builds.`);
+  console.error(
+    `[runtime] Use Node.js ${expectedNode} or a newer ${expectedMajor}.x release with npm ${expectedNpmMajor}.x before running local checks or builds.`,
+  );
   process.exitCode = 1;
 } else {
   console.log(`[runtime] Node.js ${actualNode}${actualNpm ? `, npm ${actualNpm}` : ""} is compatible with EdgeOne Node.js ${expectedNode}.`);
