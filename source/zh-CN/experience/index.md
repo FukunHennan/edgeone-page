@@ -4,76 +4,22 @@ layout: page
 comments: false
 ---
 
-# 个人经历 · Experience
+<!-- 填入真实时间后，将对应事件移入有日期的时间轴。未标明日期的项目不表示先后顺序。 -->
+<div class="experience-page">
+<header class="experience-intro"><h1>走过的路，做过的事。</h1><p>记录学习、教学和工程实践中的重要片段，以及每个阶段留下的作品。</p><a class="experience-resume-link" href="/zh-CN/resume/">查看求职简历 ↗</a></header>
+<section class="experience-section"><h2>学习与实践</h2><ol class="experience-timeline">
+<li class="experience-event"><div class="experience-date">2022.09 — 2026.06</div><article class="experience-story"><small>教育</small><h3>黄淮学院 · 自动化本科</h3><p>从电路、控制理论到嵌入式开发，逐步建立软硬件结合的工程基础。学习 C 语言、微机原理、数字与模拟电子技术、PLC 和自动控制原理。</p></article></li>
+<li class="experience-event"><div class="experience-date">大二至大三</div><article class="experience-story"><small>兼职与教学</small><h3>在青少年编程培训班做开发</h3><p>围绕 ESP32 进行物联网开发、图形化编程研究和函数库开发，也参与手机 APP 开发。在教学场景中，把底层技术转化成更容易理解和使用的工具。</p><div class="experience-links"><a href="https://github.com/FukunHennan/ESP32">ESP32 开发集合</a></div></article></li>
+</ol></section>
+<section class="experience-section experience-unknown"><h2>工程探索</h2><p>以下项目的时间待补充，暂按主题排列。</p><ol class="experience-timeline">
+<li class="experience-event"><div class="experience-date">时间待补充</div><article class="experience-story"><small>自动化与工业软件</small><h3>非标自动化流水线与数字孪生</h3><p>围绕西门子 S7-1500 流水线，结合 UG、Eplan 和 TIA 完成机械、电气及控制集成。后续尝试用单片机替代 PLC，并使用 C#、Qt 开发 PLC 与 NI 数据采集卡联合调试的软件。</p><div class="experience-links"><a href="/zh-CN/posts/xinjie-modbus-csharp-dashboard/">PLC 与上位机记录</a><a href="/zh-CN/posts/csharp-ni-measurement-integration/">NI 采集记录</a></div></article></li>
+<li class="experience-event"><div class="experience-date">时间待补充</div><article class="experience-story"><small>嵌入式与机器人</small><h3>从 STM32 控制到机器鱼平台</h3><p>基于 STM32F407、HAL、IMU 和 ADC 构建水下机器人控制系统，通过 Modbus RTU 与 Linux 设备交换传感器数据及动力命令。相关机器鱼平台进一步连接 ESP32、Go 中央控制器与视觉。</p><div class="experience-links"><a href="/zh-CN/posts/underwater-robot-steering-control/">STM32 控制记录</a><a href="/zh-CN/posts/fish-robot-platform/">机器鱼平台记录</a></div></article></li>
+<li class="experience-event"><div class="experience-date">时间待补充</div><article class="experience-story"><small>研究与视觉</small><h3>事件相机与多模态视觉</h3><p>围绕 DVS 事件相机及 RGB 相机构建视觉工作站，探索 MATLAB、C++ MEX、Fusion 数据流与三维验证，让不同传感器的数据进入同一个工程系统。</p><div class="experience-links"><a href="/zh-CN/posts/dvs-eventcamera-research/">事件相机记录</a><a href="/zh-CN/posts/dvsense-rgb-hikrobot-workstation/">多模态工作站记录</a></div></article></li>
+<li class="experience-event"><div class="experience-date">时间待补充</div><article class="experience-story"><small>个人工具与知识沉淀</small><h3>个人站点与 KiCad 元件库</h3><p>将个人站点逐步建设成连接文章、知识笔记、项目和工具的空间；把 KiCad 元件库的构建流程整理成可复用的 Skill，保留实现过程与工程证据。</p><div class="experience-links"><a href="/zh-CN/posts/building-a-professional-bilingual-hexo-site-on-edgeone-pages/">站点工程记录</a><a href="/zh-CN/posts/kicad-library-builder-skill/">KiCad 元件库记录</a></div></article></li>
+</ol></section>
+<details class="experience-support"><summary>学习阶段的荣誉与证书</summary><ul><li>西门子杯流程行业自动化 · 省级三等奖</li><li>全国大学生电子设计大赛 · 省级二等奖</li><li>华中数控数字孪生大赛 · 省级二等奖</li><li>蓝桥杯 · 多次省级及以上奖项</li><li>校级三好学生</li><li>普通话二级 · 全国计算机二级（C 语言）</li></ul></details>
+</div>
 
-<div class="resume-hero"><div class="avatar">FK</div><div><h2>陈富坤 · Fukun Hennan</h2><p>自动化 · 嵌入式系统 · 机器人 · 上位机开发</p><p>学习能力强，把想法变成真正可以运行的东西。</p><p><a href="https://github.com/FukunHennan" target="_blank" rel="noopener">GitHub: @FukunHennan</a> · 河南周口</p></div></div>
-
-## 教育背景
-
-### 黄淮学院 · 自动化（本科）
-**2022.09 – 2026.06**
-
-主修课程：C 语言、微机原理、嵌入式开发与应用、单片机原理及应用、数字电子技术基础、模拟电子技术基础、PLC 技术、自动控制原理、电路分析。
-
-## 专业技能
-
-**通信协议**：熟悉 UART、IIC、SPI、CAN、ModBus 及 TCP/IP、HTTP、MQTT 等多种通信协议的原理与实际应用。
-
-**开发环境与系统**：熟悉 MDK、VSCode、CubeMX 等开发环境，及 RT-Thread、FreeRTOS 等嵌入式实时操作系统。
-
-**硬件设计**：熟练运用嘉立创 EDA、SolidWorks 进行硬件设计及三维建模；使用 KiCad 构建元件库。
-
-**上位机开发**：熟练使用 C# 及 QT 进行上位机开发，具备 PLC 与 NI 数据采集卡联合调试经验；同时使用 Go、Python、JavaScript/TypeScript 做 Web 与服务端开发。
-
-## 项目经历
-
-### 非标自动化流水线 · 数字孪生系统
-基于西门子 PLC S7-1500 主控的非标自动化流水线数字孪生系统。集成 UG 进行机械设计与 3D 建模，通过 Eplan 完成电气设计，结合 TIA 与 UG 实现数字化控制与系统集成，并在最终迭代中使用单片机替代 PLC 作为控制器。
-
-上位机方面使用 C# 和 QT 开发了 PLC 与 NI 数据采集卡联合调试的上位机，以及自定义串口数据上位机。
-
-- 相关仓库：[XinJie Modbus C# Dashboard](https://github.com/FukunHennan/XinJie_modbus_Csharp) · [C# + NI 采集](https://github.com/FukunHennan/CSharp-NI)
-- 博客：[不动 PLC 梯形图，用 C# 和 EasyModbus 扩展自动化](../posts/xinjie-modbus-csharp-dashboard/)
-
-### 水下机器人（控制部分）
-水下机器人的控制研发项目。硬件基于 STM32F407 主控，软件基于 HAL 库开发；使用 IMU 模块和扩展 ADC 外设进行自身姿态检测与环境数据感知，以舵机和无刷电机作为动力机构，采用 Modbus RTU 作为通信协议，最终与 Linux 设备制定数据格式，完成传感器数据上传与动力机构命令下发。
-
-- 仓库：[STM32 水下机器人航向控制](https://github.com/FukunHennan/underwater-robot-steering-control-system) · [Fish Robot Platform](https://github.com/FukunHennan/fish)
-- 博客：[STM32F407 水下机器人航向控制系统](../posts/underwater-robot-steering-control/) · [机器鱼中央控制平台](../posts/fish-robot-platform/)
-
-### ESP32 物联网与图形化编程
-大二至大三期间在青少年编程培训班兼职，从事以 ESP32 为主的物联网开发、图形化编程研究与图形化函数库开发，以及手机 APP 开发。同时维护 ESP32 系列芯片的学习与项目开发集合。
-
-- 仓库：[ESP32 开发集合](https://github.com/FukunHennan/ESP32) · [OpenAI Agents Starter](https://github.com/FukunHennan/openai-agents-starter-python)
-- 博客：[ESP32 学习与项目开发集合](../posts/esp32-development-collection/)
-
-### 事件相机与多模态视觉
-事件相机（DVS）研发与 DVS + RGB 多模态视觉工作站，覆盖 DVSense 事件相机、Hikrobot RGB、MATLAB + C++ MEX、Fusion 数据流与 3D 验证。
-
-- 仓库：[DVS Event Camera](https://github.com/FukunHennan/DVS-Eventcrame) · [DVSense + RGB Hikrobot](https://github.com/FukunHennan/DVSenseRealtime_RGB_Hikrobot)
-- 博客：[DVS 事件相机研发](../posts/dvs-eventcamera-research/) · [DVS + RGB 多模态视觉工作站](../posts/dvsense-rgb-hikrobot-workstation/)
-
-### EdgeOne Page · 双语个人站点
-本站点本身。从普通 Hexo 主题演进为支持中英双语、本地搜索、RSS、PWA、确定性构建和生产审计的个人工程门户，并把 KiCad 元件库构建沉淀为可复用的 Codex Skill。
-
-- 仓库：[edgeone-page](https://github.com/FukunHennan/edgeone-page) · [kicadskill](https://github.com/FukunHennan/kicadskill)
-- 博客：[EdgeOne Page 的工程化实践](../posts/building-a-professional-bilingual-hexo-site-on-edgeone-pages/) · [KiCad 元件库构建 Skill](../posts/kicad-library-builder-skill/)
-
-## 获得荣誉
-
-- **西门子杯** 流程行业自动化 —— 省级三等奖
-- **全国大学生电子设计大赛** —— 省级二等奖
-- **华中数控数字孪生大赛** —— 省级二等奖
-- **蓝桥杯** —— 多次斩获省级及以上奖项
-- 校级 **三好学生**
-
-## 取得证书
-
-- 普通话二级
-- 全国计算机二级（C 语言）
-
-## 自我评价
-
-学习能力强，能快速适应新环境与新挑战。做事严谨认真，具备良好的执行力和责任感。善于沟通，乐于合作，注重团队共同目标，对工作充满热情，积极寻求自我提升与发展。
-
-<style>.resume-hero{display:flex;align-items:center;gap:24px;padding:28px;border-radius:22px;background:linear-gradient(135deg,rgba(79,70,229,.13),rgba(139,92,246,.08));border:1px solid rgba(129,140,248,.2);margin:20px 0 32px}.avatar{width:92px;height:92px;flex:0 0 92px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:white;box-shadow:0 12px 35px rgba(79,70,229,.3)}@media(max-width:600px){.resume-hero{align-items:flex-start;flex-direction:column}}</style>
+<style>
+.experience-page{max-width:1000px;margin:0 auto;padding:28px 16px 64px;color:var(--hub-text)}.experience-intro{max-width:700px;margin-bottom:48px}.experience-intro h1{font-size:clamp(32px,4vw,52px);font-weight:480;line-height:1.25;margin:0 0 20px}.experience-intro p{color:var(--hub-muted);font-size:15px;line-height:1.9}.experience-resume-link{display:inline-block;margin-top:8px;color:var(--mimo-green,var(--hub-blue));font-size:13px}.experience-section{margin-top:48px}.experience-section>h2{font-size:23px;font-weight:550}.experience-section>p{color:var(--hub-muted);font-size:13px}.experience-timeline{list-style:none;padding:0;margin:28px 0}.experience-event{position:relative;display:grid;grid-template-columns:145px minmax(0,1fr);gap:42px;padding:0 0 40px}.experience-event:before{content:'';position:absolute;left:166px;top:12px;bottom:-12px;width:1px;background:var(--hub-line)}.experience-event:last-child:before{bottom:40px}.experience-event:after{content:'';position:absolute;left:161px;top:8px;width:11px;height:11px;border-radius:50%;background:var(--mimo-green,var(--hub-blue));box-shadow:0 0 0 5px var(--hub-bg)}.experience-date{padding-top:3px;color:var(--hub-muted);font-size:12px;line-height:1.8}.experience-date span{display:block}.experience-story{padding:0 0 28px;border-bottom:1px solid var(--hub-line)}.experience-story small{color:var(--mimo-green,var(--hub-blue));font-size:11px}.experience-story h3{font-size:22px;margin:8px 0 12px;line-height:1.45;font-weight:550}.experience-story p{font-size:14px;line-height:1.9;color:var(--hub-muted);margin:0 0 12px}.experience-links{display:flex;flex-wrap:wrap;gap:10px 20px;font-size:12px}.experience-links a{color:var(--mimo-green,var(--hub-blue))}.experience-unknown .experience-event:after{background:var(--hub-bg);border:2px solid var(--mimo-green,var(--hub-blue))}.experience-support{margin-top:20px;border-top:1px solid var(--hub-line);padding-top:22px;color:var(--hub-muted);font-size:13px}.experience-support summary{cursor:pointer;color:var(--hub-text);font-size:15px}.experience-support ul{padding-left:20px;line-height:2}.experience-event:hover .experience-story h3{color:var(--mimo-green,var(--hub-blue));transition:color .2s}@media(max-width:600px){.experience-page{padding:20px 4px 40px}.experience-intro{margin-bottom:32px}.experience-event{grid-template-columns:1fr;gap:8px;padding-left:26px;padding-bottom:30px}.experience-event:before{left:5px;top:10px;bottom:-10px}.experience-event:after{left:0;top:7px}.experience-event:last-child:before{bottom:30px}.experience-date span{display:inline;margin-right:8px}.experience-story h3{font-size:20px}.experience-story p{font-size:13px}}@media(prefers-reduced-motion:reduce){.experience-event:hover .experience-story h3{transition:none}}
+</style>

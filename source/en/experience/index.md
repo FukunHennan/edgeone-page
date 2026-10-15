@@ -3,76 +3,10 @@ title: Experience
 layout: page
 comments: false
 ---
-# Experience
 
-<div class="resume-hero"><div class="avatar">FK</div><div><h2>Chen Fukun · Fukun Hennan</h2><p>Automation · Embedded Systems · Robotics · Host Software</p><p>Fast learner; turn ideas into things that actually run.</p><p><a href="https://github.com/FukunHennan" target="_blank" rel="noopener">GitHub: @FukunHennan</a> · Zhoukou, Henan</p></div></div>
+<!-- ????????????????????????????????????????? -->
+<div class="experience-page"><header class="experience-intro"><h1>The journey behind the work.</h1><p>Milestones from learning, teaching and engineering practice, with the work that emerged along the way.</p><a class="experience-resume-link" href="/en/resume/">View the professional resume ↗</a></header><section class="experience-section"><h2>Learning and practice</h2><ol class="experience-timeline"><li class="experience-event"><div class="experience-date">2022.09 — 2026.06</div><article class="experience-story"><small>Education</small><h3>Huanghuai University · Automation</h3><p>Built a foundation spanning circuits, control theory and embedded development. Coursework included C, microcomputer principles, digital and analog electronics, PLC technology and automatic control.</p><div class="experience-links"></div></article></li><li class="experience-event"><div class="experience-date">Sophomore–junior years</div><article class="experience-story"><small>Part-time work & teaching</small><h3>Developing tools for youth programming classes</h3><p>Worked on ESP32-based IoT, graphical programming, reusable function libraries and mobile apps. The teaching environment offered practice in making low-level technology easier to understand and use.</p><div class="experience-links"><a href="https://github.com/FukunHennan/ESP32">ESP32 development collection</a></div></article></li></ol></section><section class="experience-section experience-unknown"><h2>Engineering explorations</h2><p>Dates will be added later. These projects are grouped by topic for now.</p><ol class="experience-timeline"><li class="experience-event"><div class="experience-date">Dates to be added</div><article class="experience-story"><small>Automation & industrial software</small><h3>Automated production lines and digital twins</h3><p>Integrated mechanical, electrical and control work around a Siemens S7-1500 production line with UG, Eplan and TIA. Later explored an MCU controller and built C#/Qt software for joint PLC and NI acquisition debugging.</p><div class="experience-links"><a href="/en/posts/xinjie-modbus-csharp-dashboard/">PLC and host software</a><a href="/en/posts/csharp-ni-measurement-integration/">NI acquisition</a></div></article></li><li class="experience-event"><div class="experience-date">Dates to be added</div><article class="experience-story"><small>Embedded systems & robotics</small><h3>From STM32 control to a fish robot platform</h3><p>Built underwater robot control with STM32F407, HAL, IMU and ADC hardware, exchanging sensor data and actuator commands with Linux over Modbus RTU. Related fish robot work connected ESP32, a Go controller and vision.</p><div class="experience-links"><a href="/en/posts/underwater-robot-steering-control/">STM32 control notes</a><a href="/en/posts/fish-robot-platform/">Fish robot platform</a></div></article></li><li class="experience-event"><div class="experience-date">Dates to be added</div><article class="experience-story"><small>Research & vision</small><h3>Event cameras and multimodal vision</h3><p>Worked on a DVS and RGB vision workstation with MATLAB, C++ MEX, Fusion data streams and 3D validation, bringing different sensor outputs into one engineering system.</p><div class="experience-links"><a href="/en/posts/dvs-eventcamera-research/">Event camera notes</a><a href="/en/posts/dvsense-rgb-hikrobot-workstation/">Multimodal workstation</a></div></article></li><li class="experience-event"><div class="experience-date">Dates to be added</div><article class="experience-story"><small>Personal tools & knowledge</small><h3>A personal site and KiCad libraries</h3><p>Developed a personal space connecting writing, knowledge, projects and tools. Turned the KiCad component-library workflow into a reusable skill, retaining implementation notes and engineering evidence.</p><div class="experience-links"><a href="/en/posts/building-a-professional-bilingual-hexo-site-on-edgeone-pages/">Site engineering</a><a href="/en/posts/kicad-library-builder-skill/">KiCad library workflow</a></div></article></li></ol></section><details class="experience-support"><summary>Awards and certificates from my studies</summary><ul><li>Siemens Cup Process Automation · Provincial third prize</li><li>National Undergraduate Electronics Design Contest · Provincial second prize</li><li>Huazhong CNC Digital Twin Contest · Provincial second prize</li><li>Lanqiao Cup · Multiple provincial and higher awards</li><li>University outstanding student award</li><li>Mandarin proficiency Level 2 · National Computer Rank Examination Level 2 (C)</li></ul></details></div>
 
-## Education
-
-### Huanghuai University · Automation (B.Eng.)
-**2022.09 – 2026.06**
-
-Key coursework: C Programming, Microcomputer Principles, Embedded Development & Applications, MCU Principles & Applications, Digital Electronics, Analog Electronics, PLC Technology, Automatic Control Theory, Circuit Analysis.
-
-## Skills
-
-**Communication protocols**: UART, IIC, SPI, CAN, ModBus, TCP/IP, HTTP, MQTT — both principles and practical application.
-
-**Tools & operating systems**: MDK, VSCode, CubeMX; RT-Thread, FreeRTOS.
-
-**Hardware design**: JLC EDA and SolidWorks for hardware design and 3D modeling; KiCad for component library construction.
-
-**Host software**: C# and Qt for host application development, including joint debugging of PLCs with NI data acquisition cards; also Go, Python, and JavaScript/TypeScript for web and server-side work.
-
-## Projects
-
-### Non-standard Automated Line · Digital Twin
-A digital twin system for a non-standard automated production line controlled by a Siemens S7-1500 PLC. UG was used for mechanical design and 3D modeling, Eplan for electrical design, and TIA plus UG for digital control and system integration. The final iteration replaced the PLC with an MCU as the controller.
-
-On the host side, C# and Qt were used to build applications for joint PLC + NI data-acquisition-card debugging, plus custom serial-data hosts.
-
-- Repos: [XinJie Modbus C# Dashboard](https://github.com/FukunHennan/XinJie_modbus_Csharp) · [C# + NI](https://github.com/FukunHennan/CSharp-NI)
-- Blog: [Extending XinJie XDH automation without touching the ladder](../posts/xinjie-modbus-csharp-dashboard/)
-
-### Underwater Robot (Control)
-Control R&D for an underwater robot. Hardware based on STM32F407; software developed on the HAL library. An IMU module and extended ADC peripherals handle attitude detection and environmental sensing; servos and brushless motors provide propulsion. Modbus RTU is the communication protocol, and a custom data format with a Linux device handles sensor-data upload and propulsion-command dispatch.
-
-- Repos: [STM32 Underwater Robot](https://github.com/FukunHennan/underwater-robot-steering-control-system) · [Fish Robot Platform](https://github.com/FukunHennan/fish)
-- Blogs: [STM32F407 underwater robot steering control](../posts/underwater-robot-steering-control/) · [Fish robot central control platform](../posts/fish-robot-platform/)
-
-### ESP32 IoT & Visual Programming
-Worked part-time at a youth programming training program from sophomore to junior year, focused on ESP32-based IoT development, visual-programming research, visual function library development, and mobile app development. Also maintains the ESP32 learning and project collection.
-
-- Repos: [ESP32 Collection](https://github.com/FukunHennan/ESP32) · [OpenAI Agents Starter](https://github.com/FukunHennan/openai-agents-starter-python)
-- Blog: [ESP32 learning collection](../posts/esp32-development-collection/)
-
-### Event Camera & Multimodal Vision
-Event camera (DVS) research and the DVS + RGB multimodal vision workstation, covering DVSense event cameras, Hikrobot RGB, MATLAB + C++ MEX, the Fusion data flow, and 3D verification.
-
-- Repos: [DVS Event Camera](https://github.com/FukunHennan/DVS-Eventcrame) · [DVSense + RGB Hikrobot](https://github.com/FukunHennan/DVSenseRealtime_RGB_Hikrobot)
-- Blogs: [DVS event camera research](../posts/dvs-eventcamera-research/) · [DVS + RGB multimodal vision workstation](../posts/dvsense-rgb-hikrobot-workstation/)
-
-### EdgeOne Page · Bilingual Personal Site
-This site. Evolved from a plain Hexo theme into a personal engineering portal with bilingual content, local search, RSS, PWA, deterministic builds, and production audits; KiCad library construction was also turned into a reusable Codex Skill.
-
-- Repos: [edgeone-page](https://github.com/FukunHennan/edgeone-page) · [kicadskill](https://github.com/FukunHennan/kicadskill)
-- Blogs: [EdgeOne Page engineering](../posts/building-a-professional-bilingual-hexo-site-on-edgeone-pages/) · [KiCad library builder skill](../posts/kicad-library-builder-skill/)
-
-## Honors & Awards
-
-- **Siemens Cup** Process Industry Automation — Provincial Third Prize
-- **National Undergraduate Electronics Design Contest** — Provincial Second Prize
-- **HNC Digital Twin Competition** — Provincial Second Prize
-- **Lanqiao Cup** — Multiple provincial-level or higher awards
-- University-level **Merit Student**
-
-## Certificates
-
-- Mandarin Proficiency Test: Level 2
-- National Computer Rank Examination Level 2 (C Language)
-
-## Self-evaluation
-
-A strong learner who adapts quickly to new environments and challenges. Rigorous and responsible, with solid execution and accountability. Good communicator who enjoys collaboration and team goals; passionate about the work and actively pursuing self-improvement.
-
-<style>.resume-hero{display:flex;align-items:center;gap:24px;padding:28px;border-radius:22px;background:linear-gradient(135deg,rgba(79,70,229,.13),rgba(139,92,246,.08));border:1px solid rgba(129,140,248,.2);margin:20px 0 32px}.avatar{width:92px;height:92px;flex:0 0 92px;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;font-weight:800;background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:white;box-shadow:0 12px 35px rgba(79,70,229,.3)}@media(max-width:600px){.resume-hero{align-items:flex-start;flex-direction:column}}</style>
+<style>
+.experience-page{max-width:1000px;margin:0 auto;padding:28px 16px 64px;color:var(--hub-text)}.experience-intro{max-width:700px;margin-bottom:48px}.experience-intro h1{font-size:clamp(32px,4vw,52px);font-weight:480;line-height:1.25;margin:0 0 20px}.experience-intro p{color:var(--hub-muted);font-size:15px;line-height:1.9}.experience-resume-link{display:inline-block;margin-top:8px;color:var(--mimo-green,var(--hub-blue));font-size:13px}.experience-section{margin-top:48px}.experience-section>h2{font-size:23px;font-weight:550}.experience-section>p{color:var(--hub-muted);font-size:13px}.experience-timeline{list-style:none;padding:0;margin:28px 0}.experience-event{position:relative;display:grid;grid-template-columns:145px minmax(0,1fr);gap:42px;padding:0 0 40px}.experience-event:before{content:'';position:absolute;left:166px;top:12px;bottom:-12px;width:1px;background:var(--hub-line)}.experience-event:last-child:before{bottom:40px}.experience-event:after{content:'';position:absolute;left:161px;top:8px;width:11px;height:11px;border-radius:50%;background:var(--mimo-green,var(--hub-blue));box-shadow:0 0 0 5px var(--hub-bg)}.experience-date{padding-top:3px;color:var(--hub-muted);font-size:12px;line-height:1.8}.experience-date span{display:block}.experience-story{padding:0 0 28px;border-bottom:1px solid var(--hub-line)}.experience-story small{color:var(--mimo-green,var(--hub-blue));font-size:11px}.experience-story h3{font-size:22px;margin:8px 0 12px;line-height:1.45;font-weight:550}.experience-story p{font-size:14px;line-height:1.9;color:var(--hub-muted);margin:0 0 12px}.experience-links{display:flex;flex-wrap:wrap;gap:10px 20px;font-size:12px}.experience-links a{color:var(--mimo-green,var(--hub-blue))}.experience-unknown .experience-event:after{background:var(--hub-bg);border:2px solid var(--mimo-green,var(--hub-blue))}.experience-support{margin-top:20px;border-top:1px solid var(--hub-line);padding-top:22px;color:var(--hub-muted);font-size:13px}.experience-support summary{cursor:pointer;color:var(--hub-text);font-size:15px}.experience-support ul{padding-left:20px;line-height:2}.experience-event:hover .experience-story h3{color:var(--mimo-green,var(--hub-blue));transition:color .2s}@media(max-width:600px){.experience-page{padding:20px 4px 40px}.experience-intro{margin-bottom:32px}.experience-event{grid-template-columns:1fr;gap:8px;padding-left:26px;padding-bottom:30px}.experience-event:before{left:5px;top:10px;bottom:-10px}.experience-event:after{left:0;top:7px}.experience-event:last-child:before{bottom:30px}.experience-date span{display:inline;margin-right:8px}.experience-story h3{font-size:20px}.experience-story p{font-size:13px}}@media(prefers-reduced-motion:reduce){.experience-event:hover .experience-story h3{transition:none}}
+</style>
