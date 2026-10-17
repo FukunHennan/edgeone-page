@@ -40,12 +40,12 @@ EdgeOne Skill 用于腾讯云 EdgeOne 侧的能力和知识，包括：
 
 当前站点的 EdgeOne 项目：
 
-- 线上项目：`edgeone-page`，区域 Global，Provider 为 Github（GitHub 集成类型，平台按仓库构建，不接受直传目录）
+- 线上项目：`edgeone-page`（ID `pages-xidayxfw3y70`），全球可用区（不含中国大陆），Provider 为 Github（GitHub 集成类型，平台按仓库构建，不接受直传目录）
 - 发布方式：推送到 `master` 后由平台按仓库构建发布；GitHub Actions 只做构建与审计，构建产物以 artifact 形式保留 7 天，作为手动兜底
 - 直传通道：CI 里的直传步骤默认跳过（`edgeone-page` 是 GitHub 集成类型，不支持直传），需要时把仓库变量 `EDGEONE_DEPLOY_MODE` 设为 `upload` 才会执行
 - 生产输出目录：`public`
-- 构建命令：`npm run build:production`（平台 Node 22.11.0 自带 npm 10.9.0，本地按 .node-version 用 Node 22.23.2 + npm 10.9.8；engines 只约束 npm 10.x，两端都能通过）
-- 待确认：文档原先记录的项目名 `chenfukun-space` 和项目 ID `makers-y4jkcqsp8hqa`，在 CLI 登录账号下查不到，核对后更新
+- 构建命令：`npm run build:production`（`edgeone.json` 指定 Node 22.21.1；本地按 `.node-version` 用 Node 22.23.2；npm 限定 10.x）
+- 账号下另有 `chenfukun-space` 项目，当前未绑定 `edgeone.chenfukun.space`；不要用它的 CLI 链接作为线上项目依据
 
 ## MCP 使用建议
 
