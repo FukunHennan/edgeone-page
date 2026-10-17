@@ -1,36 +1,21 @@
 # 部署状态记录
 
-更新于 2026-10-17。记录本次排查的结论，避免重复推导。
+更新于 2026-10-17。线上项目是 EdgeOne 国际站 `edgeone-page`，项目 ID
+`pages-xidayxfw3y70`，GitHub 源为 `FukunHennan/edgeone-page` 的 `master`。
+生产地址为 `https://edgeone.chenfukun.space/`。
 
-## 现状
+## 已验证
 
-线上 `edgeone.chenfukun.space`（CNAME 指向 EdgeOne Pages）自 2026-09-23 后未更新，
-仍返回 `Last-Modified: Wed, 23 Sep 2026 02:12:56 GMT` 的产物。
+- 提交 `9f6862a` 将平台 Node 从 22.11.0 提升至 22.21.1，解决 Astro 依赖安装失败。
+- 平台部署 `dp4w6m26yzig` 成功，中文和英文页面均返回 2026-10-17 的新产物。
+- 生产构建现由 `npm run build:production` 运行 Astro，输出 `astro-dist/`。发布前用
+  Node 22.21.1 和 npm 10.x 执行 `npm run check`。
+- GitHub 集成项目由 EdgeOne 在 `master` 更新后自动构建；CI 的直传步骤默认跳过。
+  对该 GitHub 项目运行 `edgeone makers deploy` 会因 Provider 类型不符而被拒绝。
 
-## 已确认
+## 域名边界
 
-- `edgeone.chenfukun.space` 绑定在国际站 `edgeone-page`（项目 ID `pages-xidayxfw3y70`），
-  GitHub 源为 `FukunHennan/edgeone-page` 的 `master`。
-- Git 集成已触发构建。控制台显示 `cbb1633`、`84d6319`、`0684394`、`9da52ad`
-  均为失败部署；最近一次 `dp2w93svrhob` 于 2026-10-15 15:12:53 创建。
-- `dp2w93svrhob` 在 `npm ci` 安装阶段失败：平台 Node 22.11.0 / npm 10.9.0，
-  开发依赖 `@astrojs/astro2tsx@0.1.2` 要求 Node `^20.19.0 || >=22.12.0`。
-  `npm ci --omit=dev` 仍会校验锁文件中的开发依赖并失败，因此将 `edgeone.json`
-  的构建 Node 版本改为平台支持的 22.21.1。
-- GitHub Actions 在 Node 22.23.2 上构建成功；它无法代表平台的 Node 22.11.0 安装结果。
-- CI 的直传步骤不可用。线上项目是 GitHub 集成类型，`edgeone makers deploy -n edgeone-page`
-  会被拒绝（`Project edgeone-page exists but has Provider 'Github'`）。该步骤已改为受仓库
-  变量 `EDGEONE_DEPLOY_MODE` 守卫、默认跳过；构建产物以 artifact 形式保留 7 天作为手动兜底。
-- npm 版本要求已放开。原配置使用 Node 22.11.0（自带 npm 10.9.0），此前
-  `engines.npm` 与 `tools/check-runtime.js` 都要求恰好 10.9.8，加上 `.npmrc` 的
-  `engine-strict`，平台侧 `npm ci` 会以 EBADENGINE 失败；已放开为 npm 10.x。
-
-## 待确认
-
-- 修复提交推送后，确认平台构建成功且 `edgeone.chenfukun.space` 返回新产物。
-- `chenfukun.space` 根域名当前无 A/AAAA 记录；如需作为正式入口，还需核对 EdgeOne
-  域名绑定和 Cloudflare DNS。
-
-## 本文件用途
-
-记录生产部署事实和待验证项，供后续发布排查使用。
+`edgeone.chenfukun.space` 已绑定生产环境。`chenfukun.space` 根域名不作为当前发布
+入口，Cloudflare 没有为它配置网站解析记录。此前曾在 EdgeOne 添加根域名，添加后
+界面显示“部署中”且删除按钮不可用；待平台允许操作时需撤销该绑定，不要修改
+Cloudflare 根域名 DNS。

@@ -2,12 +2,23 @@
 import '../styles/site.css';
 import { themePartial } from '../lib/theme';
 import type { Language } from '../lib/content';
-interface Props { lang: Language; title: string; description?: string; alternate?: string }
-const { lang, title, description = '', alternate } = Astro.props;
+interface Props { lang: Language; title: string; description?: string; alternate?: string; published?: Date; updated?: Date }
+const { lang, title, description = '', alternate, published, updated } = Astro.props;
 const home = Astro.url.pathname === `/${lang}/`;
 const other = lang === 'zh-CN' ? 'en' : 'zh-CN';
 const otherPath = alternate || Astro.url.pathname.replace(`/${lang}/`, `/${other}/`);
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const isArticle = Astro.url.pathname.includes('/posts/');
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': isArticle ? 'BlogPosting' : 'WebPage',
+  headline: title,
+  name: title,
+  description,
+  url: canonical.href,
+  inLanguage: lang,
+  ...(isArticle ? { author: { '@type': 'Person', name: '陈富坤' }, datePublished: published?.toISOString(), dateModified: (updated || published)?.toISOString() } : {}),
+};
 const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",system-ui,sans-serif' : '"Geist Variable","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 ---
 <!doctype html>
@@ -15,7 +26,16 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
   <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} · 稻田鼠</title><meta name="description" content={description} />
-    <link rel="canonical" href={canonical} /><link rel="alternate" hreflang={lang} href={canonical} /><link rel="alternate" hreflang={other} href={new URL(otherPath, Astro.site)} />
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href={canonical} /><link rel="alternate" hreflang={lang} href={canonical} /><link rel="alternate" hreflang={other} href={new URL(otherPath, Astro.site)} /><link rel="alternate" hreflang="x-default" href={new URL(`/zh-CN/`, Astro.site)} />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href={`/${lang}/feed.xml`} />
+    <link rel="manifest" href={`/${lang}/manifest.webmanifest`} /><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg" />
+    <script type="application/ld+json" data-edgeone-schema set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
+    <script is:inline data-edgeone-service-worker>
+      if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+        window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true });
+      }
+    </script>
     <link rel="stylesheet" href="/theme/tailwind.css" /><link rel="stylesheet" href="/theme/fontawesome/all.min.css" /><link rel="stylesheet" href="/theme/style.css" />
     <style is:inline define:vars={{ fonts }}>body,input,button,select,textarea{font-family:var(--fonts)}code,pre{font-family:"Geist Mono","SFMono-Regular",Consolas,monospace}</style>
     <script is:inline>

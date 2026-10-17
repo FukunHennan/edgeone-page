@@ -8,7 +8,7 @@ if (major < 22 || (major === 22 && minor < 12)) {
 }
 
 export default defineConfig({
-  site: 'https://chenfukun.space',
+  site: 'https://edgeone.chenfukun.space',
   srcDir: './astro-src',
   publicDir: './astro-static',
   outDir: './astro-dist',

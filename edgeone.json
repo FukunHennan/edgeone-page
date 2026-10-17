@@ -2,7 +2,7 @@
   "name": "edgeone-page",
   "installCommand": "npm ci",
   "buildCommand": "npm run build:production",
-  "outputDirectory": "public",
+  "outputDirectory": "astro-dist",
   "nodeVersion": "22.21.1",
   "redirects": [
     {
@@ -33,6 +33,66 @@
     {
       "source": "/en-US/*",
       "destination": "/en/:splat",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh-CN/tags/*",
+      "destination": "/zh-CN/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/tags/*",
+      "destination": "/en/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh-CN/categories/*",
+      "destination": "/zh-CN/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/categories/*",
+      "destination": "/en/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh-CN/page/*",
+      "destination": "/zh-CN/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/page/*",
+      "destination": "/en/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh-CN/archives/page/*",
+      "destination": "/zh-CN/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/archives/page/*",
+      "destination": "/en/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh-CN/archives/2025/*",
+      "destination": "/zh-CN/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/archives/2025/*",
+      "destination": "/en/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/zh-CN/archives/2026/*",
+      "destination": "/zh-CN/archives/",
+      "statusCode": 301
+    },
+    {
+      "source": "/en/archives/2026/*",
+      "destination": "/en/archives/",
       "statusCode": 301
     }
   ],
