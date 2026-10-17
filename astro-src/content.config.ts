@@ -8,6 +8,8 @@ const postSchema = z.object({
   description: z.string().optional(),
   lang: z.enum(['zh-CN', 'en']),
   translation_key: z.string(),
+  content_type: z.enum(['article', 'showcase', 'interactive']),
+  domain: z.string().min(1),
   date: z.coerce.date(),
   updated: z.coerce.date().optional(),
   tags: z.array(z.string()).default([]),

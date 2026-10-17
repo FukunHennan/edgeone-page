@@ -1,0 +1,16 @@
+---
+import { postPath, termSlug, type Post, type Language } from '../lib/content';
+interface Props { posts: Post[]; lang: Language }
+const { posts, lang } = Astro.props;
+---
+<div class="astro-writing">
+  {posts.map((post) => <article>
+    <time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10)}</time>
+    <h2><a href={postPath(post)}>{post.data.title}</a></h2>
+    <p>{post.data.description}</p>
+    <div class="astro-article-terms">
+      {post.data.categories.map((name) => <a href={`/${lang}/categories/${termSlug(name)}/`}>{name}</a>)}
+      {post.data.tags.map((name) => <a href={`/${lang}/tags/${termSlug(name)}/`}>#{name}</a>)}
+    </div>
+  </article>)}
+</div>

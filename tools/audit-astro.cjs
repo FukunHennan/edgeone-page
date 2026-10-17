@@ -3,12 +3,16 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { collectLanguagePosts, isPublished, validDate } = require('./content-records');
 const yaml = require('js-yaml');
+const { slugize } = require('hexo-util');
 const root = path.resolve(__dirname, '..');
 const output = path.join(root, 'astro-dist');
 const origin = 'https://edgeone.chenfukun.space';
 const config = JSON.parse(fs.readFileSync(path.join(root, 'edgeone.json'), 'utf8'));
 if (config.buildCommand !== 'npm run build:production' || config.outputDirectory !== 'astro-dist') {
   throw new Error('EdgeOne must build and publish the Astro output.');
+}
+if (config.redirects.some(({ source }) => /\/(?:tags|categories)\/\*/.test(source) || /\/archives\/\d{4}\/\*/.test(source))) {
+  throw new Error('A broad redirect hides an Astro taxonomy or dated archive page.');
 }
 let articleCount = 0;
 for (const lang of ['zh-CN', 'en']) {
@@ -24,6 +28,27 @@ for (const lang of ['zh-CN', 'en']) {
       throw new Error(`Missing production canonical or article schema: ${post.url}`);
     }
     articleCount++;
+  }
+  for (const kind of ['categories', 'tags']) {
+    const index = path.join(output, lang, kind, 'index.html');
+    if (!fs.existsSync(index)) throw new Error(`Missing ${lang}/${kind} index`);
+    for (const post of available) for (const term of post.data[kind]) {
+      const slug = slugize(String(term), { transform: 1 });
+      const termPage = path.join(output, lang, kind, slug, 'index.html');
+      if (!fs.existsSync(termPage)) throw new Error(`Missing ${lang}/${kind}/${slug}`);
+      if (!fs.readFileSync(termPage, 'utf8').includes(post.data.title)) {
+        throw new Error(`Article missing from ${lang}/${kind}/${slug}: ${post.relativePath}`);
+      }
+    }
+  }
+  for (const post of available) {
+    const date = validDate(post.data.date).toISOString();
+    for (const period of [date.slice(0, 4), `${date.slice(0, 4)}/${date.slice(5, 7)}`]) {
+      const archive = path.join(output, lang, 'archives', period, 'index.html');
+      if (!fs.existsSync(archive) || !fs.readFileSync(archive, 'utf8').includes(post.data.title)) {
+        throw new Error(`Missing article from dated archive: ${lang}/${period}: ${post.relativePath}`);
+      }
+    }
   }
   for (const asset of ['feed.xml', 'sitemap.xml', 'manifest.webmanifest', 'offline.html', '404.html', 'search.json']) {
     if (!fs.existsSync(path.join(output, lang, asset))) throw new Error(`Missing ${lang}/${asset}`);

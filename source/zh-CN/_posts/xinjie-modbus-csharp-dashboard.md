@@ -5,6 +5,8 @@ date: 2025-04-22 10:00:00
 updated: 2025-04-22 10:00:00
 lang: zh-CN
 translation_key: xinjie-modbus-csharp-dashboard
+content_type: article
+domain: engineering
 published: true
 categories:
   - 工业控制

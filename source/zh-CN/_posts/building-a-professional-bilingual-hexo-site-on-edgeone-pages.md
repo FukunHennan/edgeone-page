@@ -5,6 +5,8 @@ date: 2026-07-18 01:30:00
 updated: 2026-07-18 01:30:00
 lang: zh-CN
 translation_key: building-a-professional-bilingual-hexo-site-on-edgeone-pages
+content_type: article
+domain: site
 published: true
 categories:
   - 工程实践

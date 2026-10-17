@@ -1,0 +1,35 @@
+---
+import Shell from '../../../../layouts/Shell.astro';
+import ArticleList from '../../../../components/ArticleList.astro';
+import { languages, postsFor, taxonomyFor, termSlug, type Language, type TaxonomyKind, type Post } from '../../../../lib/content';
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of languages) for (const section of ['categories', 'tags'] as const) {
+    const other = lang === 'zh-CN' ? 'en' : 'zh-CN';
+    const translations = new Map((await postsFor(other)).map((post) => [post.data.translation_key, post]));
+    for (const term of await taxonomyFor(lang, section)) {
+      const source = term.posts[0];
+      const counterpart = translations.get(source.data.translation_key);
+      const index = source.data[section].findIndex((name) => termSlug(name) === term.slug);
+      const translatedName = counterpart?.data[section][index];
+      if (!translatedName) throw new Error(`Missing ${other} ${section} translation for ${term.name}`);
+      const alternate = `/${other}/${section}/${termSlug(translatedName)}/`;
+      paths.push({ params: { lang, section, term: term.slug }, props: { name: term.name, posts: term.posts, alternate } });
+    }
+  }
+  return paths;
+}
+interface Props { name: string; posts: Post[]; alternate: string }
+const { name, posts, alternate } = Astro.props;
+const lang = Astro.params.lang as Language;
+const section = Astro.params.section as TaxonomyKind;
+const label = section === 'categories' ? (lang === 'zh-CN' ? '分类' : 'Categories') : (lang === 'zh-CN' ? '标签' : 'Tags');
+---
+<Shell lang={lang} title={`${label} · ${name}`} alternate={alternate}>
+  <section class="astro-collection">
+    <a class="astro-collection-back" href={`/${lang}/${section}/`}>{label}</a>
+    <h1>{name}</h1>
+    <p>{lang === 'zh-CN' ? `${posts.length} 篇文章` : `${posts.length} ${posts.length === 1 ? 'article' : 'articles'}`}</p>
+    <ArticleList posts={posts} lang={lang} />
+  </section>
+</Shell>

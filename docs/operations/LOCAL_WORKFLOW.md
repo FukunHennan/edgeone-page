@@ -48,4 +48,4 @@ npm run check
 git status -sb
 ```
 
-远端 CI 和 EdgeOne 部署由仓库工作流负责。没有明确授权时，本地助手不执行 `git push`、生产部署或删除远端内容。
+GitHub Actions 负责校验与保存产物，EdgeOne Git 集成负责生产部署。没有明确授权时，本地助手不执行 `git push`、生产部署或删除远端内容。
