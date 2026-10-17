@@ -19,10 +19,10 @@ function validateRecord(record, errors) {
   const data = record.data;
   const label = `${record.relativePath}: ${record.language}`;
   if (data.lang !== record.language) errors.push(`${label} must declare lang: ${record.language}`);
-  if (data.content_type !== undefined && !["article", "showcase", "interactive"].includes(data.content_type)) {
+  if (!["article", "showcase", "interactive"].includes(data.content_type)) {
     errors.push(`${label} content_type must be article, showcase, or interactive`);
   }
-  if (data.domain !== undefined && (typeof data.domain !== "string" || !data.domain.trim())) {
+  if (typeof data.domain !== "string" || !data.domain.trim()) {
     errors.push(`${label} domain must be a non-empty string`);
   }
   if (typeof data.title !== "string" || !data.title.trim()) errors.push(`${label} requires a title`);
@@ -42,6 +42,7 @@ function validateRecord(record, errors) {
   if (data.tags !== undefined && !Array.isArray(data.tags)) errors.push(`${label} tags must be an array`);
 
   if (!record.published) return;
+  if (data.domain === "unclassified") errors.push(`${label} published article requires a specific domain`);
   const description = typeof data.description === "string" ? data.description.trim() : "";
   if (description.length < 20 || description.length > 240) {
     errors.push(`${label} published article description must contain 20-240 characters`);
@@ -91,11 +92,16 @@ function validateBilingualContent() {
       if (pair["zh-CN"].data.translation_key !== pair.en.data.translation_key) {
         errors.push(`${relativePath}: translation_key values do not match`);
       }
-      if ((pair["zh-CN"].data.content_type || "article") !== (pair.en.data.content_type || "article")) {
+      if (pair["zh-CN"].data.content_type !== pair.en.data.content_type) {
         errors.push(`${relativePath}: content_type values do not match`);
       }
-      if ((pair["zh-CN"].data.domain || "") !== (pair.en.data.domain || "")) {
+      if (pair["zh-CN"].data.domain !== pair.en.data.domain) {
         errors.push(`${relativePath}: domain values do not match`);
+      }
+      for (const kind of ["categories", "tags"]) {
+        if (pair["zh-CN"].data[kind]?.length !== pair.en.data[kind]?.length) {
+          errors.push(`${relativePath}: ${kind} must have matching bilingual entries`);
+        }
       }
       if (pair["zh-CN"].published !== pair.en.published) {
         errors.push(`${relativePath}: both language versions must share the same publication state`);

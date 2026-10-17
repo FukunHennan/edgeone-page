@@ -5,6 +5,8 @@ date: 2026-09-14 10:00:00
 updated: 2026-09-14 10:00:00
 lang: en
 translation_key: openai-agents-starter-python
+content_type: article
+domain: development
 published: true
 categories:
   - Engineering

@@ -42,7 +42,7 @@ EdgeOne Skill 用于腾讯云 EdgeOne 侧的能力和知识，包括：
 
 - 线上项目：`edgeone-page`（ID `pages-xidayxfw3y70`），全球可用区（不含中国大陆），Provider 为 Github（GitHub 集成类型，平台按仓库构建，不接受直传目录）
 - 发布方式：推送到 `master` 后由平台按仓库构建发布；GitHub Actions 只做构建与审计，构建产物以 artifact 形式保留 7 天，作为手动兜底
-- 直传通道：CI 里的直传步骤默认跳过（`edgeone-page` 是 GitHub 集成类型，不支持直传），需要时把仓库变量 `EDGEONE_DEPLOY_MODE` 设为 `upload` 才会执行
+- CI 只构建、审计并保存产物；GitHub 集成类型不支持 CI 直传，因此仓库工作流不再包含直传步骤
 - 生产输出目录：`astro-dist`（Astro 构建；旧 Hexo 构建脚本仅作迁移参考）
 - 构建命令：`npm run build:production`（`edgeone.json` 指定 Node 22.21.1；本地按 `.node-version` 用 Node 22.23.2；npm 限定 10.x）
 - 账号下另有 `chenfukun-space` 项目，当前未绑定 `edgeone.chenfukun.space`；不要用它的 CLI 链接作为线上项目依据
@@ -89,7 +89,7 @@ EdgeOne 控制台负责生成自定义域名验证要求和 CNAME 目标，Cloud
 - 不在仓库中保存 Cloudflare 或 EdgeOne 凭据；
 - Cloudflare MCP 的读取、分析和写入权限应按任务最小化；
 - EdgeOne 预览域名可能需要带有效访问签名，正式访问应绑定自定义域名；
-- 中文版本是当前正式入口，英文版本暂保留在构建结构中但不作为当前导航入口。
+- 中文版本是默认入口，英文版本有独立页面和语言切换入口。
 
 ## 相关官方资源
 

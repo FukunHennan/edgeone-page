@@ -12,7 +12,7 @@
 - `showcase`：项目展示文章，可使用 `callout`、`grid`、`tabs`、`folding` 和 `button`。
 - `interactive`：需要独立前端交互的专题页。交互脚本放在主题或站点脚本目录，不直接在文章正文中写 `<script>`。
 
-未标记的旧文章暂按 `article` 处理，迁移时再补充字段。
+所有文章必须明确标记 `content_type`；未标记的文章无法通过构建检查。
 
 ## 功能域
 
@@ -29,27 +29,12 @@
 
 ## 组件规则
 
-优先使用主题已有的 Hexo 组件：
-
-```text
-{% callout type="info" title="说明" %}
-内容
-{% endcallout %}
-
-{% grid cols=2 %}
-{% ... %}
-{% endgrid %}
-
-{% tabs %}
-{% folding %}
-{% button %}
-```
-
-组件只表达结构和语义。颜色、间距、响应式行为统一由主题样式管理。文章中禁止新增大段内联 `<style>` 或 `<script>`；确需交互时，应创建可复用主题模块并在构建中验证。
+文章使用 Astro 内容集合渲染 Markdown；不要在新文章中写 Hexo 模板标签。
+组件只表达结构和语义。颜色、间距、响应式行为统一由主题样式管理。文章中禁止新增大段内联 `<style>` 或 `<script>`；确需交互时，应创建可复用的 Astro 页面或浏览器模块并在构建中验证。
 
 ## 目录策略
 
-当前保留 `source/<language>/_posts/` 作为 Hexo 发布入口，以保证双语校验和现有 URL 稳定。功能分类通过 Front Matter 的 `domain`、`categories` 和 `tags` 实现，不直接移动文件破坏 URL。
+当前保留 `source/<language>/_posts/` 作为 Astro 内容集合的源目录，以保证双语校验和现有 URL 稳定。功能分类通过 Front Matter 的 `domain`、`categories` 和 `tags` 实现，不直接移动文件破坏 URL。
 
 辅助资料按功能放置：
 
@@ -57,7 +42,7 @@
 data/                    重复使用的数据源
 docs/content/            文章架构和迁移规范
 docs/operations/         本地构建、同步和发布流程
-themes/.../scripts/      Hexo 组件和构建逻辑
+themes/.../scripts/      迁移保留的主题组件和构建逻辑
 themes/.../source/css/   组件样式
 themes/.../source/js/    浏览器交互
 ```
@@ -72,4 +57,4 @@ themes/.../source/js/    浏览器交互
 - 相同的 `domain`
 - 相同的发布状态
 
-每次迁移至少同时更新中英文版本，并执行 `npm run check:content`。
+每次更新至少同时检查中英文版本，并执行 `npm run check`。

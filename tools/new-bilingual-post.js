@@ -46,6 +46,8 @@ date: ${timestamp}
 updated: ${timestamp}
 lang: ${language}
 translation_key: ${slug}
+content_type: article
+domain: unclassified
 published: false
 categories:
   - ${definition.category}

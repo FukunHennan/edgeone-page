@@ -1,0 +1,30 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import ArticleList from '../../../components/ArticleList.astro';
+import { languages, postsFor, type Language, type Post } from '../../../lib/content';
+export async function getStaticPaths() {
+  const paths = [];
+  for (const lang of languages) {
+    const posts = await postsFor(lang);
+    const periods = new Set(posts.flatMap((post) => {
+      const date = post.data.date.toISOString();
+      return [date.slice(0, 4), `${date.slice(0, 4)}/${date.slice(5, 7)}`];
+    }));
+    for (const period of periods) {
+      paths.push({ params: { lang, period }, props: { posts: posts.filter((post) => post.data.date.toISOString().startsWith(period.replace('/', '-'))) } });
+    }
+  }
+  return paths;
+}
+interface Props { posts: Post[] }
+const { posts } = Astro.props;
+const lang = Astro.params.lang as Language;
+const period = Astro.params.period as string;
+---
+<Shell lang={lang} title={`${lang === 'zh-CN' ? '文章归档' : 'Writing'} · ${period.replace('/', '.')}`}>
+  <section class="astro-collection">
+    <a class="astro-collection-back" href={`/${lang}/archives/`}>{lang === 'zh-CN' ? '全部文章' : 'All writing'}</a>
+    <h1>{period.replace('/', '.')}</h1>
+    <ArticleList posts={posts} lang={lang} />
+  </section>
+</Shell>

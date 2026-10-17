@@ -1,5 +1,5 @@
 {
-  "name": "hexo-site",
+  "name": "edgeone-page",
   "version": "0.0.0",
   "private": true,
   "description": "A bilingual Astro site deployed on Tencent EdgeOne Pages.",
@@ -9,9 +9,8 @@
     "check:astro": "node tools/validate-bilingual.js && astro check",
     "build:astro": "npm run check:astro && astro build && node tools/postprocess-astro.cjs && node tools/audit-astro.cjs",
     "preview:astro": "astro preview --host 127.0.0.1",
-    "clean": "node -e \"for(const path of ['astro-dist','.astro','public','db.json'])require('fs').rmSync(path,{recursive:true,force:true})\"",
+    "clean": "node -e \"for(const path of ['astro-dist','.astro'])require('fs').rmSync(path,{recursive:true,force:true})\"",
     "dev": "npm run dev:astro",
-    "dev:en": "node tools/dev-preview.js --en",
     "build": "npm run build:production",
     "build:production": "node tools/check-runtime.js && npm run build:astro",
     "audit:production": "node tools/audit-astro.cjs",
@@ -20,11 +19,8 @@
     "check:articles": "node tools/check-articles.js",
     "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
-    "preview:production": "node tools/check-runtime.js && npm run build:production && node tools/preview-public.js",
-    "server": "npm run dev",
-    "server:zh-CN": "hexo server --config _config.yml,_config.zh-CN.yml",
-    "server:en": "hexo server --config _config.yml,_config.en.yml",
-    "deploy": "hexo deploy"
+    "preview:production": "node tools/check-runtime.js && npm run build:production && npm run preview:astro",
+    "server": "npm run dev"
   },
   "repository": {
     "type": "git",
@@ -38,26 +34,12 @@
     "node": ">=22.11.0 <23",
     "npm": ">=10.9.0 <11"
   },
-  "hexo": {
-    "version": "8.1.1"
-  },
   "dependencies": {
-    "hexo": "^8.0.0",
-    "hexo-generator-archive": "^2.0.0",
-    "hexo-generator-category": "^2.0.0",
-    "hexo-generator-feed": "^4.0.0",
-    "hexo-generator-index": "^4.0.0",
-    "hexo-generator-searchdb": "^1.5.0",
-    "hexo-generator-tag": "^2.0.0",
-    "hexo-renderer-ejs": "^2.0.0",
-    "hexo-renderer-marked": "^7.0.0",
-    "hexo-renderer-stylus": "^3.0.1",
-    "hexo-server": "^3.0.0",
-    "hexo-theme-landscape": "^1.0.0",
-    "hexo-wordcount": "^6.0.1",
-    "html2canvas-pro": "^2.4.4",
+    "ejs": "^3.1.10",
+    "hexo-util": "^4.0.0",
     "js-yaml": "^4.1.1",
-    "jspdf": "^4.2.1"
+    "nib": "^1.2.0",
+    "stylus": "^0.62.0"
   },
   "overrides": {
     "strip-ansi": "6.0.1"

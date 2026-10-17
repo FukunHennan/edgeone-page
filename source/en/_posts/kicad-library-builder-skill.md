@@ -5,6 +5,8 @@ date: 2026-09-11 14:00:00
 updated: 2026-09-11 14:00:00
 lang: en
 translation_key: kicad-library-builder-skill
+content_type: article
+domain: development
 published: true
 categories:
   - Hardware Engineering

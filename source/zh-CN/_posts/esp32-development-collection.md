@@ -5,6 +5,8 @@ date: 2026-04-28 16:00:00
 updated: 2026-04-28 16:00:00
 lang: zh-CN
 translation_key: esp32-development-collection
+content_type: article
+domain: robotics
 published: true
 categories:
   - 嵌入式

@@ -5,6 +5,8 @@ date: 2025-04-28 14:30:00
 updated: 2025-04-28 14:30:00
 lang: en
 translation_key: csharp-ni-measurement-integration
+content_type: article
+domain: engineering
 published: true
 categories:
   - Measurement & Instrumentation

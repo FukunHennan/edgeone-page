@@ -5,6 +5,8 @@ date: 2026-07-16 11:00:00
 updated: 2026-07-16 11:00:00
 lang: en
 translation_key: dvs-eventcamera-research
+content_type: article
+domain: vision
 published: true
 categories:
   - Computer Vision

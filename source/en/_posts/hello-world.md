@@ -5,6 +5,8 @@ date: 2026-07-17 13:30:00
 updated: 2026-07-18 01:30:00
 lang: en
 translation_key: hello-world
+content_type: article
+domain: site
 published: true
 categories:
   - Guides

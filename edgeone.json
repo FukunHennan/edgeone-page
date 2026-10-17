@@ -36,26 +36,6 @@
       "statusCode": 301
     },
     {
-      "source": "/zh-CN/tags/*",
-      "destination": "/zh-CN/archives/",
-      "statusCode": 301
-    },
-    {
-      "source": "/en/tags/*",
-      "destination": "/en/archives/",
-      "statusCode": 301
-    },
-    {
-      "source": "/zh-CN/categories/*",
-      "destination": "/zh-CN/archives/",
-      "statusCode": 301
-    },
-    {
-      "source": "/en/categories/*",
-      "destination": "/en/archives/",
-      "statusCode": 301
-    },
-    {
       "source": "/zh-CN/page/*",
       "destination": "/zh-CN/archives/",
       "statusCode": 301
@@ -76,23 +56,23 @@
       "statusCode": 301
     },
     {
-      "source": "/zh-CN/archives/2025/*",
-      "destination": "/zh-CN/archives/",
+      "source": "/zh-CN/archives/2025/page/*",
+      "destination": "/zh-CN/archives/2025/",
       "statusCode": 301
     },
     {
-      "source": "/en/archives/2025/*",
-      "destination": "/en/archives/",
+      "source": "/en/archives/2025/page/*",
+      "destination": "/en/archives/2025/",
       "statusCode": 301
     },
     {
-      "source": "/zh-CN/archives/2026/*",
-      "destination": "/zh-CN/archives/",
+      "source": "/zh-CN/archives/2026/page/*",
+      "destination": "/zh-CN/archives/2026/",
       "statusCode": 301
     },
     {
-      "source": "/en/archives/2026/*",
-      "destination": "/en/archives/",
+      "source": "/en/archives/2026/page/*",
+      "destination": "/en/archives/2026/",
       "statusCode": 301
     }
   ],

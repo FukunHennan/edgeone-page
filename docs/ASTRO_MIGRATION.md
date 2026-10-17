@@ -29,5 +29,7 @@ npm run preview:astro
 `tools/postprocess-astro.cjs` 生成 RSS、sitemap、robots、离线页、manifest 和
 service worker；`tools/audit-astro.cjs` 检查双语路由、资源与生产元数据。
 
-旧 Hexo 生成的标签、分类和归档分页 URL 由 `edgeone.json` 重定向到对应语言的
-文章归档。首页、项目、经历时间轴、简历、工具箱、文章和知识笔记均由 Astro 输出。
+旧 Hexo 的标签、分类及按年月归档地址由 Astro 生成等价的文章列表。旧分页地址
+重定向到对应的完整归档列表。首页、项目、经历时间轴、简历、工具箱、文章和知识笔记
+均由 Astro 输出。文章的 `content_type` 与 `domain` 已补齐；新文章草稿必须在发布前
+将 `domain: unclassified` 改成具体功能域。

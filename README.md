@@ -40,6 +40,8 @@ source/en/_posts/hello-world.md
 title: 你好，EdgeOne Page
 lang: zh-CN
 translation_key: hello-world
+content_type: article
+domain: site
 ---
 ```
 
@@ -50,6 +52,8 @@ translation_key: hello-world
 title: Hello, EdgeOne Page
 lang: en
 translation_key: hello-world
+content_type: article
+domain: site
 ---
 ```
 
@@ -68,7 +72,7 @@ source/zh-CN/_posts/my-article-slug.md
 source/en/_posts/my-article-slug.md
 ```
 
-然后分别完成中文和英文正文。文章保存后无需在访问时再次翻译。
+然后分别完成中文和英文正文，选择具体的 `domain`，并在发布前把 `published` 改为 `true`。文章保存后无需在访问时再次翻译。
 
 ## 本地预览
 
@@ -118,6 +122,7 @@ npm run build:production
 - `lang` 是否正确
 - `translation_key` 是否存在并一致
 - 同一语言内是否存在重复 `translation_key`
+- 文章类型、功能域和旧分类/标签地址对应的 Astro 页面是否完整
 
 任何检查失败都会阻止部署。
 

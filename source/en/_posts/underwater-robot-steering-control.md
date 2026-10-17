@@ -5,6 +5,8 @@ date: 2026-05-09 09:00:00
 updated: 2026-05-09 09:00:00
 lang: en
 translation_key: underwater-robot-steering-control
+content_type: article
+domain: robotics
 published: true
 categories:
   - Embedded Systems

@@ -5,6 +5,8 @@ date: 2026-08-26 10:30:00
 updated: 2026-08-26 10:30:00
 lang: zh-CN
 translation_key: dvsense-rgb-hikrobot-workstation
+content_type: article
+domain: vision
 published: true
 categories:
   - 计算机视觉

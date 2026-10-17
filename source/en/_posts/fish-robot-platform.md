@@ -5,6 +5,8 @@ date: 2026-09-16 15:00:00
 updated: 2026-09-16 15:00:00
 lang: en
 translation_key: fish-robot-platform
+content_type: article
+domain: robotics
 published: true
 categories:
   - Robotics
