@@ -1,15 +1,6 @@
 # EdgeOne Page
 
-## Astro 迁移验证
-
-正在以独立入口验证 Astro + TypeScript。第一阶段接入现有双语项目数据和文章，
-当前生产站点仍使用下面说明的 Hexo 构建。
-
-运行 `npm run dev:astro` 预览，`npm run check:astro` 检查类型，
-`npm run build:astro` 构建到 `astro-dist/`。
-范围、目录和后续切换条件见 [Astro 迁移说明](docs/ASTRO_MIGRATION.md)。
-
-EdgeOne Page 是一个面向腾讯云 EdgeOne Pages 的 Hexo 双语站点项目，只支持：
+EdgeOne Page 是部署在腾讯云 EdgeOne 国际站的 Astro 双语站点，使用以下语言：
 
 - 简体中文：`zh-CN`
 - English：`en`
@@ -21,8 +12,8 @@ EdgeOne Page 是一个面向腾讯云 EdgeOne Pages 的 Hexo 双语站点项目�
 生产构建会生成：
 
 ```text
-public/
-├── index.html          # 根据已保存语言或浏览器语言跳转
+astro-dist/
+├── index.html          # 跳转到中文首页
 ├── zh-CN/              # 简体中文站点
 └── en/                 # English site
 ```
@@ -87,19 +78,18 @@ source/en/_posts/my-article-slug.md
 npm ci
 ```
 
-预览简体中文：
+预览 Astro 站点：
 
 ```bash
-npm run server:zh-CN
+npm run dev:astro
 ```
 
-预览英文：
+生产构建完成后预览产物：
 
 ```bash
-npm run server:en
+npm run build:production
+npm run preview:astro
 ```
-
-默认 `npm run server` 打开简体中文站点。
 
 ## 校验与构建
 
@@ -144,16 +134,16 @@ npm run build:production
 
 因为双语文章使用相同的文件路径，所以切换后会直接打开对应语言版本，而不是返回首页。
 
-用户选择保存在浏览器 `localStorage` 中。访问站点根目录时，会优先使用已保存语言；没有保存记录时，中文浏览器进入简体中文，其余浏览器进入英文。
+站点根路径跳转到 `/zh-CN/`；每个页面都提供对应语言的入口。
 
 ## 配置文件
 
 ```text
-_config.yml                 # 两种语言共享的 Hexo 配置
-_config.zh-CN.yml           # 简体中文站点配置
-_config.en.yml              # 英文站点配置
-scripts/localized-theme.js  # 将语言配置应用到主题
-scripts/bilingual-runtime.js# 语言切换与 hreflang
+astro.config.mjs            # Astro 构建与站点 URL
+astro-src/                  # 页面、布局和交互
+astro-static/               # 静态资源
+edgeone.json                # EdgeOne 构建、路由和响应头
+source/{zh-CN,en}/          # 双语内容源
 ```
 
 更完整的设置说明见 [`CONFIGURATION.md`](CONFIGURATION.md)。
@@ -163,9 +153,9 @@ scripts/bilingual-runtime.js# 语言切换与 hreflang
 仓库中的 `.edgeone/config.json` 使用：
 
 - Build command：`npm run build:production`
-- Output directory：`public`
+- Output directory：`astro-dist`
 
-连接仓库的 `master` 分支后即可部署。
+国际站 `edgeone-page` 项目连接仓库的 `master` 分支，发布到 `edgeone.chenfukun.space`。`chenfukun.space` 根域名不作为当前发布入口。
 
 ## License
 

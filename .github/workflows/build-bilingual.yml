@@ -45,6 +45,8 @@ jobs:
           node --check tools/finalize-service-worker.js
           node --check tools/build-bilingual.js
           node --check tools/audit-production.js
+          node --check tools/postprocess-astro.cjs
+          node --check tools/audit-astro.cjs
 
       - name: Build and audit production output
         run: npm run check
@@ -53,8 +55,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: edgeone-public-${{ github.sha }}
-          path: public
+          name: edgeone-astro-${{ github.sha }}
+          path: astro-dist
           if-no-files-found: error
           retention-days: 7
 
@@ -64,7 +66,7 @@ jobs:
         if: github.event_name != 'pull_request' && vars.EDGEONE_DEPLOY_MODE == 'upload'
         env:
           EDGEONE_GLOBAL_TOKEN: ${{ secrets.EDGEONE_GLOBAL_TOKEN }}
-        run: npx --yes edgeone@1.6.39 makers deploy public -n edgeone-page -e production -a global -t "$EDGEONE_GLOBAL_TOKEN" --json
+        run: npx --yes edgeone@1.6.39 makers deploy astro-dist -n edgeone-page -e production -a global -t "$EDGEONE_GLOBAL_TOKEN" --json
 
       - name: Note publish path
         if: github.event_name != 'pull_request' && vars.EDGEONE_DEPLOY_MODE != 'upload'

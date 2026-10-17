@@ -27,7 +27,7 @@ const { post, lang, alternate } = Astro.props;
 const { Content, headings } = await render(post);
 const tools = 'registry' in post.data && post.data.registry === 'tools' ? yaml.load(lang === 'zh-CN' ? toolsZh : toolsEn) as unknown[] : null;
 ---
-<Shell lang={lang} title={post.data.title} description={'description' in post.data ? post.data.description : ''} alternate={alternate}>
+<Shell lang={lang} title={post.data.title} description={'description' in post.data ? post.data.description : ''} alternate={alternate} published={'date' in post.data ? post.data.date : undefined} updated={'updated' in post.data ? post.data.updated : undefined}>
   {tools ? <Fragment set:html={registryMarkup('tools', lang, tools)} /> : 'date' in post.data ? <article class="astro-article">
     <header><p><time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10)}</time></p><h1>{post.data.title}</h1><p>{post.data.description}</p></header>
     {headings.length > 0 && <details class="astro-toc"><summary>{lang === 'zh-CN' ? '文章目录' : 'Contents'}</summary><ul>{headings.filter((heading) => heading.depth <= 3).map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></details>}

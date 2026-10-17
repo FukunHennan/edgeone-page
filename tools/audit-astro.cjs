@@ -4,6 +4,12 @@ const path = require('node:path');
 const { collectLanguagePosts, isPublished, validDate } = require('./content-records');
 const yaml = require('js-yaml');
 const root = path.resolve(__dirname, '..');
+const output = path.join(root, 'astro-dist');
+const origin = 'https://edgeone.chenfukun.space';
+const config = JSON.parse(fs.readFileSync(path.join(root, 'edgeone.json'), 'utf8'));
+if (config.buildCommand !== 'npm run build:production' || config.outputDirectory !== 'astro-dist') {
+  throw new Error('EdgeOne must build and publish the Astro output.');
+}
 let articleCount = 0;
 for (const lang of ['zh-CN', 'en']) {
   const available = collectLanguagePosts(lang).filter((post) => isPublished(post.data) && validDate(post.data.date) <= new Date());
@@ -14,8 +20,18 @@ for (const lang of ['zh-CN', 'en']) {
     if (!html.includes(`lang="${lang}"`) || !html.includes('rel="canonical"') || !html.includes('hreflang=')) {
       throw new Error(`Missing language or SEO metadata: ${post.url}`);
     }
+    if (!html.includes(`${origin}${post.url}`) || !html.includes('"@type":"BlogPosting"')) {
+      throw new Error(`Missing production canonical or article schema: ${post.url}`);
+    }
     articleCount++;
   }
+  for (const asset of ['feed.xml', 'sitemap.xml', 'manifest.webmanifest', 'offline.html', '404.html', 'search.json']) {
+    if (!fs.existsSync(path.join(output, lang, asset))) throw new Error(`Missing ${lang}/${asset}`);
+  }
+  const manifest = JSON.parse(fs.readFileSync(path.join(output, lang, 'manifest.webmanifest'), 'utf8'));
+  if (manifest.lang !== lang || manifest.start_url !== `/${lang}/`) throw new Error(`Invalid ${lang} manifest`);
+  const feed = fs.readFileSync(path.join(output, lang, 'feed.xml'), 'utf8');
+  if ((feed.match(/<item>/g) || []).length !== Math.min(available.length, 30)) throw new Error(`Invalid ${lang} RSS feed`);
   const projects = yaml.load(fs.readFileSync(path.join(root, 'data', lang, 'projects.yml'), 'utf8'));
   const home = fs.readFileSync(path.join(root, 'astro-dist', lang, 'index.html'), 'utf8');
   for (const marker of ['mimo-home-art', 'mimo-art-dots', 'mimo-art-word', 'hub-quick-grid', '/theme/style.css', 'personal-hub-navbar']) {
@@ -35,4 +51,11 @@ for (const lang of ['zh-CN', 'en']) {
 for (const asset of ['theme/style.css', 'theme/tailwind.css', 'theme/images/稻田鼠.jpg', 'theme/js/Swup.min.js', 'theme/js/SwupSlideTheme.min.js']) {
   if (!fs.existsSync(path.join(root, 'astro-dist', asset))) throw new Error(`Missing original theme asset: ${asset}`);
 }
+for (const asset of ['index.html', '404.html', 'robots.txt', 'sitemap.xml', 'service-worker.js', 'icons/稻田鼠.jpg', 'language-manifest.json']) {
+  if (!fs.existsSync(path.join(output, asset))) throw new Error(`Missing production asset: ${asset}`);
+}
+const robots = fs.readFileSync(path.join(output, 'robots.txt'), 'utf8');
+if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`) || robots.includes('Disallow: /')) throw new Error('Production robots.txt blocks indexing');
+const worker = fs.readFileSync(path.join(output, 'service-worker.js'), 'utf8');
+if (!worker.includes('edgeone-page-') || worker.includes('Date.now')) throw new Error('Service worker cache version is unstable');
 console.log(`[astro audit] ${articleCount} articles, bilingual project pages and project references passed.`);

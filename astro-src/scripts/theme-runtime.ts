@@ -26,6 +26,18 @@ function initPage() {
     try { localStorage.setItem('REDEFINE-THEME-STATUS', JSON.stringify({ isDark: dark })); } catch {}
   }, { signal }));
   document.querySelector('.navbar-bar')?.addEventListener('click', () => document.documentElement.classList.toggle('astro-menu-open'), { signal });
+  const projects = document.querySelector('.projects-workspace');
+  const projectItems = projects?.querySelectorAll<HTMLElement>('.project-workspace-grid article');
+  const projectCount = projects?.querySelector('#project-count');
+  projects?.querySelectorAll<HTMLButtonElement>('[data-project-filter]').forEach((button) => button.addEventListener('click', () => {
+    projects.querySelectorAll('[data-project-filter]').forEach((item) => item.classList.toggle('active', item === button));
+    let visible = 0;
+    projectItems?.forEach((item) => {
+      item.hidden = button.dataset.projectFilter !== 'all' && !item.dataset.kind?.split(' ').includes(button.dataset.projectFilter || '');
+      if (!item.hidden) visible++;
+    });
+    if (projectCount) projectCount.textContent = `${visible} ${document.documentElement.lang === 'en' ? 'projects' : '个项目'}`;
+  }, { signal }));
   const language = document.documentElement.lang;
   const dialog = document.querySelector<HTMLDialogElement>('#astro-search'); const input = document.querySelector<HTMLInputElement>('#astro-search-input'); const list = document.querySelector('#astro-search-results');
   let searchData: { title: string; url: string; description: string }[] | undefined;
