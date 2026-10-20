@@ -25,4 +25,6 @@
 
 ## 注意
 
-此目录是设计原型，不参与正式内容模型。正式站点页面仍由 Hexo + `themes/edg-one-page` 构建。原型确认后，将组件逐步迁移到 EJS partial / Stylus，并保持中文、英文和移动端一致。
+此目录是设计原型，不参与正式内容模型。正式站点已迁移到 Astro（`astro-src/`），
+不再由 Hexo + `themes/edg-one-page` 构建。本 Demo 仅作视觉与交互意图参考，
+正式实现以 `astro-src/` 为准，并保持中文、英文和移动端一致。

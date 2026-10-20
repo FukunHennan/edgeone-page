@@ -1,221 +1,221 @@
-# EdgeOne Page 双语配置指南
+# EdgeOne Page 配置指南
+
+本指南说明站点的配置文件、内容目录和 Front Matter 要求。快速上手见
+[`README.md`](README.md)。
 
 ## 1. 支持的语言
 
-项目只支持两个语言代码：
+站点只支持两个语言代码，分别构建为独立的静态站点：
 
 ```text
-zh-CN
- en
+zh-CN   简体中文
+en      English
 ```
 
-不再支持繁体中文，也不在浏览器中即时翻译文章正文。
+不再支持繁体中文，也不在浏览器中即时翻译文章正文。文章正文分别保存在中文和
+英文两套 Markdown 里，选择语言后打开对应语言的静态页面。
 
 ## 2. 配置分层
 
-项目配置分为三层：
+当前配置由以下文件组成：
+
+| 文件 | 作用 |
+| --- | --- |
+| `astro.config.mjs` | Astro 构建配置：站点 URL、源目录、输出目录、静态输出 |
+| `edgeone.json` | EdgeOne 生产构建、Node 版本、重定向和响应头（现行主配置） |
+| `.edgeone/config.json` | EdgeOne Pages 旧配置，仅保留 `build.command` 与 `build.output` |
+| `.node-version` | 本地开发使用的 Node 版本 |
+| `package.json` | npm 脚本、依赖和 Node/npm 版本范围 |
+
+`astro.config.mjs` 的关键设置：
+
+- `site: https://edgeone.chenfukun.space`
+- `srcDir: ./astro-src`（页面、布局、交互源码）
+- `publicDir: ./astro-static`（静态资源）
+- `outDir: ./astro-dist`（生产产物，不提交到 Git）
+- `output: static`、`trailingSlash: always`
+
+构建前会检查 Node 版本，低于 22.12 直接报错。
+
+### Node 版本口径
+
+| 场景 | 版本 | 来源 |
+| --- | --- | --- |
+| 本地开发 | 22.23.2 | `.node-version` |
+| EdgeOne 平台构建 | 22.21.1 | `edgeone.json` 的 `nodeVersion` |
+| 最低要求 | ≥ 22.12 | `astro.config.mjs` 的启动检查 |
+
+npm 使用 10.x（`package.json` 的 `engines` 限定 `>=10.9.0 <11`）。
+
+## 3. 内容目录
 
 ```text
-_config.yml
-_config.zh-CN.yml
-_config.en.yml
+source/
+├── zh-CN/
+│   ├── _posts/       博客文章（Astro 内容集合源目录）
+│   ├── notes/        知识笔记
+│   ├── projects/     项目页
+│   ├── tools/        工具页
+│   ├── experience/   经历时间轴
+│   ├── resume/       简历
+│   └── about/        关于
+└── en/               （同结构）
 ```
 
-- `_config.yml`：永久链接、分页、代码高亮等共享设置。
-- `_config.zh-CN.yml`：简体中文站点标题、描述、目录和本地化文字。
-- `_config.en.yml`：英文站点标题、描述、目录和本地化文字。
-- `themes/edg-one-page/_config.yml`：主题默认设置；站点语言文件中的 `localized_theme` 会在构建时覆盖需要本地化的主题值。
-
-修改域名时，需要同步更新两个语言配置中的 `url`：
-
-```yaml
-# _config.zh-CN.yml
-url: https://your-domain.example/zh-CN
-root: /zh-CN/
-
-# _config.en.yml
-url: https://your-domain.example/en
-root: /en/
-```
-
-## 3. 双语文章目录
-
-简体中文文章：
+重复使用的数据放在：
 
 ```text
-source/zh-CN/_posts/
+data/
+├── zh-CN/
+│   ├── projects.yml   项目档案
+│   └── tools.yml      工具箱
+└── en/                （同结构）
 ```
 
-英文文章：
+`astro-src/` 是页面、布局和浏览器交互源码：
 
 ```text
-source/en/_posts/
+astro-src/
+├── components/     页面组件（如 ArticleList）
+├── layouts/        布局（Shell）
+├── lib/            内容与主题逻辑
+├── pages/          路由与页面（含 [lang]、[section]、archives、projects）
+├── scripts/        浏览器运行时
+└── styles/         站点样式
 ```
-
-同一篇文章必须拥有相同的相对路径。例如：
-
-```text
-source/zh-CN/_posts/guides/install.md
-source/en/_posts/guides/install.md
-```
-
-这样构建后会得到：
-
-```text
-/zh-CN/posts/guides/install/
-/en/posts/guides/install/
-```
-
-语言切换时可以直接替换 URL 中的语言代码。
 
 ## 4. Front Matter 要求
 
-中文版本：
+文章 Front Matter 由 `astro-src/content.config.ts` 校验，字段如下：
+
+| 字段 | 是否必填 | 说明 |
+| --- | --- | --- |
+| `title` | 必填 | 标题 |
+| `lang` | 必填 | `zh-CN` 或 `en`，必须与所在目录一致 |
+| `translation_key` | 必填 | 双语文章共享的标识，中英文必须一致 |
+| `content_type` | 必填 | `article` / `showcase` / `interactive` |
+| `domain` | 必填 | 功能域，非空字符串 |
+| `date` | 必填 | 发布日期 |
+| `description` | 可选 | 摘要 |
+| `updated` | 可选 | 更新日期 |
+| `tags` | 可选 | 标签数组，默认 `[]` |
+| `categories` | 可选 | 分类数组，默认 `[]` |
+| `published` | 可选 | 是否发布，默认 `true` |
+| `draft` | 可选 | 是否草稿，默认 `false` |
+| `slug` / `permalink` | 可选 | 覆盖默认路径 |
+
+中文示例：
 
 ```yaml
 ---
 title: 安装指南
-date: 2026-07-17 12:00:00
 lang: zh-CN
 translation_key: install-guide
-categories:
-  - 指南
+content_type: article
+domain: engineering
+date: 2026-07-17
 tags:
   - 安装
+categories:
+  - 指南
 ---
 ```
 
-英文版本：
+英文版本只翻译 `title`、`tags`、`categories` 和正文，其余字段保持一致：
 
 ```yaml
 ---
 title: Installation Guide
-date: 2026-07-17 12:00:00
 lang: en
 translation_key: install-guide
-categories:
-  - Guides
+content_type: article
+domain: engineering
+date: 2026-07-17
 tags:
   - Installation
+categories:
+  - Guides
 ---
 ```
 
-`title`、分类、标签和正文可以分别翻译，但两个文件的 `translation_key` 必须完全一致。
+`content_type` 取值：
 
-## 5. 创建新文章
+- `article`：普通技术文章，以 Markdown 为主。
+- `showcase`：项目展示文章，可使用 `callout`、`grid`、`tabs`、`folding` 和 `button`。
+- `interactive`：需要独立前端交互的专题页。
 
-推荐使用双语文章生成器：
+`domain` 推荐值：`engineering`、`robotics`、`vision`、`development`、`research`、`site`。
+中英文版本的 `content_type` 和 `domain` 必须一致。
+
+## 5. 项目数据
+
+项目档案不在文章里维护，而在 `data/<lang>/projects.yml`，字段为 `key`、`status`、
+`category`、`label`、`title`、`description`、`tags`、`github`、`post` 和 `order`。
+`key` 在同一语言内不能重复，构建时按 `order` 排序。
+
+## 6. 创建新文章
 
 ```bash
 npm run new:post -- install-guide
 ```
 
-文章标识只允许小写字母、数字和连字符。命令会同时创建中英文模板，避免忘记其中一个版本。
+这会同时创建 `source/zh-CN/_posts/install-guide.md` 和
+`source/en/_posts/install-guide.md`，避免遗漏其中一个语言版本。文章标识只允许
+小写字母、数字和连字符。
 
-## 6. 内容校验
-
-运行：
-
-```bash
-npm run check:content
-```
-
-检查内容包括：
-
-1. 每篇中文文章都有英文版本。
-2. 每篇英文文章都有中文版本。
-3. 两个版本相对路径相同。
-4. `lang` 与所在目录一致。
-5. `translation_key` 存在且相同。
-6. 同一语言内不能重复使用 `translation_key`。
-
-校验失败时，生产构建和 GitHub Actions 都会失败。
-
-## 7. 本地开发
-
-简体中文：
+## 7. 内容校验
 
 ```bash
-npm run server:zh-CN
+npm run check:content     # 只检查双语文章是否成对
+npm run check             # 完整校验并生产构建
 ```
 
-英文：
+校验器检查：中英文文章是否同时存在、相对路径是否相同、`lang` 是否正确、
+`translation_key` 是否存在且一致、同一语言内是否重复、`content_type`/`domain`/
+`published` 是否合法，以及分类、标签、旧文章地址对应的 Astro 页面是否完整。
+任何检查失败都会阻止部署。
 
-```bash
-npm run server:en
-```
+## 8. 常用命令
 
-两个命令分别读取对应语言配置，界面、首页介绍和文章内容都会使用相应语言。
+| 命令 | 作用 |
+| --- | --- |
+| `npm run dev`（或 `dev:astro`、`server`） | 启动 Astro 本地开发服务 |
+| `npm run check` | 完整校验并构建（部署前的门禁） |
+| `npm run check:content` | 只校验双语文章成对 |
+| `npm run build:production`（或 `build`） | 生产构建，输出 `astro-dist/` |
+| `npm run preview:astro` | 预览生产产物 |
 
-## 8. 生产构建
+`dev`、`build`、`server` 是 `dev:astro`、`build:production` 的别名。
 
-```bash
-npm ci
-npm run build:production
-```
+## 9. EdgeOne Pages
 
-构建器会依次生成两个站点：
+现行主配置是 `edgeone.json`：
 
-```text
-public/zh-CN/
-public/en/
-```
+- 安装命令：`npm ci`
+- 构建命令：`npm run build:production`
+- 输出目录：`astro-dist`
+- Node 版本：`22.21.1`
 
-同时生成 `public/index.html` 作为语言入口。入口优先读取用户上一次选择，没有记录时再根据浏览器语言跳转。
+`.edgeone/config.json` 是旧配置，仅保留 `build.command` 和 `build.output`（同样指向
+`astro-dist`），与 `edgeone.json` 保持一致。
 
-## 9. 导航与语言切换
+国际站 `edgeone-page` 项目连接仓库的 `master` 分支，发布到
+`edgeone.chenfukun.space`。`chenfukun.space` 根域名不作为当前发布入口。
 
-语言选择器只保留：
+## 10. 重定向与响应头
 
-```text
-简体中文
-English
-```
+`edgeone.json` 中维护了旧地址的重定向（301）：
 
-切换程序会：
+- `/zh`、`/zh/*`、`/cn`、`/cn/*` → `/zh-CN/`
+- `/en-US`、`/en-US/*` → `/en/`
+- 旧分页 `/zh-CN/page/*`、`/en/page/*` 及年月归档分页 → 对应完整归档列表
 
-- 保存用户选择
-- 保留查询参数和锚点
-- 将 `/zh-CN/` 替换为 `/en/`，或反向替换
-- 在对应文章不存在时回退到目标语言首页
-- 输出 `hreflang="zh-CN"`、`hreflang="en"` 和 `x-default`
+同时为全站设置安全响应头（`X-Content-Type-Options`、`X-Frame-Options`、
+`Referrer-Policy`、`Permissions-Policy`），并为 `service-worker.js` 和
+`manifest.webmanifest` 设置专用 Content-Type 与缓存策略。
 
-## 10. 界面翻译
+## 11. 语言切换
 
-主题界面语言文件只保留：
-
-```text
-themes/edg-one-page/languages/zh-CN.yml
-themes/edg-one-page/languages/en.yml
-```
-
-新增菜单或界面文案时，需要同时维护这两个文件。
-
-文章正文不要写入语言包，应分别写在双语 Markdown 文件中。
-
-## 11. 评论系统
-
-评论默认关闭。启用 Giscus 后，`scripts/localized-theme.js` 会根据当前站点语言设置评论界面语言。
-
-```yaml
-comment:
-  enable: true
-  system: giscus
-```
-
-不要把密钥、令牌或其他敏感信息提交到仓库。
-
-## 12. EdgeOne Pages
-
-`.edgeone/config.json` 应保持：
-
-```json
-{
-  "build": {
-    "command": "npm run build:production",
-    "output": "public"
-  }
-}
-```
-
-GitHub Actions 也会检查中文首页、英文首页和示例文章的两个语言版本是否成功生成。
+导航栏只保留「简体中文」和「English」。切换时保留当前页面路径，把 `/zh-CN/`
+替换为 `/en/`（或反向）；因为双语文章使用相同相对路径，切换后直接打开对应语言
+版本，而不是返回首页。站点根路径跳转到 `/zh-CN/`，每个页面都提供对应语言入口。

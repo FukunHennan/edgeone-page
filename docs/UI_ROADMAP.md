@@ -1,5 +1,9 @@
 # Personal Hub UI Roadmap
 
+> ⚠️ 历史文档：本文档跟踪的是 Hexo 时代的界面建设。项目已迁移到 Astro，页面实现
+> 位于 `astro-src/`。下方状态与「下一阶段任务」中的 Hexo/EJS 迁移方向已由 Astro
+> 迁移取代，仅保留页面状态与 Design Tokens 作为参考。
+
 本文档用于跟踪界面建设，避免一边开发一边重新定义页面。
 
 ## 页面状态

@@ -130,15 +130,16 @@ Experience ─ Project ─ Notes
 
 ## 8. 目录约定
 
-主题 UI：
+界面（已迁移到 Astro）：
 
 ```text
-themes/edg-one-page/
-├── layout/
-│   ├── components/
-│   └── pages/
-└── source/css/
-    └── layout/
+astro-src/
+├── components/     页面组件（如 ArticleList）
+├── layouts/        布局（Shell）
+├── lib/            内容与主题逻辑
+├── pages/          路由与页面
+├── scripts/        浏览器运行时
+└── styles/         站点样式
 ```
 
 内容：
@@ -146,14 +147,17 @@ themes/edg-one-page/
 ```text
 source/
 ├── zh-CN/
-│   ├── _posts/
-│   ├── notes/
-│   ├── projects/
-│   ├── tools/
-│   └── experience/
-└── en/
+│   ├── _posts/       博客文章
+│   ├── notes/        知识笔记
+│   ├── projects/     项目页
+│   ├── tools/        工具页
+│   ├── experience/   经历时间轴
+│   ├── resume/       简历
+│   └── about/        关于
+└── en/               （同结构）
 ```
 
+重复使用的数据放在 `data/{zh-CN,en}/`（`projects.yml`、`tools.yml`）。
 设计文档统一放在 `docs/`。
 
 ## 9. 开发阶段
