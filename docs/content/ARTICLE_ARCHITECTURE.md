@@ -39,13 +39,20 @@
 辅助资料按功能放置：
 
 ```text
-data/                    重复使用的数据源
-docs/content/            文章架构和迁移规范
-docs/operations/         本地构建、同步和发布流程
-themes/.../scripts/      迁移保留的主题组件和构建逻辑
-themes/.../source/css/   组件样式
-themes/.../source/js/    浏览器交互
+data/                         重复使用的数据源（项目、工具箱）
+astro-src/                    页面、布局、内容集合和浏览器交互
+tools/                        内容校验、资源准备和构建后处理
+themes/edg-one-page/          Astro 仍读取的主题资源，见下方说明
+docs/content/                 文章架构和迁移规范
+docs/operations/              本地构建、同步和发布流程
 ```
+
+主题目录只保留 Astro 构建实际读取的部分：`_config.yml`（供 Stylus 的
+`hexo-config()` 取值）、`source/css/`（`style.styl` 及其 `@require` 树和
+`build/tailwind.css`）、`source/{images,fonts,fontawesome,webfonts}/`、
+`source/js/toolbox.js`、`source/js/libs/` 中简历页用到的两个 PDF 库与五个
+Swup 文件，以及 `layout/` 下的 `home-banner.ejs`、`home-content.ejs`、
+`navbar.ejs`。其余主题文件已随迁移清理删除。
 
 ## 双语要求
 

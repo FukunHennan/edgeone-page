@@ -28,8 +28,12 @@ function prepareTheme() {
     const dir = path.join(ROOT, 'astro-static', lang, 'js');
     fs.mkdirSync(dir, { recursive: true });
     fs.copyFileSync(path.join(SOURCE, 'js/toolbox.js'), path.join(dir, 'toolbox.js'));
-    fs.cpSync(path.join(SOURCE, 'js/libs'), path.join(dir, 'libs'), { recursive: true });
-    fs.cpSync(path.join(SOURCE, 'js/libs'), path.join(dir, 'build/libs'), { recursive: true });
+    // 简历页的打印/PDF 导出引用 ../js/libs/ 下这两个库；其余 libs 文件没有任何页面引用。
+    const libs = path.join(dir, 'libs');
+    fs.mkdirSync(libs, { recursive: true });
+    for (const name of ['html2canvas-pro.min.js', 'jspdf.umd.min.js']) {
+      fs.copyFileSync(path.join(SOURCE, 'js/libs', name), path.join(libs, name));
+    }
   }
 }
 module.exports = { prepareTheme };

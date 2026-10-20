@@ -25,6 +25,6 @@ npm run preview:astro
 搜索与页面切换。EdgeOne 国际站从 `master` 自动构建 `astro-dist/`；
 生产域名仅为 `edgeone.chenfukun.space`。
 
-旧 Hexo 配置、主题模板和 `public/` 仅供视觉资源复用及历史地址核对，
-不参与生产生成器或 CI 发布。主题 CSS/图片与少量 EJS 局部模板仍由
-Astro 构建读取，修改它们需要重新构建验证。
+旧 Hexo 配置、站点脚本、模板脚手架和 `public/` 构建产物已随迁移清理删除，
+需要核对历史地址时查 Git 历史。主题目录只保留 Astro 仍读取的部分：CSS、
+字体、图片、Swup 库、`toolbox.js` 和 3 个 EJS 模板；修改它们需要重新构建验证。

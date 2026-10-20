@@ -43,7 +43,7 @@ EdgeOne Skill 用于腾讯云 EdgeOne 侧的能力和知识，包括：
 - 线上项目：`edgeone-page`（ID `pages-xidayxfw3y70`），全球可用区（不含中国大陆），Provider 为 Github（GitHub 集成类型，平台按仓库构建，不接受直传目录）
 - 发布方式：推送到 `master` 后由平台按仓库构建发布；GitHub Actions 只做构建与审计，构建产物以 artifact 形式保留 7 天，作为手动兜底
 - CI 只构建、审计并保存产物；GitHub 集成类型不支持 CI 直传，因此仓库工作流不再包含直传步骤
-- 生产输出目录：`astro-dist`（Astro 构建；旧 Hexo 构建脚本仅作迁移参考）
+- 生产输出目录：`astro-dist`（Astro 构建；旧 Hexo 构建脚本已随迁移清理删除）
 - 构建命令：`npm run build:production`（`edgeone.json` 指定 Node 22.21.1；本地按 `.node-version` 用 Node 22.23.2；npm 限定 10.x）
 - 账号下另有 `chenfukun-space` 项目，当前未绑定 `edgeone.chenfukun.space`；不要用它的 CLI 链接作为线上项目依据
 
