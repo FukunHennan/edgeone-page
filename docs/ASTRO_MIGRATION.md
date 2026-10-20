@@ -12,7 +12,7 @@
 - `data/{zh-CN,en}/projects.yml`：双语项目档案。
 - `astro-dist/`：构建产物，不提交到 Git。
 
-现有 Hexo 源码和 `public/` 构建仍保留用于迁移核对，但不参与 EdgeOne 生产构建。
+旧 Hexo 配置、站点脚本、模板脚手架和 `public/` 构建产物已随迁移清理删除，需要时查 Git 历史。主题目录只保留 Astro 仍读取的资源：`_config.yml`、CSS、字体、图片、`toolbox.js`、简历页用的两个 PDF 库与 Swup 文件，以及 `home-banner`/`home-content`/`navbar` 三个 EJS 模板。
 
 ## 本地命令
 
