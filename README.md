@@ -155,10 +155,13 @@ source/{zh-CN,en}/          # 双语内容源
 
 ## EdgeOne Pages
 
-仓库中的 `.edgeone/config.json` 使用：
+现行主配置是 `edgeone.json`：
 
 - Build command：`npm run build:production`
 - Output directory：`astro-dist`
+- Node 版本：`22.21.1`
+
+`.edgeone/config.json` 是旧配置，仅保留构建命令和输出目录，同样指向 `astro-dist`。
 
 国际站 `edgeone-page` 项目连接仓库的 `master` 分支，发布到 `edgeone.chenfukun.space`。`chenfukun.space` 根域名不作为当前发布入口。
 

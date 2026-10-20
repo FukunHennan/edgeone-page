@@ -16,7 +16,8 @@
 
 ## 本地命令
 
-使用 Node 22.21.1 或更新的 22.x 与 npm 10.x：
+本地按 `.node-version` 使用 Node 22.23.2，平台构建在 `edgeone.json` 钉 22.21.1；
+两者都满足 ≥ 22.12 的要求。使用 npm 10.x：
 
 ```sh
 npm ci

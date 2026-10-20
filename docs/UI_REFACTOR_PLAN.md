@@ -1,8 +1,14 @@
 # Personal Hub UI 全面重构计划
 
+> ⚠️ 历史文档：本计划针对 Hexo 时代的主题重构。项目已迁移到 Astro，生产入口为
+> `astro-src/`，下文「Hexo / Theme / EJS partial」的执行方向已不再沿用。分层思路
+> （Design Tokens → Global Shell → Workspace → Content → Interaction）仍可作为
+> Design System 的参考。
+
 ## 目标
 
-把当前“Hexo 主题 + 新页面局部样式”彻底收敛成一套 Personal Hub Design System。Hexo 只负责内容和生成，Theme 负责完整产品界面。
+把当前“Hexo 主题 + 新页面局部样式”彻底收敛成一套 Personal Hub Design System。内容
+与生成由构建器负责（现已切换到 Astro），界面由统一的 Design System 承载。
 
 ## Layer 1 — Design Tokens
 
