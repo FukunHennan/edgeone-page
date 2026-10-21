@@ -1,11 +1,12 @@
 import initMimoInspired from '../../themes/edg-one-page/source/js/layouts/mimoInspired.js';
 import initWorkspaces from '../../themes/edg-one-page/source/js/layouts/personalHubWorkspaces.js';
+import { initArticleToc } from './article-toc';
 type SwupInstance = { hooks: { on: (event: string, callback: () => void) => void; before: (event: string, callback: () => void) => void } };
 const globals = window as unknown as Record<string, new (options?: Record<string, unknown>) => unknown>;
 let pageScope = new AbortController();
 function initPage() {
   pageScope.abort(); pageScope = new AbortController(); const signal = pageScope.signal;
-  initMimoInspired({ signal }); initWorkspaces();
+  initMimoInspired({ signal }); initWorkspaces(); initArticleToc(signal);
   const backLink = document.querySelector<HTMLAnchorElement>('[data-history-back]');
   const backLabel = backLink?.querySelector('[data-history-back-label]');
   const state = history.state || {};
@@ -52,14 +53,11 @@ function initPage() {
       const li = document.createElement('li'); const link = document.createElement('a'); link.href = item.url; link.textContent = item.title; li.append(link); list.append(li);
     }
   }, { signal });
-  if (document.querySelector('.toolbox-workspace')) {
-    const script = document.createElement('script'); script.src = `/${language}/js/toolbox.js`; document.body.append(script); signal.addEventListener('abort', () => script.remove(), { once: true });
-  }
 }
 initPage();
 if (globals.Swup && !location.pathname.includes('/resume/')) {
   const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
-  const plugins = ['SwupProgressPlugin','SwupScrollPlugin','SwupPreloadPlugin'].filter((name) => globals[name]).map((name) => new globals[name](name === 'SwupScrollPlugin' ? { offset: 80 } : {}));
+  const plugins = ['SwupProgressPlugin','SwupScrollPlugin','SwupPreloadPlugin'].filter((name) => globals[name]).map((name) => new globals[name](name === 'SwupScrollPlugin' ? { offset: 96 } : {}));
   if (!reduced && globals.SwupSlideTheme) plugins.push(new globals.SwupSlideTheme({ mainElement: '.main-content-body' }));
   const swup = new globals.Swup({ containers: ['#swup'], plugins, linkSelector: 'a[href]:not([href*="/resume/"]):not([lang])' }) as SwupInstance;
   swup.hooks.before('content:replace', () => { pageScope.abort(); document.documentElement.classList.remove('astro-menu-open'); }); swup.hooks.on('page:view', initPage);

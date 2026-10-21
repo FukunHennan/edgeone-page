@@ -27,7 +27,6 @@ function prepareTheme() {
   for (const lang of ['zh-CN', 'en']) {
     const dir = path.join(ROOT, 'astro-static', lang, 'js');
     fs.mkdirSync(dir, { recursive: true });
-    fs.copyFileSync(path.join(SOURCE, 'js/toolbox.js'), path.join(dir, 'toolbox.js'));
     // 简历页的打印/PDF 导出引用 ../js/libs/ 下这两个库；其余 libs 文件没有任何页面引用。
     const libs = path.join(dir, 'libs');
     fs.mkdirSync(libs, { recursive: true });
