@@ -1,0 +1,45 @@
+---
+import type { Language } from '../lib/content';
+interface Props { lang: Language }
+const { lang } = Astro.props;
+const zh = lang === 'zh-CN';
+const slides = [
+  { src: '/scenes/mountain-lake.svg', alt: zh ? '薄雾中的群山与宁静湖面' : 'Quiet alpine lake with mountains in morning mist', caption: zh ? '山间清晨' : 'Morning by the lake', english: 'MOUNTAIN LAKE' },
+  { src: '/scenes/soft-coast.svg', alt: zh ? '晚霞下柔和宁静的海岸线' : 'A quiet coastline under a soft pastel sunset', caption: zh ? '日落海岸' : 'Along the coast', english: 'SOFT COAST' },
+  { src: '/scenes/green-meadow.svg', alt: zh ? '阳光洒向起伏的绿色草甸' : 'Sunshine falls across rolling green meadows', caption: zh ? '风吹草甸' : 'The open meadow', english: 'GREEN MEADOW' },
+  { src: '/scenes/misty-forest.svg', alt: zh ? '清晨雾气萦绕的树林和溪流' : 'A misty evergreen forest with a quiet stream', caption: zh ? '林间微光' : 'A gentle forest', english: 'MISTY FOREST' },
+];
+---
+<section class="calm-home" data-calm-carousel aria-roledescription={zh ? '风景轮播' : 'Scenic carousel'} aria-label={zh ? '放慢脚步，看看风景' : 'A moment to slow down'}>
+  <div class="calm-slides" aria-live="off">
+    {slides.map((slide, index) => (
+      <figure class:list={['calm-slide', { 'is-active': index === 0 }]} data-calm-slide aria-hidden={index !== 0}>
+        <img src={slide.src} alt={slide.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} width="1600" height="900" />
+        <figcaption class="calm-caption"><span>{String(index + 1).padStart(2, '0')} / 04</span><span>{slide.caption}</span><small>{slide.english}</small></figcaption>
+      </figure>
+    ))}
+  </div>
+  <div class="calm-overlay" aria-hidden="true"></div>
+  <div class="calm-content">
+    <p class="calm-eyebrow">{zh ? '稻田鼠 · 一处安静的角落' : 'A QUIET CORNER OF THE WEB'}</p>
+    <h1>{zh ? '慢一点，' : 'Take a moment,'}<span>{zh ? '也很好。' : 'stay a while.'}</span></h1>
+    <p class="calm-description">{zh ? '看看山川和光影。生活不只有忙碌，也有值得停留的风景。' : 'For the mountains, the light, and the little things worth noticing.'}</p>
+    <div class="calm-links">
+      <a href={`/${lang}/archives/`}>{zh ? '读一读我的故事' : 'Read the journal'} <span aria-hidden="true">↗</span></a>
+      <a href={`/${lang}/projects/`}>{zh ? '看看我在做什么' : 'Explore my work'} <span aria-hidden="true">↗</span></a>
+    </div>
+  </div>
+  <div class="calm-controls" aria-label={zh ? '轮播控制' : 'Slideshow controls'}>
+    <div class="calm-dots">
+      {slides.map((slide, index) => (
+        <button type="button" class:list={['calm-dot', { 'is-active': index === 0 }]} data-calm-dot={index} aria-label={zh ? `查看第 ${index + 1} 张：${slide.caption}` : `Show slide ${index + 1}: ${slide.caption}`} aria-current={index === 0 ? 'true' : undefined}><span></span></button>
+      ))}
+    </div>
+    <div class="calm-control-buttons">
+      <button class="calm-arrow" type="button" data-calm-prev aria-label={zh ? '上一张图片' : 'Previous image'}>←</button>
+      <button class="calm-toggle" type="button" data-calm-pause aria-label={zh ? '暂停轮播' : 'Pause slideshow'} aria-pressed="false">Ⅱ</button>
+      <button class="calm-arrow" type="button" data-calm-next aria-label={zh ? '下一张图片' : 'Next image'}>→</button>
+    </div>
+  </div>
+  <p class="sr-only" aria-live="polite" aria-atomic="true" data-calm-announcement></p>
+</section>
