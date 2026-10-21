@@ -39,3 +39,8 @@ html.astro-menu-open{overflow:hidden}
 #astro-search-results a{display:block;min-height:42px;padding:8px 2px;color:var(--hub-text);text-decoration:none}
 #astro-search-results a:hover,#astro-search-results a:focus-visible{color:var(--mimo-green)}
 #astro-search-results .search-feedback{color:var(--hub-muted);font-size:14px;border:0}
+
+@media(max-width:600px){
+  .hub-drawer-bottom{flex-wrap:wrap;gap:12px}
+  .hub-mobile-actions button.icon-item{min-height:44px}
+}
