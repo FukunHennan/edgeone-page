@@ -27,3 +27,15 @@ html.astro-menu-open .personal-hub-navbar .navbar-drawer{transform:none!importan
   .astro-prose{font-size:16px;line-height:1.85}
 }
 .astro-toc-mobile summary:focus-visible{outline:2px solid var(--mimo-green);outline-offset:3px}
+
+/* Touch-friendly mobile navigation and drawer accessibility */
+.hub-mobile-actions button.icon-item{appearance:none;background:transparent;border:0;color:var(--hub-text);cursor:pointer}
+.hub-mobile-actions button.navbar-bar,.hub-mobile-actions button.search{width:44px;height:44px;min-width:44px;display:inline-flex;align-items:center;justify-content:center}
+.personal-hub-navbar .navbar-drawer{visibility:hidden;pointer-events:none}
+html.astro-menu-open .personal-hub-navbar .navbar-drawer{visibility:visible;pointer-events:auto}
+html.astro-menu-open .personal-hub-navbar .window-mask{visibility:visible;opacity:1;pointer-events:auto}
+html.astro-menu-open{overflow:hidden}
+.drawer-theme-toggle{padding:10px 12px;border:1px solid var(--hub-line);border-radius:9px;background:transparent;color:var(--hub-text);cursor:pointer;font-size:13px}
+#astro-search-results a{display:block;min-height:42px;padding:8px 2px;color:var(--hub-text);text-decoration:none}
+#astro-search-results a:hover,#astro-search-results a:focus-visible{color:var(--mimo-green)}
+#astro-search-results .search-feedback{color:var(--hub-muted);font-size:14px;border:0}
