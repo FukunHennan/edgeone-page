@@ -8,9 +8,10 @@ type Entry = { link: HTMLAnchorElement; section: HTMLElement };
  * 未到第一节时高亮第一节。随 Swup 换页由 theme-runtime 的 pageScope signal 统一销毁重建。
  */
 export function initArticleToc(signal: AbortSignal) {
-  const toc = document.querySelector('.astro-toc');
-  if (!toc) return;
-  const links = [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+  const tocs = [...document.querySelectorAll('.astro-toc')];
+  if (!tocs.length) return;
+  // Desktop sticky navigation and mobile disclosure share the same headings.
+  const links = tocs.flatMap((toc) => [...toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')]);
   const entries = links
     .map((link) => ({ link, section: document.getElementById(decodeURIComponent(link.hash.slice(1))) }))
     .filter((entry): entry is Entry => Boolean(entry.section));
@@ -28,7 +29,7 @@ export function initArticleToc(signal: AbortSignal) {
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
     if (maxScroll > 0 && window.scrollY >= maxScroll - 4) current = entries[entries.length - 1];
     for (const entry of entries) {
-      const active = entry === current;
+      const active = entry.section === current.section;
       entry.link.classList.toggle('is-active', active);
       if (active) entry.link.setAttribute('aria-current', 'location');
       else entry.link.removeAttribute('aria-current');

@@ -1,6 +1,7 @@
-const bindFilter = ({ root, buttonSelector, itemSelector, countSelector, filterData, suffix, searchable = false }) => {
+const bindFilter = ({ root, buttonSelector, itemSelector, countSelector, filterData, suffix, searchable = false, signal }) => {
   if (!root || root.dataset.workspaceBound === "true") return;
   root.dataset.workspaceBound = "true";
+  signal?.addEventListener("abort", () => { delete root.dataset.workspaceBound; }, { once: true });
   const count = root.querySelector(countSelector);
   const input = searchable ? root.querySelector(".workspace-search input") : null;
   let filter = "all";
@@ -17,7 +18,9 @@ const bindFilter = ({ root, buttonSelector, itemSelector, countSelector, filterD
       if (show) visible += 1;
     });
     buttons.forEach((button) => {
-      button.classList.toggle("active", (button.dataset[filterData] || "all") === filter);
+      const active = (button.dataset[filterData] || "all") === filter;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
     });
     if (count) count.textContent = `${visible} ${suffix}`;
   };
@@ -26,14 +29,14 @@ const bindFilter = ({ root, buttonSelector, itemSelector, countSelector, filterD
     if (!button) return;
     filter = button.dataset[filterData] || "all";
     render();
-  });
-  input?.addEventListener("input", render);
+  }, { signal });
+  input?.addEventListener("input", render, { signal });
   render();
 };
 
-export default function initPersonalHubWorkspaces() {
+export default function initPersonalHubWorkspaces({ signal } = {}) {
   const notes = document.querySelector(".notes-workspace");
-  if (notes) bindFilter({ root: notes, buttonSelector: "[data-note-filter]", itemSelector: ".note-list article", countSelector: "#note-count", filterData: "noteFilter", suffix: document.documentElement.lang?.startsWith("zh") ? "个主题" : "topics", searchable: true });
+  if (notes) bindFilter({ root: notes, buttonSelector: "[data-note-filter]", itemSelector: ".note-list article", countSelector: "#note-count", filterData: "noteFilter", suffix: document.documentElement.lang?.startsWith("zh") ? "个主题" : "topics", searchable: true, signal });
   const projects = document.querySelector(".projects-workspace");
-  if (projects) bindFilter({ root: projects, buttonSelector: "[data-project-filter]", itemSelector: ".project-workspace-grid article", countSelector: "#project-count", filterData: "projectFilter", suffix: document.documentElement.lang?.startsWith("zh") ? "个项目" : "projects" });
+  if (projects) bindFilter({ root: projects, buttonSelector: "[data-project-filter]", itemSelector: ".project-workspace-grid article", countSelector: "#project-count", filterData: "projectFilter", suffix: document.documentElement.lang?.startsWith("zh") ? "个项目" : "projects", signal });
 }
