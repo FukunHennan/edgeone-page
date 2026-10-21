@@ -1,9 +1,12 @@
 ---
 import Shell from '../../layouts/Shell.astro';
-import { languages, postsFor, type Language } from '../../lib/content';
-import { themePartial } from '../../lib/theme';
+import CalmCarousel from '../../components/CalmCarousel.astro';
+import { languages, type Language } from '../../lib/content';
 export function getStaticPaths() { return languages.map((lang) => ({ params: { lang } })); }
 const lang = Astro.params.lang as Language;
-const posts = await postsFor(lang);
 ---
-<Shell lang={lang} title={lang === 'zh-CN' ? '首页' : 'Home'}><Fragment slot="hero" set:html={themePartial('hero', lang, Astro.url.pathname)} /><Fragment set:html={themePartial('dashboard', lang, Astro.url.pathname, posts)} /></Shell>
+<Shell lang={lang}
+  title={lang === 'zh-CN' ? '首页' : 'Home'}
+  description={lang === 'zh-CN' ? '慢一点，也很好。稻田鼠的个人角落：记录技术、创作与沿途风景。' : 'Take a moment, stay a while. A quiet personal space for learning, making, and creating.'}>
+  <CalmCarousel lang={lang} />
+</Shell>
