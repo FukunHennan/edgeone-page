@@ -69,7 +69,7 @@ for (const lang of ['zh-CN', 'en']) {
     const url = new URL(project.post, `https://chenfukun.space/${lang}/projects/`).pathname;
     if (!available.some((post) => post.url === url)) throw new Error(`Broken project reference: ${project.key}: ${url}`);
   }
-  for (const page of ['projects', 'archives', 'notes', 'tools', 'experience', 'resume', 'about']) {
+  for (const page of ['projects', 'archives', 'notes', 'experience', 'resume', 'about']) {
     if (!fs.existsSync(path.join(root, 'astro-dist', lang, page, 'index.html'))) throw new Error(`Missing ${lang}/${page}`);
   }
 }

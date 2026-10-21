@@ -1,11 +1,7 @@
 ---
 import { render, getCollection, type CollectionEntry } from 'astro:content';
 import Shell from '../layouts/Shell.astro';
-import { languages, postsFor, postPath, type Post, type Language } from '../lib/content';
-import { registryMarkup } from '../lib/theme';
-import toolsZh from '../../data/zh-CN/tools.yml?raw';
-import toolsEn from '../../data/en/tools.yml?raw';
-import yaml from 'js-yaml';
+import { languages, postsFor, postPath, termSlug, type Post, type Language } from '../lib/content';
 export async function getStaticPaths() {
   const posts = (await Promise.all(languages.map(postsFor))).flat();
   const urls = new Set<string>();
@@ -25,12 +21,32 @@ export async function getStaticPaths() {
 interface Props { post: Post | CollectionEntry<'pagesZh'> | CollectionEntry<'pagesEn'>; lang: Language; alternate: string }
 const { post, lang, alternate } = Astro.props;
 const { Content, headings } = await render(post);
-const tools = 'registry' in post.data && post.data.registry === 'tools' ? yaml.load(lang === 'zh-CN' ? toolsZh : toolsEn) as unknown[] : null;
+const day = (value?: Date) => value?.toISOString().slice(0, 10);
+const termLink = (section: string, name: string) => `/${lang}/${section}/${termSlug(name)}/`;
+const tocHeadings = headings.filter((heading) => heading.depth <= 3);
 ---
 <Shell lang={lang} title={post.data.title} description={'description' in post.data ? post.data.description : ''} alternate={alternate} published={'date' in post.data ? post.data.date : undefined} updated={'updated' in post.data ? post.data.updated : undefined}>
-  {tools ? <Fragment set:html={registryMarkup('tools', lang, tools)} /> : 'date' in post.data ? <article class="astro-article">
-    <header><p><time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10)}</time></p><h1>{post.data.title}</h1><p>{post.data.description}</p></header>
-    {headings.length > 0 && <details class="astro-toc"><summary>{lang === 'zh-CN' ? '文章目录' : 'Contents'}</summary><ul>{headings.filter((heading) => heading.depth <= 3).map((heading) => <li><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul></details>}
-    <div class="astro-prose"><Content /></div>
+  {'date' in post.data ? <article class="astro-article">
+    <header class="astro-article-head">
+      <p class="astro-article-date"><time datetime={post.data.date.toISOString()}>{day(post.data.date)}</time></p>
+      <h1>{post.data.title}</h1>
+      {post.data.description && <p class="astro-lede">{post.data.description}</p>}
+    </header>
+    <aside class="astro-article-rail">
+      {tocHeadings.length > 0 && <nav class="astro-toc" aria-label={lang === 'zh-CN' ? '文章目录' : 'Contents'}>
+        <p class="astro-rail-title">{lang === 'zh-CN' ? '文章目录' : 'Contents'}</p>
+        <ul>{tocHeadings.map((heading) => <li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
+      </nav>}
+      <div class="astro-article-meta">
+        <p class="astro-rail-title">{lang === 'zh-CN' ? '文章信息' : 'Details'}</p>
+        <dl>
+          <div><dt>{lang === 'zh-CN' ? '发布' : 'Published'}</dt><dd><time datetime={post.data.date.toISOString()}>{day(post.data.date)}</time></dd></div>
+          {post.data.updated && <div><dt>{lang === 'zh-CN' ? '更新' : 'Updated'}</dt><dd><time datetime={post.data.updated.toISOString()}>{day(post.data.updated)}</time></dd></div>}
+          {post.data.categories.length > 0 && <div><dt>{lang === 'zh-CN' ? '分类' : 'Categories'}</dt><dd class="astro-terms">{post.data.categories.map((name) => <a href={termLink('categories', name)}>{name}</a>)}</dd></div>}
+          {post.data.tags.length > 0 && <div><dt>{lang === 'zh-CN' ? '标签' : 'Tags'}</dt><dd class="astro-terms">{post.data.tags.map((name) => <a href={termLink('tags', name)}>{name}</a>)}</dd></div>}
+        </dl>
+      </div>
+    </aside>
+    <div class="astro-article-body"><div class="astro-prose"><Content /></div></div>
   </article> : <Content />}
 </Shell>
