@@ -104,7 +104,7 @@ html{scrollbar-color:#a5b4fc transparent}
 }
 .hub-mini-tags span:hover{background:rgba(139,92,246,.18);color:#8b8cf7}
 
-/* ---------- 入场动效（backwards 避免锁死 hover 变换） ---------- */
+/* ---------- 入场动效：Hero 保留，卡片交给 mimoInspired 的 IntersectionObserver ---------- */
 @keyframes hubRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .hub-hero-copy>*{animation:hubRise .72s var(--hub-ease) backwards}
 .hub-hero-copy>*:nth-child(1){animation-delay:.04s}
@@ -113,15 +113,15 @@ html{scrollbar-color:#a5b4fc transparent}
 .hub-hero-copy>*:nth-child(4){animation-delay:.28s}
 .hub-hero-copy>*:nth-child(5){animation-delay:.36s}
 .hub-stats{animation:hubRise .8s var(--hub-ease) .44s backwards}
-.hub-section-head{animation:hubRise .62s var(--hub-ease) .1s backwards}
-.hub-quick-card{animation:hubRise .58s var(--hub-ease) backwards}
+.hub-section-head{animation:none}
+.hub-quick-card{animation:none}
 .hub-quick-card:nth-child(1){animation-delay:.06s}
 .hub-quick-card:nth-child(2){animation-delay:.12s}
 .hub-quick-card:nth-child(3){animation-delay:.18s}
 .hub-quick-card:nth-child(4){animation-delay:.24s}
 .hub-quick-card:nth-child(5){animation-delay:.3s}
 .hub-quick-card:nth-child(6){animation-delay:.36s}
-.hub-dashboard-grid>section{animation:hubRise .66s var(--hub-ease) backwards}
+.hub-dashboard-grid>section{animation:none}
 .hub-dashboard-grid>section:nth-child(1){animation-delay:.1s}
 .hub-dashboard-grid>section:nth-child(2){animation-delay:.18s}
 .hub-dashboard-grid>section:nth-child(3){animation-delay:.26s}

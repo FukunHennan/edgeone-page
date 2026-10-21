@@ -11,7 +11,8 @@ const navItems = [
   { id: 'about', zh: '关于', en: 'About', path: '/about/', icon: 'fa-regular fa-user' }
 ];
 const languageOptions = [
-  { code: 'zh-CN', label: '简体中文' }
+  { code: 'zh-CN', label: '简体中文' },
+  { code: 'en', label: 'English' }
 ];
 function itemActive(item) {
   if (item.id === 'home') return is_home();
@@ -52,7 +53,7 @@ function itemActive(item) {
         <button class="hub-nav-icon tool-dark-light-toggle" type="button" aria-label="<%= isZh ? '切换主题' : 'Toggle theme' %>">
           <i class="fa-regular fa-moon"></i>
         </button>
-        <span class="hub-lang-label" aria-label="当前语言">简体中文</span>
+        <span class="hub-lang-label" aria-label="<%= isZh ? '当前语言' : 'Current language' %>"><%= isZh ? '简体中文' : 'English' %></span>
         <a class="hub-github-link" href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">
           <i class="fa-brands fa-github"></i><span>GitHub</span><b>↗</b>
         </a>
@@ -60,14 +61,14 @@ function itemActive(item) {
 
       <div class="mobile hub-mobile-actions">
         <% if (theme.navbar.search.enable === true) { %>
-          <div class="icon-item search search-popup-trigger"><i class="fa-solid fa-magnifying-glass"></i></div>
+          <button class="icon-item search search-popup-trigger" type="button" aria-label="<%= isZh ? '搜索' : 'Search' %>"><i class="fa-solid fa-magnifying-glass"></i></button>
         <% } %>
-        <div class="icon-item navbar-bar" aria-label="<%= isZh ? '菜单' : 'Menu' %>"><div class="navbar-bar-middle"></div></div>
+        <button class="icon-item navbar-bar" type="button" aria-controls="mobile-site-navigation" aria-expanded="false" aria-label="<%= isZh ? '菜单' : 'Menu' %>"><span class="navbar-bar-middle"></span></button>
       </div>
     </div>
   </div>
 
-  <div class="navbar-drawer h-dvh w-full absolute top-0 left-0 flex flex-col justify-between">
+  <div id="mobile-site-navigation" class="navbar-drawer h-dvh w-full absolute top-0 left-0 flex flex-col justify-between">
     <div class="hub-drawer-head">
       <span class="hub-brand-mark"><img src="<%= url_for('/images/稻田鼠.jpg') %>" alt="稻田鼠"></span>
       <span><strong>稻田鼠</strong><small>BUILD · LEARN · CREATE</small></span>
@@ -88,6 +89,7 @@ function itemActive(item) {
           <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
         <% }); %>
       </select>
+      <button type="button" class="tool-dark-light-toggle drawer-theme-toggle"><%= isZh ? '切换主题' : 'Toggle theme' %></button>
       <a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>

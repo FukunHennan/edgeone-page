@@ -33,7 +33,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
       {post.data.description && <p class="astro-lede">{post.data.description}</p>}
     </header>
     <aside class="astro-article-rail">
-      {tocHeadings.length > 0 && <nav class="astro-toc" aria-label={lang === 'zh-CN' ? '文章目录' : 'Contents'}>
+      {tocHeadings.length > 0 && <nav class="astro-toc astro-toc-desktop" aria-label={lang === 'zh-CN' ? '文章目录' : 'Contents'}>
         <p class="astro-rail-title">{lang === 'zh-CN' ? '文章目录' : 'Contents'}</p>
         <ul>{tocHeadings.map((heading) => <li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
       </nav>}
@@ -47,6 +47,12 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
         </dl>
       </div>
     </aside>
+    {tocHeadings.length > 0 && <details class="astro-toc-mobile">
+      <summary>{lang === 'zh-CN' ? '文章目录' : 'Contents'}</summary>
+      <nav class="astro-toc" aria-label={lang === 'zh-CN' ? '文章目录' : 'Contents'}>
+        <ul>{tocHeadings.map((heading) => <li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
+      </nav>
+    </details>}
     <div class="astro-article-body"><div class="astro-prose"><Content /></div></div>
   </article> : <Content />}
 </Shell>
