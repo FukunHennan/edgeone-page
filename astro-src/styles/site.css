@@ -11,3 +11,19 @@
 #astro-search{width:min(650px,calc(100% - 32px));max-height:80vh;border:1px solid var(--hub-line);border-radius:16px;background:var(--hub-surface);color:var(--hub-text);padding:24px}#astro-search::backdrop{background:rgba(0,0,0,.4)}#astro-search input{width:100%;padding:10px;border:1px solid var(--hub-line);background:var(--hub-bg);color:var(--hub-text)}#astro-search form{text-align:right}#astro-search-results{padding:0;list-style:none}#astro-search-results li{padding:12px 0;border-bottom:1px solid var(--hub-line)}
 html.astro-menu-open .personal-hub-navbar .navbar-drawer{transform:none!important;opacity:1!important;visibility:visible!important;display:flex!important;z-index:101}html.astro-menu-open .personal-hub-navbar .navbar-bar{z-index:102}
 @media(prefers-reduced-motion:reduce){html.is-changing *,html.is-animating *{transition:none!important;animation:none!important}}@media print{.personal-hub-navbar,.astro-language,.astro-skip,.astro-article-rail{display:none!important}.astro-article{width:100%;margin:0;display:block}.main-content-container{padding-top:0!important}body{background:#fff!important;color:#000!important}}
+
+/* Mobile reading: collapsible contents before the article; metadata follows it. */
+.astro-toc-mobile{display:none}
+@media(max-width:768px){
+  .astro-article{width:min(720px,calc(100% - 32px));grid-template-areas:"head" "toc" "body" "rail";gap:18px 0}
+  .astro-toc-desktop{display:none}
+  .astro-toc-mobile{display:block;grid-area:toc;min-width:0;border:1px solid var(--hub-line);border-radius:13px;background:var(--hub-surface)}
+  .astro-toc-mobile summary{position:relative;cursor:pointer;list-style:none;display:flex;align-items:center;justify-content:space-between;min-height:48px;padding:12px 16px;font-size:14px;font-weight:650}
+  .astro-toc-mobile summary::-webkit-details-marker{display:none}
+  .astro-toc-mobile summary::after{content:"+";font-size:20px;color:var(--mimo-green);line-height:1}
+  .astro-toc-mobile[open] summary::after{content:"−"}
+  .astro-toc-mobile .astro-toc{margin:0 10px 10px;border:0;border-top:1px solid var(--hub-line);border-radius:0;max-height:min(45vh,300px);overflow-y:auto}
+  .astro-article-meta{margin-top:0}
+  .astro-prose{font-size:16px;line-height:1.85}
+}
+.astro-toc-mobile summary:focus-visible{outline:2px solid var(--mimo-green);outline-offset:3px}
