@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Soft pastel evening light over a quiet sea">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#adb5c8"/><stop offset=".43" stop-color="#e8c7bd"/><stop offset=".87" stop-color="#f9dbc0"/><stop offset="1" stop-color="#f8e4ca"/></linearGradient><linearGradient id="sea" x2="0" y2="1"><stop stop-color="#98b8bd"/><stop offset="1" stop-color="#446f7b"/></linearGradient><linearGradient id="sand" x2="0" y2="1"><stop stop-color="#e9d0b1"/><stop offset="1" stop-color="#d0b697"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="40"/></filter><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".38" numOctaves="2" seed="8" stitchTiles="stitch"/></filter></defs>
+<path fill="url(#sky)" d="M0 0h1600v900H0z"/>
+<ellipse cx="1145" cy="333" rx="128" ry="128" fill="#ffead1" opacity=".5" filter="url(#glow)"/><circle cx="1145" cy="333" r="66" fill="#fff0d8" opacity=".91"/>
+<path d="M0 510q320-7 660 0t940-1v391H0z" fill="url(#sea)"/><path d="M0 520q320-8 580 2t480-1q290-9 540 0" fill="none" stroke="#f6e6d7" stroke-width="7" opacity=".55"/>
+<path d="M0 506q100-50 183-38 69 10 136 42zm794 4q66-42 140-29 49 8 85 29zm521 4q162-83 285-39v37z" fill="#8d929a" opacity=".58"/>
+<path d="M1085 519q35 80 17 160-10 67 43 113 35-60 23-128-17-93 21-147" fill="#ffeed2" opacity=".17"/>
+<path d="M0 606q250 19 500-6t511 2q300 18 589-3M0 681q250-14 515 0t520 2q261-11 565-3M0 765q350 14 656-7t566 0q190 20 378 4" stroke="#e1e4dc" stroke-width="3" fill="none" opacity=".33"/>
+<path d="M0 720q186-71 317-34 105 32 244 74-236-18-360 51L0 861z" fill="url(#sand)"/>
+<path d="M1600 733q-251-80-456-30-95 21-180 77 183-27 323 44l313 76z" fill="#b5b5a5" opacity=".55"/>
+<path d="M0 854q260-113 428-74t349 120H0z" fill="#637878"/><path d="M1600 833q-187-53-333-15t-221 82h554z" fill="#5d7775"/>
+<g fill="#405f5b"><path d="M25 900l53-177 13 177zm42-5 89-142-19 147zm141 5-33-147 96 147zm126 0 4-131 60 131zM1448 900l-13-168 79 168zm95 0 22-150 35 150z"/></g>
+<path d="M0 0h1600v900H0z" filter="url(#grain)" opacity=".075"/></svg>

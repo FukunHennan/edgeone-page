@@ -1,12 +1,13 @@
 import initMimoInspired from '../../themes/edg-one-page/source/js/layouts/mimoInspired.js';
 import initWorkspaces from '../../themes/edg-one-page/source/js/layouts/personalHubWorkspaces.js';
 import { initArticleToc } from './article-toc';
+import { initCalmCarousel } from './calm-carousel';
 type SwupInstance = { hooks: { on: (event: string, callback: () => void) => void; before: (event: string, callback: () => void) => void } };
 const globals = window as unknown as Record<string, new (options?: Record<string, unknown>) => unknown>;
 let pageScope = new AbortController();
 function initPage() {
   pageScope.abort(); pageScope = new AbortController(); const signal = pageScope.signal;
-  initMimoInspired({ signal }); initWorkspaces({ signal }); initArticleToc(signal);
+  initMimoInspired({ signal }); initWorkspaces({ signal }); initArticleToc(signal); initCalmCarousel(signal);
   const backLink = document.querySelector<HTMLAnchorElement>('[data-history-back]');
   const backLabel = backLink?.querySelector('[data-history-back-label]');
   const state = history.state || {};
