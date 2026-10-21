@@ -59,8 +59,12 @@ for (const lang of ['zh-CN', 'en']) {
   if ((feed.match(/<item>/g) || []).length !== Math.min(available.length, 30)) throw new Error(`Invalid ${lang} RSS feed`);
   const projects = yaml.load(fs.readFileSync(path.join(root, 'data', lang, 'projects.yml'), 'utf8'));
   const home = fs.readFileSync(path.join(root, 'astro-dist', lang, 'index.html'), 'utf8');
-  for (const marker of ['mimo-home-art', 'mimo-art-dots', 'mimo-art-word', 'hub-quick-grid', '/theme/style.css', 'personal-hub-navbar']) {
-    if (!home.includes(marker)) throw new Error(`Missing original visual element in ${lang}: ${marker}`);
+  // The homepage intentionally replaces the old dense dashboard with a quiet gallery.
+  for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-dot', 'data-calm-pause', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
+    if (!home.includes(marker)) throw new Error(`Missing calm homepage element in ${lang}: ${marker}`);
+  }
+  if (home.includes('hub-quick-grid') || home.includes('hub-dashboard-grid')) {
+    throw new Error(`Legacy dashboard leaked into the calm homepage: ${lang}`);
   }
   const projectHtml = fs.readFileSync(path.join(root, 'astro-dist', lang, 'projects', 'index.html'), 'utf8');
   if (!projectHtml.includes('workspace-sidebar') || !projectHtml.includes('project-workspace-grid')) throw new Error(`Original project layout missing: ${lang}`);
@@ -72,6 +76,9 @@ for (const lang of ['zh-CN', 'en']) {
   for (const page of ['projects', 'archives', 'notes', 'experience', 'resume', 'about']) {
     if (!fs.existsSync(path.join(root, 'astro-dist', lang, page, 'index.html'))) throw new Error(`Missing ${lang}/${page}`);
   }
+}
+for (const asset of ['scenes/mountain-lake.svg', 'scenes/soft-coast.svg', 'scenes/green-meadow.svg', 'scenes/misty-forest.svg']) {
+  if (!fs.existsSync(path.join(output, asset))) throw new Error(`Missing homepage scene asset: ${asset}`);
 }
 for (const asset of ['theme/style.css', 'theme/tailwind.css', 'theme/images/稻田鼠.jpg', 'theme/js/Swup.min.js', 'theme/js/SwupSlideTheme.min.js']) {
   if (!fs.existsSync(path.join(root, 'astro-dist', asset))) throw new Error(`Missing original theme asset: ${asset}`);

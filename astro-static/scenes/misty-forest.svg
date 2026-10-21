@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-label="Misty evergreen forest and a quiet stream at dawn">
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#7e9da5"/><stop offset=".7" stop-color="#becabc"/><stop offset="1" stop-color="#d6d5be"/></linearGradient><linearGradient id="trees" x2="0" y2="1"><stop stop-color="#6a8c7e"/><stop offset="1" stop-color="#345e56"/></linearGradient><linearGradient id="stream" x2="0" y2="1"><stop stop-color="#b5c9bb"/><stop offset="1" stop-color="#648b83"/></linearGradient><filter id="fog"><feGaussianBlur stdDeviation="38"/></filter><filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".4" numOctaves="2" seed="13" stitchTiles="stitch"/></filter></defs>
+<path fill="url(#sky)" d="M0 0h1600v900H0z"/><ellipse cx="880" cy="244" rx="300" ry="140" fill="#e9e9ce" opacity=".42" filter="url(#fog)"/>
+<path d="M0 595q250-40 440-3 300 34 520-17 332-42 640 4v321H0z" fill="#9aafa0"/>
+<g fill="#668879" opacity=".45"><path d="m70 590 54-280 64 280zm122-5 65-330 69 330zm177-8 55-279 57 279zm211 0 50-292 65 292zm190 0 70-333 72 333zm218 0 67-307 64 307zm204 0 51-259 58 259zm169 0 69-323 78 323z"/></g>
+<path d="M0 666q273-86 520-30 285 65 590-5 248-57 490-13v282H0z" fill="url(#trees)"/>
+<g fill="#365f57" opacity=".87"><path d="m0 772 100-478 110 478zm160-23 102-507 115 507zm186-3 70-388 90 388zm833-13 85-462 110 462zm181 21 90-479 113 479zm125 20 66-392 80 392z"/></g>
+<path d="M640 900q290-85 332-173 46-75 184-119-181 40-241 126-61 84-396 166z" fill="url(#stream)" opacity=".91"/><path d="M705 900q231-88 282-171t122-99" stroke="#e1e8d7" stroke-width="8" fill="none" opacity=".52"/>
+<path d="M0 803q184-101 333-83 196 22 317 180H0zM1600 787q-171-99-289-62-150 42-240 175h529z" fill="#2e594f"/>
+<g stroke="#9db3a0" stroke-width="3" stroke-linecap="round" opacity=".55"><path d="M56 900l23-70m55 70-13-77m234 77 7-56m72 56-20-49m875 49 16-62m119 62-14-90m101 90 8-65"/></g>
+<path d="M0 0h1600v900H0z" filter="url(#grain)" opacity=".075"/></svg>
