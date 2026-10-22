@@ -436,3 +436,39 @@
 @media(max-width:768px){
   .scenic-inner .astro-collection{margin-top:82px}
 }
+
+/* Approved temporary cover artwork, kept distinct from scenic page backgrounds.
+   Both modes use original generated art, not repeated landscape photographs. */
+.scenic-inner .scenic-story-image,
+.scenic-inner .project-cover{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  aspect-ratio:16/9;
+  background:#f2f1e9;
+}
+.scenic-inner .scenic-story-image .cover-image,
+.scenic-inner .project-cover .cover-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  transition:transform .3s ease;
+}
+.scenic-inner .cover-dark{display:none!important}
+.dark .scenic-inner .cover-light{display:none!important}
+.dark .scenic-inner .cover-dark{display:block!important}
+.scenic-inner .scenic-story-image:hover .cover-image{transform:none}
+.scenic-inner .project-cover{
+  margin:-22px -22px 0;
+  border-radius:13px 13px 0 0;
+  border-bottom:1px solid var(--scenic-outline);
+}
+.scenic-inner .project-workspace-grid article{overflow:hidden}
+.scenic-inner .project-workspace-grid .project-card-top{margin-top:16px}
+@media(prefers-reduced-motion:reduce){
+  .scenic-inner .scenic-story-image .cover-image,
+  .scenic-inner .project-cover .cover-image{transition:none}
+}
