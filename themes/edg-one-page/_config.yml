@@ -90,12 +90,6 @@ global:
   preloader:
     enable: false
     custom_message: # Custom message. If empty, the site title will be displayed
-  # Side tools settings
-  side_tools:
-    # Whether to enable gear rotation animation for settings button
-    gear_rotation: true
-    # Whether to auto expand tools list on page load
-    auto_expand: false
   # Whether to enable open graph
   open_graph:
     enable: true
@@ -448,62 +442,3 @@ plugins:
   # RSS feed. Requires hexo-generator-feed (npm i hexo-generator-feed). See https://github.com/hexojs/hexo-generator-feed
   feed:
     enable: false # Whether to enable
-  # Aplayer. See https://github.com/DIYgod/APlayer
-  aplayer:
-    enable: false # Whether to enable
-    type: fixed # fixed, mini
-    audios:
-      - name: # audio name
-        artist: # audio artist
-        url: # audio url
-        cover: # audio cover url
-        lrc: # audio cover lrc
-#      - name: # audio name
-#        artist: # audio artist
-#        url: # audio url
-#        cover: # audio cover url
-#        lrc: # audio cover lrc
-      # .... you can add more audios here
-  # Mermaid JS. Requires hexo-filter-mermaid-diagrams (npm i hexo-filter-mermaid-diagrams). See https://mermaid.js.org/
-  mermaid:
-    enable: false # enable mermaid or not
-    version: "11.4.1" # default v11.4.1
-    theme:
-      light: "default"
-      dark: "dark"
-# PLUGINS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
-
-
-# PAGE TEMPLATES >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start
-# Docs: https://gitee.com/chenfukun/edg-one-page
-page_templates:
-  # Friend Links page column number
-  friends_column: 2
-  # Tags page style
-  tags_style: blur # blur, cloud
-  # Masonry page batch size
-  masonry:
-    batch_size: 12
-    initial_batch_size: 24
-# PAGE TEMPLATES <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
-
-
-# CDN >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start
-# Docs: https://gitee.com/chenfukun/edg-one-page
-cdn:
-  # Whether to enable CDN
-  enable: false
-  # CDN Provider
-  provider: npmmirror # npmmirror, zstatic, cdnjs, jsdelivr, unpkg, custom
-  # Custom CDN URL
-  # format example: https://cdn.custom.com/edg-one-page/${version}/source/${path}
-  # The ${path} must leads to the root of the "source" folder of the theme
-  custom_url: 
-# CDN <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
-
-# DEVELOPER MODE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> start
-# Docs: https://gitee.com/chenfukun/edg-one-page
-developer:
-  # Whether to enable developer mode (only for developers who want to modify the theme source code, not for ordinary users)
-  enable: false
-# DEVELOPER MODE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< end
