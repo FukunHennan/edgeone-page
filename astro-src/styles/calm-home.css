@@ -26,11 +26,27 @@
   padding:0!important;
   overflow:hidden!important;
 }
+/* Bypass legacy min-height/flex/centering behavior entirely: each homepage
+   wrapper covers the same viewport, rather than sizing to a parent of
+   uncertain height or shrinking inside a flex column. */
+.home-mimo-page .main-content-container,
+.home-mimo-page .main-content-body,
+.home-mimo-page .main-content-body .main-content {
+  position:absolute!important;
+  inset:0!important;
+  display:block!important;
+  box-sizing:border-box!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:100%!important;
+  max-height:none!important;
+  flex:none!important;
+}
 .home-mimo-page .calm-home {
-  position:relative!important;
+  position:absolute!important;
   isolation:isolate;
   display:block;
-  inset:auto!important;
+  inset:0!important;
   width:100%!important;
   max-width:none!important;
   height:100%!important;
@@ -227,3 +243,8 @@
   .home-mimo-page .calm-slide .calm-poster{transition:none!important;transform:none!important}
 }
 @media print{.home-mimo-page{height:auto!important;min-height:100vh!important}}
+
+/* Defend against browser default spacing and inherited constrained wrappers. */
+html:has(.home-mimo-page),
+body:has(.home-mimo-page){margin:0!important;width:100%!important;overflow-x:hidden!important}
+.home-mimo-page .calm-slide .calm-poster{min-width:100%;min-height:100%}
