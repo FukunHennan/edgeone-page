@@ -1,57 +1,45 @@
-# 首页实景轮播 · 维护与部署
+# 首页风景轮播 · 自托管素材说明
 
-首页维持「安静的风景 + 极简入口」，四段真实风景素材搭配静态照片；博客、笔记、项目与经历仍通过顶栏访问。2026-10-22 的优化优先考虑稳定性、节省流量和中英文对应页面跳转。
+2026-10-22：已将首页四段风景视频和对应 WebP 封面**直接保存到仓库**，构建后作为 EdgeOne Pages 站内静态资源使用。浏览首页时不再向 Mixkit 或 Unsplash 请求视频、图片；离线兜底仍保留最初的本地 SVG。
 
-## 实景资源
+## 已部署至仓库的资源
 
-| 场景 | 来源条目 | 备选照片 | 本地离线兜底 |
-| --- | --- | --- | --- |
-| 山湖 | [Mixkit 42490](https://mixkit.co/free-stock-video/landscape-with-mountains-and-a-lake-seen-from-above-42490/) | Unsplash 1501785888041 | `/scenes/mountain-lake.svg` |
-| 海浪 | [Mixkit 1164](https://mixkit.co/free-stock-video/waves-in-the-water-1164/) | Unsplash 1507525428034 | `/scenes/soft-coast.svg` |
-| 草甸 | [Mixkit 4075](https://mixkit.co/free-stock-video/countryside-meadow-4075/) | Unsplash 1470252649378 | `/scenes/green-meadow.svg` |
-| 森林 | [Mixkit 529](https://mixkit.co/free-stock-video/forest-stream-in-the-sunlight-529/) | Unsplash 1448375240586 | `/scenes/misty-forest.svg` |
+| 场景 | 视频（MP4） | WebP 封面 | 来源与作者 |
+| --- | ---: | ---: | --- |
+| 湖泊与远山 | `/scenes/mountain-lake.mp4` (2.42 MB) | `/scenes/mountain-lake.webp` (127 KB) | [Mikata Five Lakes (Video)](https://commons.wikimedia.org/wiki/File:Mikata_Five_Lakes_(Video).webm), Yoshi Canopus |
+| 挪威海岸 | `/scenes/soft-coast.mp4` (0.28 MB) | `/scenes/soft-coast.webp` (16 KB) | [Ocean in Sommaroy](https://commons.wikimedia.org/wiki/File:Ocean_in_Sommaroy.webm), Netha Hussain |
+| 微风草地 | `/scenes/green-meadow.mp4` (1.36 MB) | `/scenes/green-meadow.webp` (72 KB) | [The wind plays with grasses by a stream in Nickel Plate Park](https://commons.wikimedia.org/wiki/File:The_wind_plays_with_grasses_by_a_stream_in_Nickel_Plate_Park.webm), Extemporalist |
+| 林间溪流 | `/scenes/misty-forest.mp4` (3.43 MB) | `/scenes/misty-forest.webp` (273 KB) | [Overlooking a forest creek in the Tsimpsean Peninsula](https://commons.wikimedia.org/wiki/File:Overlooking_a_forest_creek_in_the_Tsimpsean_Peninsula.webm), Extemporalist |
 
-修正了原先草甸 4077、山湖 4732 等未核实编号；现在四个条目均对应公开的素材页面。**仍需在真实浏览器核验每个视频预览 MP4 的可访问性**：素材页面存在不等于 CDN 预览链接永远有效。
+**许可**：以上四件原始媒体在各自 Wikimedia Commons 文件页面标注为 **CC0 1.0 Universal Public Domain Dedication**；保留这些来源与作者记录以便审计。许可详情：[CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/deed.en)。未经许可不要把素材声明为个人原创。
 
-授权：使用或重新托管素材前，请分别核对素材具体许可；上述对应页面列为 Mixkit Stock Video Free License，且 [Mixkit 许可](https://mixkit.co/license/) 对 Free / Restricted 有不同条款。照片遵循 [Unsplash License](https://unsplash.com/license)。
+## 编码和大小
 
-### 长期自托管建议（待实施）
+由 `tools/prepare-home-media.sh` 在 GitHub Actions Ubuntu 环境实际执行生成：
 
-目前视频仍为 Mixkit CDN、照片为 Unsplash CDN，未直接保存到 GitHub 或 EdgeOne。这是运行时外部依赖，无法用静态构建审计保证可用。
+- H.264 MP4，1280 × 720，20 fps，最长 12 秒，禁用音轨，`faststart` 适合网页流式加载。
+- WebP 封面取剪辑第 2 秒，质量 75。
+- 运行时只给当前风景设置视频 `src`，切换后暂停上一段视频。
+- 四段 MP4 合计约 **7.48 MB**，四张 WebP 合计约 **488 KB**。
+- 单视频大小预算 6.5 MB；单 WebP 封面大小预算 600 KB。
+- 所有 `/scenes/*.mp4`、`/scenes/*.webp`、`/scenes/*.svg` 均随 Astro 从 `astro-static/` 复制到构建产物。
 
-长期建议：从各素材官方页面依法下载 HD 原文件，裁出 8–15 秒片段，使用 H.264 MP4（可选 WebM）压缩至单段约 2–5 MB；制作 1200–1600px 的 WebP 真实照片封面。上传 EdgeOne 支持的静态资源或对象存储后，将 `astro-src/components/CalmCarousel.astro` 中 `video` / `poster` 修改为站内 URL。不要把不明版权的视频直接上传到公共仓库。
+## 交互与节能
 
-## 前端行为
+- 每 14 秒自动切换，1.2 秒淡化；不再因鼠标悬停在大图上冻结轮播。
+- 手动暂停、圆点、左右按钮、键盘方向键、手机滑动正常可用。
+- “沉浸模式”隐藏文案与导航但保留退出按钮；也可按 Esc 退出。
+- 移动设备启用低流量/慢速网络、用户启用减少动态效果、离线状态或播放错误时优先显示**本地 WebP 封面**。
+- WebP 加载失败时回退到本地 SVG 插画，不依赖外站。
+- 离开首页时清理定时器与播放状态。
+- 全站双语切换仍在顶部导航，并使用页面真实的翻译目标链接。
 
-- 每 14 秒自动切换一次，画面之间 1.2 秒交叉淡化；不再因鼠标停留在首页大图上而冻结轮播。
-- 视频只在成为当前场景时才设置 `src`。旧画面与浏览器非活动标签页停止播放。
-- 低流量模式、2G / 3G、离线以及系统启用「减少动态效果」时不加载/播放视频，优先保留风景照片。照片加载失败回退至仓库自带的 SVG。
-- 保留手动上一张、下一张、圆点、键盘方向键及手机滑动；键盘焦点操作时暂停自动切换。
-- 新增右下角「沉浸模式」，只展示风景与退出按钮；按 Esc 可退出。离开首页自动还原原有导航。
-- 用户主动暂停时同时停止自动换页和视频，恢复播放后再重新计时。
-- 不自动播放音频。
+## 维护方法
 
-## 中英文跳转
+1. 在 `astro-src/components/CalmCarousel.astro` 的 `slides` 数组修改路径、标题和无障碍描述。
+2. 如需更换风景，先确定素材版权与来源，再使用 `tools/prepare-home-media.sh` 中的白名单清单更新源地址；在能联网、安装 FFmpeg 的机器上执行 `bash tools/prepare-home-media.sh`。
+3. 重新生成的四对 MP4/WebP 需存放到 `astro-static/scenes/` 并提交 GitHub，编辑 `tools/audit-astro.cjs` 对应清单。
+4. 测试命令：`npm ci && npm run check`；构建审计会检查静态媒体的存在、文件签名和大小预算。
+5. EdgeOne 部署后分别打开 `/zh-CN/` 与 `/en/`，用手机及桌面浏览器验证视频播放、滚动、暂停、静态回退和双语跳转。
 
-`Shell.astro` 将当前页面实际翻译地址传给 `themePartial('navbar', ...)`；导航选择器通过 `data-alternate-href` 获取目标地址，而不是单纯替换 `/zh-CN/` 或 `/en/`。文章可能有不同的翻译路径，也能跳转正确。
-
-涉及文件：
-
-- `astro-src/lib/theme.ts` — 注入翻译地址到 EJS。
-- `astro-src/layouts/Shell.astro` — 传递 `otherPath`。
-- `themes/edg-one-page/layout/components/header/navbar.ejs` — 顶栏控件接收 `data-alternate-href`。
-- `astro-src/scripts/theme-runtime.ts` — 顶栏切换语言。
-- `astro-src/components/CalmCarousel.astro` — 视频及封面资源。
-- `astro-src/scripts/calm-carousel.ts` — 轮播、沉浸和网络状态控制。
-- `astro-src/styles/calm-home.css` — 过渡和沉浸样式。
-- `tools/audit-astro.cjs` — 页面静态结构、双语导航、资源引用审计。
-
-## 验证
-
-```bash
-npm ci
-npm run check
-npm run dev
-```
-
-构建成功不等于视频实际播放成功。发布后应人工检查：4 个 MP4 实际可播、封面加载失败回退、网络限制、低流量模式、手机 Safari/Chrome、320px/375px/768px/1280px 排版、首页沉浸按钮、Esc 退出、中文文章切换英文文章及返回、Swup 页面切换。
+**注意**：GitHub Actions 的生产构建审计不能替代真实浏览器视频播放和 EdgeOne 缓存验证，首次部署后仍须现场检查。
