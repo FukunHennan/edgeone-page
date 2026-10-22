@@ -30,7 +30,7 @@ const scenes = [
   },
 ];
 // 横屏窄机（如 iPhone SE 横屏）也需要覆盖，故最小档从 640 宽算起。
-// 1920 档直接复用 /scenes 下的原图，其余档位在 /scenes/responsive 中生成。
+// 1920 档直接复用 /scenes 下的原图，其余档位在 /scene-sizes 中生成。
 const sizes = '100vw';
 const slides = scenes.map((scene) => ({
   ...scene,
@@ -38,7 +38,7 @@ const slides = scenes.map((scene) => ({
   srcset: [640, 960, 1440, 1920]
     .map((width) => (width === 1920
       ? `/scenes/${scene.name}.webp ${width}w`
-      : `/scenes/responsive/${scene.name}-${width}.webp ${width}w`))
+      : `/scene-sizes/${scene.name}-${width}.webp ${width}w`))
     .join(', '),
 }));
 ---
