@@ -53,7 +53,7 @@ function itemActive(item) {
         <button class="hub-nav-icon tool-dark-light-toggle" type="button" aria-label="<%= isZh ? '切换主题' : 'Toggle theme' %>">
           <i class="fa-regular fa-moon"></i>
         </button>
-        <select class="hub-language-select" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
+        <select class="hub-language-select" data-alternate-href="<%= alternatePath || '' %>" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
           <% languageOptions.forEach(function(option) { %>
             <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
           <% }); %>
@@ -64,7 +64,7 @@ function itemActive(item) {
       </div>
 
       <div class="mobile hub-mobile-actions">
-        <select class="hub-language-select hub-language-select-mobile" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
+        <select class="hub-language-select hub-language-select-mobile" data-alternate-href="<%= alternatePath || '' %>" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
           <% languageOptions.forEach(function(option) { %>
             <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
           <% }); %>

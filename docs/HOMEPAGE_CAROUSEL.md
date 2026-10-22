@@ -1,44 +1,50 @@
-# 首页实景视频轮播 · 维护说明
+# 首页实景轮播 · 维护与部署
 
-首页采用四段真实自然风景视频（静音、循环）组成的轻量轮播，保留顶部导航；博客、笔记、项目、经历、简历等页面不变。**语言切换统一位于顶部导航栏**，不再出现在页面底部或手机菜单底部。
+首页维持「安静的风景 + 极简入口」，四段真实风景素材搭配静态照片；博客、笔记、项目与经历仍通过顶栏访问。2026-10-22 的优化优先考虑稳定性、节省流量和中英文对应页面跳转。
 
-## 资源清单
+## 实景资源
 
-| 场景 | MP4 来源 | 静态照片兜底 |
-| --- | --- | --- |
-| 山湖 | Mixkit: `mixkit-landscape-of-the-snowy-mountain-with-a-lake-4732-large.mp4` | Unsplash: `photo-1501785888041-af3ef285b470` |
-| 海浪 | Mixkit: `mixkit-waves-in-the-water-1164-large.mp4` | Unsplash: `photo-1507525428034-b723cf961d3e` |
-| 草甸 | Mixkit: `mixkit-countryside-meadow-4077-large.mp4` | Unsplash: `photo-1470252649378-9c29740c9fa8` |
-| 森林溪流 | Mixkit: `mixkit-forest-stream-in-the-sunlight-529-large.mp4` | Unsplash: `photo-1448375240586-882707db888b` |
+| 场景 | 来源条目 | 备选照片 | 本地离线兜底 |
+| --- | --- | --- | --- |
+| 山湖 | [Mixkit 42490](https://mixkit.co/free-stock-video/landscape-with-mountains-and-a-lake-seen-from-above-42490/) | Unsplash 1501785888041 | `/scenes/mountain-lake.svg` |
+| 海浪 | [Mixkit 1164](https://mixkit.co/free-stock-video/waves-in-the-water-1164/) | Unsplash 1507525428034 | `/scenes/soft-coast.svg` |
+| 草甸 | [Mixkit 4075](https://mixkit.co/free-stock-video/countryside-meadow-4075/) | Unsplash 1470252649378 | `/scenes/green-meadow.svg` |
+| 森林 | [Mixkit 529](https://mixkit.co/free-stock-video/forest-stream-in-the-sunlight-529/) | Unsplash 1448375240586 | `/scenes/misty-forest.svg` |
 
-播放器仅在切到对应场景时设置视频 `src`，避免首次打开时同时下载全部视频。照片是视频无法播放、弱网或系统启用“减少动态效果”时的兜底。本地原创 SVG 继续保留为图片无法加载的进一步兜底素材，位于 `astro-static/scenes/`。
+修正了原先草甸 4077、山湖 4732 等未核实编号；现在四个条目均对应公开的素材页面。**仍需在真实浏览器核验每个视频预览 MP4 的可访问性**：素材页面存在不等于 CDN 预览链接永远有效。
 
-**运行依赖**：视频由 Mixkit 的公开资源地址提供，照片由 Unsplash 提供，因此实时视频效果依赖用户设备能访问这两个外部域名。本仓库并未托管 MP4。外部地址未来可能变动或限制跨站引用；正式长期运营推荐在遵守素材许可的前提下下载并转码为短小的 WebM/MP4，自行托管到 EdgeOne 静态资源或对象存储，再将 `video` / `poster` 改为站内 URL。
+授权：使用或重新托管素材前，请分别核对素材具体许可；上述对应页面列为 Mixkit Stock Video Free License，且 [Mixkit 许可](https://mixkit.co/license/) 对 Free / Restricted 有不同条款。照片遵循 [Unsplash License](https://unsplash.com/license)。
 
-**素材许可**：使用前/更换素材时核对每个素材的具体许可。Mixkit 的免费素材页面通常采用 [Mixkit Video Free License](https://mixkit.co/license/)，但网站也有受限素材；Unsplash 图像遵循 [Unsplash License](https://unsplash.com/license)。不要未经授权改用受限素材。
+### 长期自托管建议（待实施）
 
-## 交互行为
+目前视频仍为 Mixkit CDN、照片为 Unsplash CDN，未直接保存到 GitHub 或 EdgeOne。这是运行时外部依赖，无法用静态构建审计保证可用。
 
-- 8 秒切换一幕。当前场景的静音视频循环播放；离开场景时暂停上一段，手动“暂停”按钮同时停止自动切换和视频播放。
-- 支持左右按钮、分页圆点、键盘左右方向键与触屏左右滑动。
-- 标签页隐藏时暂停视频和自动切换；鼠标悬停或控制器获取焦点时暂停自动切换，避免操作时跳帧。
-- 用户系统偏好减少动画时不自动播放视频或幻灯片，但可以手动切换静态照片。
-- Swup 页面切换离开首页时清理定时器、事件和视频播放。
+长期建议：从各素材官方页面依法下载 HD 原文件，裁出 8–15 秒片段，使用 H.264 MP4（可选 WebM）压缩至单段约 2–5 MB；制作 1200–1600px 的 WebP 真实照片封面。上传 EdgeOne 支持的静态资源或对象存储后，将 `astro-src/components/CalmCarousel.astro` 中 `video` / `poster` 修改为站内 URL。不要把不明版权的视频直接上传到公共仓库。
 
-## 语言导航
+## 前端行为
 
-- `themes/edg-one-page/layout/components/header/navbar.ejs`：顶栏语言选择器，桌面与手机分别适配。
-- `astro-src/scripts/theme-runtime.ts`：语言变更时保留当前对应的双语路径、查询字符串及锚点。
-- `astro-src/layouts/Shell.astro`：删除原底部语言切换链接。
-- 双语路径遵循 `/zh-CN/...`、`/en/...`；既有文章对应双语 slug 需保持一致。
+- 每 14 秒自动切换一次，画面之间 1.2 秒交叉淡化；不再因鼠标停留在首页大图上而冻结轮播。
+- 视频只在成为当前场景时才设置 `src`。旧画面与浏览器非活动标签页停止播放。
+- 低流量模式、2G / 3G、离线以及系统启用「减少动态效果」时不加载/播放视频，优先保留风景照片。照片加载失败回退至仓库自带的 SVG。
+- 保留手动上一张、下一张、圆点、键盘方向键及手机滑动；键盘焦点操作时暂停自动切换。
+- 新增右下角「沉浸模式」，只展示风景与退出按钮；按 Esc 可退出。离开首页自动还原原有导航。
+- 用户主动暂停时同时停止自动换页和视频，恢复播放后再重新计时。
+- 不自动播放音频。
 
-## 主要文件
+## 中英文跳转
 
-- `astro-src/components/CalmCarousel.astro`：编辑视频 URL、照片、标题和文案。
-- `astro-src/scripts/calm-carousel.ts`：轮播计时、视频加载、暂停和生命周期。
-- `astro-src/styles/calm-home.css`：视频铺满画面及手机布局。
-- `astro-src/styles/site.css`：顶栏语言选择器尺寸。
-- `tools/audit-astro.cjs`：静态产物审计。
+`Shell.astro` 将当前页面实际翻译地址传给 `themePartial('navbar', ...)`；导航选择器通过 `data-alternate-href` 获取目标地址，而不是单纯替换 `/zh-CN/` 或 `/en/`。文章可能有不同的翻译路径，也能跳转正确。
+
+涉及文件：
+
+- `astro-src/lib/theme.ts` — 注入翻译地址到 EJS。
+- `astro-src/layouts/Shell.astro` — 传递 `otherPath`。
+- `themes/edg-one-page/layout/components/header/navbar.ejs` — 顶栏控件接收 `data-alternate-href`。
+- `astro-src/scripts/theme-runtime.ts` — 顶栏切换语言。
+- `astro-src/components/CalmCarousel.astro` — 视频及封面资源。
+- `astro-src/scripts/calm-carousel.ts` — 轮播、沉浸和网络状态控制。
+- `astro-src/styles/calm-home.css` — 过渡和沉浸样式。
+- `tools/audit-astro.cjs` — 页面静态结构、双语导航、资源引用审计。
 
 ## 验证
 
@@ -48,4 +54,4 @@ npm run check
 npm run dev
 ```
 
-上线前检查 375、768、1280px 视口，中英双语、深浅色、手动切换、弱网照片兜底，以及手机 Safari/Chrome 的静音自动播放。GitHub Actions 构建通过不能代替浏览器播放验证。
+构建成功不等于视频实际播放成功。发布后应人工检查：4 个 MP4 实际可播、封面加载失败回退、网络限制、低流量模式、手机 Safari/Chrome、320px/375px/768px/1280px 排版、首页沉浸按钮、Esc 退出、中文文章切换英文文章及返回、Swup 页面切换。

@@ -4,7 +4,7 @@
 .home-mimo-page .main-content-body .main-content{width:100%;max-width:none!important}
 .calm-home{position:relative;isolation:isolate;width:min(1560px,calc(100% - 40px));height:clamp(550px,calc(100svh - 122px),920px);margin:92px auto 18px;overflow:hidden;border-radius:22px;background:#72928a;color:#fff;box-shadow:0 18px 55px rgba(24,47,43,.1)}
 .calm-slides,.calm-slide,.calm-overlay{position:absolute;inset:0}
-.calm-slide{margin:0;opacity:0;visibility:hidden;transition:opacity 1.1s ease,visibility 1.1s ease;pointer-events:none}
+.calm-slide{margin:0;opacity:0;visibility:hidden;transition:opacity 1.2s ease,visibility 1.2s ease;pointer-events:none}
 .calm-slide.is-active{opacity:1;visibility:visible}
 .calm-slide img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
 .calm-overlay{z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(15,39,39,.62),rgba(24,46,46,.14) 67%,rgba(18,39,39,.06)),linear-gradient(0deg,rgba(15,36,35,.38),transparent 45%)}
@@ -73,3 +73,34 @@
 .calm-toggle:disabled{cursor:not-allowed;opacity:.65}
 @media(max-width:600px){.calm-slide .calm-poster,.calm-slide .calm-video{object-position:53% center}}
 @media(prefers-reduced-motion:reduce){.calm-slide .calm-video{display:none}.calm-slide .calm-poster{transition:none}}
+
+/* Quiet immersive viewing: keep an always-visible exit control and Escape shortcut. */
+.calm-immersive .calm-home{
+  position:fixed!important;
+  inset:0!important;
+  z-index:250!important;
+  width:100vw!important;
+  height:100dvh!important;
+  max-height:none!important;
+  margin:0!important;
+  border-radius:0!important;
+}
+.calm-immersive .personal-hub-navbar{transform:translateY(-120%);pointer-events:none}
+.calm-immersive body{overflow:hidden}
+.calm-home.is-immersive .calm-content,
+.calm-home.is-immersive .calm-caption,
+.calm-home.is-immersive .calm-dots,
+.calm-home.is-immersive .calm-arrow,
+.calm-home.is-immersive .calm-toggle{opacity:0;visibility:hidden;pointer-events:none}
+.calm-home .calm-immersive{display:inline-grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(20,49,47,.19);color:#fff;font-size:22px;cursor:pointer;backdrop-filter:blur(12px);transition:background .25s ease,transform .25s ease}
+.calm-home .calm-immersive:hover{background:rgba(255,255,255,.24);transform:translateY(-2px)}
+.calm-home.is-immersive .calm-controls{right:28px;left:auto;bottom:calc(24px + env(safe-area-inset-bottom));gap:0}
+.calm-home.is-immersive .calm-control-buttons{gap:0}
+.calm-home.is-immersive .calm-immersive{width:48px;height:48px;background:rgba(13,36,34,.48)}
+@media(max-width:600px){
+  .calm-home .calm-immersive{width:40px;height:40px}
+  .calm-home.is-immersive .calm-controls{right:18px}
+}
+@media(prefers-reduced-motion:reduce){
+  .calm-home .calm-immersive{transition:none}
+}
