@@ -99,12 +99,11 @@ for (const lang of ['zh-CN', 'en']) {
   for (const marker of ['/covers/article-light.webp', '/covers/article-dark.webp']) {
     if (!archiveHtml.includes(marker)) throw new Error(`Missing temporary blog cover art: ${lang}: ${marker}`);
   }
-  if (archiveHtml.includes('src="/scenes/green-meadow.webp"') && archiveHtml.includes('class="scenic-story-image"')) {
-    // Scenic banners may use scenery, but card thumbnails should use cover assets.
-    const thumbnails = [...archiveHtml.matchAll(/class="scenic-story-image"[^>]*>([\\s\\S]*?)<\\/a>/g)];
-    if (thumbnails.some((match) => match[1].includes('src="/scenes/'))) {
-      throw new Error(`An old landscape photograph is still used as a blog card cover: ${lang}`);
-    }
+  // Landscape scenes remain in banners, but must not be reused as card covers.
+  const thumbnailBlocks = archiveHtml.split('class="scenic-story-image"').slice(1)
+    .map((section) => section.split('</a>')[0]);
+  if (thumbnailBlocks.some((markup) => markup.includes('src="/scenes/'))) {
+    throw new Error(`Old landscape photo still used as blog card cover: ${lang}`);
   }
   const aboutHtml = fs.readFileSync(path.join(output, lang, 'about', 'index.html'), 'utf8');
   for (const marker of ['scenic-about-card', 'scenic-about-profile', 'scenic-about-skills']) {
