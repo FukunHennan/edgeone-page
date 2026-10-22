@@ -50,9 +50,6 @@ function itemActive(item) {
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
         <% } %>
-        <button class="hub-nav-icon tool-dark-light-toggle" type="button" aria-label="<%= isZh ? '切换主题' : 'Toggle theme' %>">
-          <i class="fa-regular fa-moon"></i>
-        </button>
         <select class="hub-language-select" data-alternate-href="<%= alternatePath || '' %>" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
           <% languageOptions.forEach(function(option) { %>
             <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
@@ -93,7 +90,6 @@ function itemActive(item) {
       <% }); %>
     </ul>
     <div class="hub-drawer-bottom">
-      <button type="button" class="tool-dark-light-toggle drawer-theme-toggle"><%= isZh ? '切换主题' : 'Toggle theme' %></button>
       <a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>
   </div>

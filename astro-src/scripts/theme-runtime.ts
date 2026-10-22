@@ -43,11 +43,6 @@ function initPage() {
     event.preventDefault();
     history.back();
   }, { signal });
-  document.querySelectorAll('.tool-dark-light-toggle').forEach((button) => button.addEventListener('click', () => {
-    const dark = !document.documentElement.classList.contains('dark');
-    document.documentElement.classList.toggle('dark', dark); document.documentElement.classList.toggle('light', !dark); document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-    try { localStorage.setItem('REDEFINE-THEME-STATUS', JSON.stringify({ isDark: dark })); } catch {}
-  }, { signal }));
   const menuButton = document.querySelector<HTMLButtonElement>('.navbar-bar');
   const setMenuOpen = (open: boolean) => {
     document.documentElement.classList.toggle('astro-menu-open', open);

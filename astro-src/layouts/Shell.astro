@@ -31,7 +31,7 @@ const schema = {
 const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",system-ui,sans-serif' : '"Geist Variable","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} class="light">
   <head>
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} · 稻田鼠</title><meta name="description" content={description} />
@@ -64,9 +64,10 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
     </script>
     <link rel="stylesheet" href="/theme/tailwind.css" /><link rel="stylesheet" href="/theme/fontawesome/subset.min.css" /><link rel="stylesheet" href="/theme/style.css" />
     <style is:inline define:vars={{ fonts }}>body,input,button,select,textarea{font-family:var(--fonts)}code,pre{font-family:"Geist Mono","SFMono-Regular",Consolas,monospace}</style>
-    <script is:inline>
-      try { const stored = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS') || 'null'); const dark = stored ? stored.isDark : matchMedia('(prefers-color-scheme:dark)').matches; document.documentElement.classList.add(dark ? 'dark' : 'light'); document.documentElement.style.colorScheme = dark ? 'dark' : 'light'; } catch { document.documentElement.classList.add(matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'); }
-    </script>
+    <style is:inline>
+      /* 站点只提供亮色主题。尽早声明 color-scheme，避免浏览器按系统偏好绘制深色滚动条与表单控件。 */
+      :root { color-scheme: light only; }
+    </style>
   </head>
   <body>
     <a class="astro-skip" href="#main">{lang === 'zh-CN' ? '跳至内容' : 'Skip to content'}</a>
