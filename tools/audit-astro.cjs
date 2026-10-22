@@ -174,11 +174,13 @@ function auditNoLegacyScenes(directory) {
   for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
     const location = path.join(directory, entry.name);
     if (entry.isDirectory()) { auditNoLegacyScenes(location); continue; }
-    if (!/\\.(?:html|css|js)$/.test(entry.name)) continue;
+    if (!['.html', '.css', '.js'].some(ext => entry.name.endsWith(ext))) continue;
     const body = fs.readFileSync(location, 'utf8');
     for (const scene of removedScenes) {
-      if (new RegExp(`/scenes/${scene}\\\\.(?:mp4|webp|svg)`).test(body)) {
-        throw new Error(`Legacy media reference found in published file: ${location}`);
+      for (const ext of ['mp4', 'webp', 'svg']) {
+        if (body.includes(`/scenes/${scene}.${ext}`)) {
+          throw new Error(`Legacy media reference found in published file: ${location}`);
+        }
       }
     }
   }
