@@ -5,17 +5,42 @@ interface Props { lang: Language }
 const { lang } = Astro.props;
 const zh = lang === 'zh-CN';
 const slides = [
-  { src: '/scenes/mountain-lake.svg', alt: zh ? '薄雾中的群山与宁静湖面' : 'Quiet alpine lake with mountains in morning mist', caption: zh ? '山间清晨' : 'Morning by the lake', english: 'MOUNTAIN LAKE' },
-  { src: '/scenes/soft-coast.svg', alt: zh ? '晚霞下柔和宁静的海岸线' : 'A quiet coastline under a soft pastel sunset', caption: zh ? '日落海岸' : 'Along the coast', english: 'SOFT COAST' },
-  { src: '/scenes/green-meadow.svg', alt: zh ? '阳光洒向起伏的绿色草甸' : 'Sunshine falls across rolling green meadows', caption: zh ? '风吹草甸' : 'The open meadow', english: 'GREEN MEADOW' },
-  { src: '/scenes/misty-forest.svg', alt: zh ? '清晨雾气萦绕的树林和溪流' : 'A misty evergreen forest with a quiet stream', caption: zh ? '林间微光' : 'A gentle forest', english: 'MISTY FOREST' },
+  {
+    video: 'https://assets.mixkit.co/videos/preview/mixkit-landscape-of-the-snowy-mountain-with-a-lake-4732-large.mp4',
+    poster: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80',
+    fallback: '/scenes/mountain-lake.svg',
+    alt: zh ? '雪山与湖泊的真实风景' : 'Real mountain and lake scenery',
+    caption: zh ? '山间清晨' : 'Morning by the lake', english: 'MOUNTAIN LAKE',
+  },
+  {
+    video: 'https://assets.mixkit.co/videos/preview/mixkit-waves-in-the-water-1164-large.mp4',
+    poster: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1600&q=80',
+    fallback: '/scenes/soft-coast.svg',
+    alt: zh ? '轻柔海浪与海岸的真实风景' : 'Real ocean waves by the coast',
+    caption: zh ? '日落海岸' : 'Along the coast', english: 'SOFT COAST',
+  },
+  {
+    video: 'https://assets.mixkit.co/videos/preview/mixkit-countryside-meadow-4077-large.mp4',
+    poster: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1600&q=80',
+    fallback: '/scenes/green-meadow.svg',
+    alt: zh ? '阳光下的乡间草甸实景' : 'Real countryside meadow in warm light',
+    caption: zh ? '风吹草甸' : 'The open meadow', english: 'GREEN MEADOW',
+  },
+  {
+    video: 'https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4',
+    poster: 'https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=1600&q=80',
+    fallback: '/scenes/misty-forest.svg',
+    alt: zh ? '森林中潺潺流动的小溪实景' : 'Real sunlit stream in a quiet forest',
+    caption: zh ? '林间微光' : 'A gentle forest', english: 'FOREST STREAM',
+  },
 ];
 ---
 <section class="calm-home" data-calm-carousel aria-roledescription={zh ? '风景轮播' : 'Scenic carousel'} aria-label={zh ? '放慢脚步，看看风景' : 'A moment to slow down'}>
   <div class="calm-slides" aria-live="off">
     {slides.map((slide, index) => (
       <figure class:list={['calm-slide', { 'is-active': index === 0 }]} data-calm-slide aria-hidden={index !== 0}>
-        <img src={slide.src} alt={slide.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} width="1600" height="900" />
+        <img class="calm-poster" src={slide.poster} alt={slide.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} width="1600" height="900" style={`background-image: url('${slide.fallback}')`} />
+        <video class="calm-video" data-calm-video data-video-src={slide.video} poster={slide.poster} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
         <figcaption class="calm-caption"><span>{String(index + 1).padStart(2, '0')} / 04</span><span>{slide.caption}</span><small>{slide.english}</small></figcaption>
       </figure>
     ))}

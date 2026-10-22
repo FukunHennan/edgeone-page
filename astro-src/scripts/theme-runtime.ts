@@ -40,13 +40,15 @@ function initPage() {
       menuButton?.focus();
     }
   }, { signal });
-  // Language switching in the mobile drawer; localized routes share article slugs.
-  document.querySelector<HTMLSelectElement>('.lang-select-mobile')?.addEventListener('change', (event) => {
-    const selected = (event.currentTarget as HTMLSelectElement).value;
-    if (selected !== 'zh-CN' && selected !== 'en') return;
-    const remaining = location.pathname.replace(/^\/(?:zh-CN|en)(?=\/|$)/, '') || '/';
-    location.assign(`/${selected}${remaining}`);
-  }, { signal });
+  // Keep language switching consistently in the top navigation.
+  document.querySelectorAll<HTMLSelectElement>('.hub-language-select').forEach((picker) => {
+    picker.addEventListener('change', () => {
+      const selected = picker.value;
+      if (selected !== 'zh-CN' && selected !== 'en') return;
+      const remaining = location.pathname.replace(/^\/(?:zh-CN|en)(?=\/|$)/, '') || '/';
+      location.assign(`/${selected}${remaining}${location.search}${location.hash}`);
+    }, { signal });
+  });
   const language = document.documentElement.lang;
   const isZh = language === 'zh-CN';
   const dialog = document.querySelector<HTMLDialogElement>('#astro-search');

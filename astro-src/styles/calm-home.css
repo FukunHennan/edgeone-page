@@ -2,7 +2,6 @@
 .home-mimo-page .main-content-container{min-height:0!important;padding-top:0!important}
 .home-mimo-page .main-content-body{padding:0!important}
 .home-mimo-page .main-content-body .main-content{width:100%;max-width:none!important}
-.home-mimo-page .astro-language{margin:10px auto 25px}
 .calm-home{position:relative;isolation:isolate;width:min(1560px,calc(100% - 40px));height:clamp(550px,calc(100svh - 122px),920px);margin:92px auto 18px;overflow:hidden;border-radius:22px;background:#72928a;color:#fff;box-shadow:0 18px 55px rgba(24,47,43,.1)}
 .calm-slides,.calm-slide,.calm-overlay{position:absolute;inset:0}
 .calm-slide{margin:0;opacity:0;visibility:hidden;transition:opacity 1.1s ease,visibility 1.1s ease;pointer-events:none}
@@ -65,3 +64,12 @@
 @media(prefers-reduced-motion:reduce){
   .calm-slide,.calm-dot span,.calm-links a,.calm-arrow,.calm-toggle{transition:none!important}
 }
+
+/* Real landscape video, photo fallback, subtle fade-in. */
+.calm-slide .calm-poster,.calm-slide .calm-video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+.calm-slide .calm-poster{background-size:cover;background-position:center;background-color:#72928a}
+.calm-slide .calm-video{opacity:0;pointer-events:none;transition:opacity .7s ease}
+.calm-slide.has-live-video .calm-video{opacity:1}
+.calm-toggle:disabled{cursor:not-allowed;opacity:.65}
+@media(max-width:600px){.calm-slide .calm-poster,.calm-slide .calm-video{object-position:53% center}}
+@media(prefers-reduced-motion:reduce){.calm-slide .calm-video{display:none}.calm-slide .calm-poster{transition:none}}

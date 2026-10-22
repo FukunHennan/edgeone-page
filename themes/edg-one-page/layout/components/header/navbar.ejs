@@ -53,13 +53,22 @@ function itemActive(item) {
         <button class="hub-nav-icon tool-dark-light-toggle" type="button" aria-label="<%= isZh ? '切换主题' : 'Toggle theme' %>">
           <i class="fa-regular fa-moon"></i>
         </button>
-        <span class="hub-lang-label" aria-label="<%= isZh ? '当前语言' : 'Current language' %>"><%= isZh ? '简体中文' : 'English' %></span>
+        <select class="hub-language-select" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
+          <% languageOptions.forEach(function(option) { %>
+            <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
+          <% }); %>
+        </select>
         <a class="hub-github-link" href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">
           <i class="fa-brands fa-github"></i><span>GitHub</span><b>↗</b>
         </a>
       </div>
 
       <div class="mobile hub-mobile-actions">
+        <select class="hub-language-select hub-language-select-mobile" aria-label="<%= isZh ? '切换语言' : 'Switch language' %>">
+          <% languageOptions.forEach(function(option) { %>
+            <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
+          <% }); %>
+        </select>
         <% if (theme.navbar.search.enable === true) { %>
           <button class="icon-item search search-popup-trigger" type="button" aria-label="<%= isZh ? '搜索' : 'Search' %>"><i class="fa-solid fa-magnifying-glass"></i></button>
         <% } %>
@@ -84,11 +93,6 @@ function itemActive(item) {
       <% }); %>
     </ul>
     <div class="hub-drawer-bottom">
-      <select class="lang-select lang-select-mobile" aria-label="<%= isZh ? '语言' : 'Language' %>">
-        <% languageOptions.forEach(function(option) { %>
-          <option value="<%= option.code %>" <%= option.code === currentLanguage ? 'selected' : '' %>><%= option.label %></option>
-        <% }); %>
-      </select>
       <button type="button" class="tool-dark-light-toggle drawer-theme-toggle"><%= isZh ? '切换主题' : 'Toggle theme' %></button>
       <a href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
     </div>

@@ -4,6 +4,7 @@ export function initCalmCarousel(signal: AbortSignal) {
   if (!root) return;
   const slides = [...root.querySelectorAll<HTMLElement>('[data-calm-slide]')];
   const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-calm-dot]')];
+  const videos = slides.map((slide) => slide.querySelector<HTMLVideoElement>('[data-calm-video]'));
   const prev = root.querySelector<HTMLButtonElement>('[data-calm-prev]');
   const next = root.querySelector<HTMLButtonElement>('[data-calm-next]');
   const toggle = root.querySelector<HTMLButtonElement>('[data-calm-pause]');
@@ -34,6 +35,28 @@ export function initCalmCarousel(signal: AbortSignal) {
       schedule();
     }, 8000);
   }
+  // Only fetch and play the active film; photos stay visible if the video fails.
+  function syncVideo() {
+    videos.forEach((video, position) => {
+      if (!video) return;
+      const shouldPlay = position === index && !paused && !reduceMotion.matches &&
+        document.visibilityState === 'visible' && !signal.aborted;
+      if (!shouldPlay) { video.pause(); return; }
+      if (!video.src && video.dataset.videoSrc) video.src = video.dataset.videoSrc;
+      const playback = video.play();
+      if (playback) void playback.catch(() => {
+        slides[position]?.classList.remove('has-live-video');
+      });
+    });
+  }
+  videos.forEach((video, position) => {
+    video?.addEventListener('playing', () => {
+      if (position === index) slides[position]?.classList.add('has-live-video');
+    }, { signal });
+    video?.addEventListener('error', () => {
+      slides[position]?.classList.remove('has-live-video');
+    }, { signal });
+  });
   function updatePauseButton() {
     if (!toggle) return;
     const off = paused || reduceMotion.matches;
@@ -42,6 +65,7 @@ export function initCalmCarousel(signal: AbortSignal) {
       (zh ? '播放轮播' : 'Play slideshow') :
       (zh ? '暂停轮播' : 'Pause slideshow'));
     toggle.textContent = off ? '▶' : 'Ⅱ';
+    toggle.disabled = reduceMotion.matches;
   }
   function show(nextIndex: number, userAction: boolean) {
     index = (nextIndex + slides.length) % slides.length;
@@ -56,6 +80,7 @@ export function initCalmCarousel(signal: AbortSignal) {
       if (active) dot.setAttribute('aria-current', 'true');
       else dot.removeAttribute('aria-current');
     });
+    syncVideo();
     if (userAction && announcement) {
       const label = dots[index]?.getAttribute('aria-label') || '';
       announcement.textContent = label;
@@ -72,6 +97,7 @@ export function initCalmCarousel(signal: AbortSignal) {
     // In reduced-motion mode a visitor may navigate manually, but autoplay stays off.
     paused = !paused;
     updatePauseButton();
+    syncVideo();
     schedule();
   }, { signal });
   root.addEventListener('keydown', (event) => {
@@ -99,9 +125,10 @@ export function initCalmCarousel(signal: AbortSignal) {
       schedule();
     }
   }, { passive: true, signal });
-  document.addEventListener('visibilitychange', schedule, { signal });
-  reduceMotion.addEventListener('change', () => { updatePauseButton(); schedule(); }, { signal });
-  signal.addEventListener('abort', stop, { once: true });
+  document.addEventListener('visibilitychange', () => { syncVideo(); schedule(); }, { signal });
+  reduceMotion.addEventListener('change', () => { updatePauseButton(); syncVideo(); schedule(); }, { signal });
+  signal.addEventListener('abort', () => { stop(); videos.forEach((video) => video?.pause()); }, { once: true });
   updatePauseButton();
+  syncVideo();
   schedule();
 }
