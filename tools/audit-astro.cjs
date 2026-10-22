@@ -63,8 +63,11 @@ for (const lang of ['zh-CN', 'en']) {
   for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-dot', 'data-calm-pause', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
     if (!home.includes(marker)) throw new Error(`Missing calm homepage element in ${lang}: ${marker}`);
   }
-  for (const marker of ['data-calm-video', 'data-video-src', 'mixkit-landscape-with-mountains-and-a-lake-seen-from-above-42490-large.mp4', 'mixkit-countryside-meadow-4075-large.mp4', 'calm-poster', 'data-fallback-src', 'data-calm-immersive', 'hub-language-select']) {
-    if (!home.includes(marker)) throw new Error(`Missing homepage media or control element: ${lang}: ${marker}`);
+  for (const marker of ['data-calm-video', 'data-video-src', '/scenes/mountain-lake.mp4', '/scenes/soft-coast.mp4', '/scenes/green-meadow.mp4', '/scenes/misty-forest.mp4', '/scenes/mountain-lake.webp', 'calm-poster', 'data-fallback-src', 'data-calm-immersive', 'hub-language-select']) {
+    if (!home.includes(marker)) throw new Error(`Missing self-hosted media or control element: ${lang}: ${marker}`);
+  }
+  if (home.includes('assets.mixkit.co') || home.includes('images.unsplash.com')) {
+    throw new Error(`Homepage still depends on external scenic media hosts: ${lang}`);
   }
   if (!home.includes(`data-alternate-href="/${lang === 'zh-CN' ? 'en' : 'zh-CN'}/"`)) {
     throw new Error(`Homepage language selector does not link to its translation: ${lang}`);
@@ -93,8 +96,23 @@ for (const lang of ['zh-CN', 'en']) {
     if (!fs.existsSync(path.join(root, 'astro-dist', lang, page, 'index.html'))) throw new Error(`Missing ${lang}/${page}`);
   }
 }
-for (const asset of ['scenes/mountain-lake.svg', 'scenes/soft-coast.svg', 'scenes/green-meadow.svg', 'scenes/misty-forest.svg']) {
-  if (!fs.existsSync(path.join(output, asset))) throw new Error(`Missing homepage scene asset: ${asset}`);
+for (const name of ['mountain-lake', 'soft-coast', 'green-meadow', 'misty-forest']) {
+  for (const ext of ['mp4', 'webp', 'svg']) {
+    const asset = `scenes/${name}.${ext}`;
+    const target = path.join(output, asset);
+    if (!fs.existsSync(target)) throw new Error(`Missing self-hosted homepage scene asset: ${asset}`);
+    const contents = fs.readFileSync(target);
+    if (ext === 'mp4') {
+      if (contents.toString('ascii', 4, 8) !== 'ftyp' || contents.length > 6500000 || contents.length < 50000) {
+        throw new Error(`Invalid or oversized local MP4: ${asset}`);
+      }
+    }
+    if (ext === 'webp') {
+      if (contents.toString('ascii', 0, 4) !== 'RIFF' || contents.toString('ascii', 8, 12) !== 'WEBP' || contents.length > 600000) {
+        throw new Error(`Invalid or oversized WebP poster: ${asset}`);
+      }
+    }
+  }
 }
 for (const asset of ['theme/style.css', 'theme/tailwind.css', 'theme/images/稻田鼠.jpg', 'theme/js/Swup.min.js', 'theme/js/SwupSlideTheme.min.js']) {
   if (!fs.existsSync(path.join(root, 'astro-dist', asset))) throw new Error(`Missing original theme asset: ${asset}`);
