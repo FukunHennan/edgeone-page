@@ -63,6 +63,12 @@ for (const lang of ['zh-CN', 'en']) {
   for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-dot', 'data-calm-pause', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
     if (!home.includes(marker)) throw new Error(`Missing calm homepage element in ${lang}: ${marker}`);
   }
+  for (const marker of ['data-calm-video', 'data-video-src', 'mixkit.co/videos/preview/', 'calm-poster', 'hub-language-select']) {
+    if (!home.includes(marker)) throw new Error(`Missing live scenery or header language selection: ${lang}: ${marker}`);
+  }
+  if (home.includes('class="astro-language"') || home.includes('class="lang-select lang-select-mobile"')) {
+    throw new Error(`A language switch is incorrectly placed outside the header: ${lang}`);
+  }
   if (home.includes('hub-quick-grid') || home.includes('hub-dashboard-grid')) {
     throw new Error(`Legacy dashboard leaked into the calm homepage: ${lang}`);
   }
