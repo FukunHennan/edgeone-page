@@ -51,7 +51,7 @@ const slides = [
     <h1>{zh ? '慢一点，' : 'Take a moment,'}<span>{zh ? '也很好。' : 'stay a while.'}</span></h1>
     <p class="calm-description">{zh ? '看看山川和光影。生活不只有忙碌，也有值得停留的风景。' : 'For the mountains, the light, and the little things worth noticing.'}</p>
   </div>
-  {/* Pause and immersive controls remain keyboard/screen-reader accessible but do not occupy the image. */}
+  <!-- Pause and immersive controls are available by keyboard without cluttering the scene. -->
   <div class="calm-accessibility-actions">
     <button type="button" data-calm-pause aria-label={zh ? '暂停自动轮播' : 'Pause automatic slideshow'} aria-pressed="false">{zh ? '暂停风景动画' : 'Pause scenery'}</button>
     <button type="button" data-calm-immersive aria-label={zh ? '进入沉浸模式' : 'Enter immersive mode'} aria-pressed="false">{zh ? '沉浸模式' : 'Immersive view'}</button>
