@@ -6,34 +6,47 @@ const { lang } = Astro.props;
 const zh = lang === 'zh-CN';
 // The homepage is deliberately a PHOTO slideshow: no <video>, MP4, or autoplaying footage.
 // These are the four self-hosted nature photographs available in the repository.
-const slides = [
+// Each one ships three widths (960 / 1440 / 1920) so phones never download the 1920 file.
+const scenes = [
   {
-    src: '/scenes/gallery-mountain.webp',
+    name: 'gallery-mountain',
     alt: zh ? '清晨的群山与湖泊' : 'Mountain lake in the morning',
     caption: zh ? '山间清晨' : 'Morning by the lake',
   },
   {
-    src: '/scenes/gallery-coast.webp',
+    name: 'gallery-coast',
     alt: zh ? '宁静海岸与海浪' : 'Peaceful coastline',
     caption: zh ? '宁静海岸' : 'Along the coast',
   },
   {
-    src: '/scenes/gallery-meadow.webp',
+    name: 'gallery-meadow',
     alt: zh ? '微风中的青绿草甸' : 'Meadow in a gentle breeze',
     caption: zh ? '风吹草甸' : 'Green meadow',
   },
   {
-    src: '/scenes/gallery-forest.webp',
+    name: 'gallery-forest',
     alt: zh ? '林间溪流与柔和晨光' : 'Forest stream in morning light',
     caption: zh ? '林间微光' : 'Forest stream',
   },
 ];
+// 横屏窄机（如 iPhone SE 横屏）也需要覆盖，故最小档从 640 宽算起。
+// 1920 档直接复用 /scenes 下的原图，其余档位在 /scenes/responsive 中生成。
+const sizes = '100vw';
+const slides = scenes.map((scene) => ({
+  ...scene,
+  src: `/scenes/${scene.name}.webp`,
+  srcset: [640, 960, 1440, 1920]
+    .map((width) => (width === 1920
+      ? `/scenes/${scene.name}.webp ${width}w`
+      : `/scenes/responsive/${scene.name}-${width}.webp ${width}w`))
+    .join(', '),
+}));
 ---
 <section class="calm-home" data-calm-carousel aria-roledescription={zh ? '风景照片轮播' : 'Scenic photo slideshow'} aria-label={zh ? '四季风景，慢慢欣赏' : 'Relaxing landscape photography'}>
   <div class="calm-slides" aria-live="off">
     {slides.map((slide, index) => (
       <figure class:list={['calm-slide', { 'is-active': index === 0 }]} data-calm-slide aria-hidden={index !== 0}>
-        <img class="calm-poster" src={slide.src}
+        <img class="calm-poster" src={slide.src} srcset={slide.srcset} sizes={sizes}
           alt={slide.alt} width="1920" height="1080"
           loading={index === 0 ? 'eager' : 'lazy'} decoding="async"
           fetchpriority={index === 0 ? 'high' : 'auto'}/>
