@@ -184,8 +184,24 @@ npm run check             # 完整校验并生产构建
 | `npm run check:content` | 只校验双语文章成对 |
 | `npm run build:production`（或 `build`） | 生产构建，输出 `astro-dist/` |
 | `npm run preview:astro` | 预览生产产物 |
+| `npm run subset:icons` | 重新生成 `assets/fa-subset/` 图标字体（增删图标时才需要） |
 
 `dev`、`build`、`server` 是 `dev:astro`、`build:production` 的别名。
+
+### 图标（Font Awesome）
+
+站点用的是**按图标裁剪过的字体**，不是 Font Awesome 完整字体：
+
+- `assets/fa-subset/*.woff2` —— 三个 woff2，合计约 2.5KB（完整版是 812KB）
+- `assets/fa-subset/subset.min.css` —— 与上面字形一一对应的 `@font-face` 和 `.fa-xxx:before` 规则
+
+这两者必须同步。**新增或删除图标时**：
+
+1. 改 `tools/subset-icons.py` 里的 `ICONS`（类名 + 码点）；
+2. 在 `assets/fa-subset/subset.min.css` 里加/删对应的 `:before` 规则；
+3. 运行 `npm run subset:icons`，把重新生成的 woff2 一起提交。
+
+产物已入库，所以**正常构建不需要 Python**；只有第 3 步需要 `pyftsubset`（`pip install fonttools brotli`）。
 
 ## 9. EdgeOne Pages
 
