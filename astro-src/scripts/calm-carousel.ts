@@ -64,7 +64,7 @@ export function initCalmCarousel(signal: AbortSignal) {
     videos.forEach((video, position) => {
       if (!video) return;
       const shouldPlay = position === index && !paused && !reduceMotion.matches &&
-        !conservativeNetwork() && !failedVideos.has(position) &&
+        !conservativeNetwork() && navigator.onLine && !failedVideos.has(position) &&
         document.visibilityState === 'visible' && !signal.aborted;
       if (!shouldPlay) { video.pause(); return; }
       if (!video.src && video.dataset.videoSrc) video.src = video.dataset.videoSrc;
@@ -160,7 +160,13 @@ export function initCalmCarousel(signal: AbortSignal) {
 
   // Do not pause on pointer hover: the gallery fills most desktop viewports.
   // Pause automatic slide changes only while a keyboard user is interacting.
-  root.addEventListener('focusin', () => { focusInside = true; stop(); }, { signal });
+  root.addEventListener('pointerdown', () => { focusInside = false; schedule(); }, { signal });
+  root.addEventListener('focusin', (event) => {
+    if ((event.target as HTMLElement).matches(':focus-visible')) {
+      focusInside = true;
+      stop();
+    }
+  }, { signal });
   root.addEventListener('focusout', (event) => {
     if (!root.contains(event.relatedTarget as Node | null)) {
       focusInside = false;
