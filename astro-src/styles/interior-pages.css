@@ -1,5 +1,5 @@
 /* Cinematic Calm — the approved visual language outside the homepage.
-   Reuse self-hosted CC0 scenery. Scope to .scenic-inner so the printable resume
+   Reuse self-hosted photographic scenery; the original video frame grabs were removed. Scope to .scenic-inner so the printable resume
    and the intentionally quiet, full-bleed homepage remain unchanged. */
 .scenic-inner{
   --scenic-ink:#24342f;
@@ -81,7 +81,7 @@
   min-height:0;
   border:0!important;
   border-radius:14px 14px 0 0;
-  background:#516d65 url('/scenes/mountain-lake.webp') center 51%/cover no-repeat!important;
+  background:#516d65 url('/scenes/gallery-mountain.webp') center 51%/cover no-repeat!important;
   color:#fff!important;
   box-shadow:none!important;
 }
@@ -143,10 +143,10 @@
   align-items:flex-start;
   justify-content:flex-end;
   padding:105px clamp(30px,5vw,76px) clamp(32px,4vw,50px);
-  background-image:url('/scenes/mountain-lake.webp')!important;
+  background-image:url('/scenes/gallery-mountain.webp')!important;
 }
-.scenic-inner .notes-workspace .workspace-hero{background-image:url('/scenes/misty-forest.webp')!important}
-.scenic-inner .projects-workspace .workspace-hero{background-image:url('/scenes/mountain-lake.webp')!important}
+.scenic-inner .notes-workspace .workspace-hero{background-image:url('/scenes/gallery-forest.webp')!important}
+.scenic-inner .projects-workspace .workspace-hero{background-image:url('/scenes/gallery-mountain.webp')!important}
 .scenic-inner .workspace-hero::after{display:none!important}
 .scenic-inner .workspace-hero-projects{padding-right:clamp(28px,5vw,76px)!important}
 .scenic-inner .workspace-hero .workspace-kicker{position:relative;z-index:1}

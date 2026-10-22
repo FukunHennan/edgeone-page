@@ -59,12 +59,16 @@ for (const lang of ['zh-CN', 'en']) {
   if ((feed.match(/<item>/g) || []).length !== Math.min(available.length, 30)) throw new Error(`Invalid ${lang} RSS feed`);
   const projects = yaml.load(fs.readFileSync(path.join(root, 'data', lang, 'projects.yml'), 'utf8'));
   const home = fs.readFileSync(path.join(root, 'astro-dist', lang, 'index.html'), 'utf8');
-  // The homepage intentionally replaces the old dense dashboard with a quiet gallery.
-  for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-pause', 'calm-accessibility-actions', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
-    if (!home.includes(marker)) throw new Error(`Missing calm homepage element in ${lang}: ${marker}`);
+  // The homepage is photo-only and fills the viewport; no video node or legacy posters.
+  for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-pause', 'calm-accessibility-actions',
+    '/scenes/gallery-mountain.webp', '/scenes/gallery-coast.webp',
+    '/scenes/gallery-meadow.webp', '/scenes/gallery-forest.webp',
+    '/theme/style.css', 'personal-hub-navbar']) {
+    if (!home.includes(marker)) throw new Error(`Missing full-screen photo gallery element in ${lang}: ${marker}`);
   }
-  for (const marker of ['data-calm-video', 'data-video-src', '/scenes/mountain-lake.mp4', '/scenes/soft-coast.mp4', '/scenes/green-meadow.mp4', '/scenes/misty-forest.mp4', '/scenes/mountain-lake.webp', 'calm-poster', 'data-fallback-src', 'data-calm-immersive', 'hub-language-select']) {
-    if (!home.includes(marker)) throw new Error(`Missing self-hosted media or control element: ${lang}: ${marker}`);
+  for (const obsolete of ['<video', 'data-calm-video', 'data-video-src', '/scenes/mountain-lake.mp4',
+    '/scenes/soft-coast.mp4', '/scenes/green-meadow.mp4', '/scenes/misty-forest.mp4']) {
+    if (home.includes(obsolete)) throw new Error(`Obsolete video markup still rendered in ${lang}: ${obsolete}`);
   }
   // Intentional low-distraction homepage: no prominent hero CTA or carousel button bar.
   for (const obsolete of ['class="calm-links"', 'class="calm-controls"', 'data-calm-dot=', 'data-calm-prev', 'data-calm-next']) {
@@ -74,7 +78,7 @@ for (const lang of ['zh-CN', 'en']) {
     throw new Error(`Missing keyboard-accessible media controls in ${lang}`);
   }
   if (home.includes('assets.mixkit.co') || home.includes('images.unsplash.com')) {
-    throw new Error(`Homepage still depends on external scenic media hosts: ${lang}`);
+    throw new Error(`Homepage still depends on external media hosts: ${lang}`);
   }
   if (!home.includes(`data-alternate-href="/${lang === 'zh-CN' ? 'en' : 'zh-CN'}/"`)) {
     throw new Error(`Homepage language selector does not link to its translation: ${lang}`);
@@ -137,21 +141,20 @@ for (const asset of ['article-light.webp', 'article-dark.webp', 'project-light.w
     throw new Error(`Invalid or excessive temporary WebP cover: ${asset}`);
   }
 }
-for (const name of ['mountain-lake', 'soft-coast', 'green-meadow', 'misty-forest']) {
+for (const name of ['gallery-mountain', 'gallery-coast', 'gallery-meadow', 'gallery-forest']) {
+  const asset = `scenes/${name}.webp`;
+  const target = path.join(output, asset);
+  if (!fs.existsSync(target)) throw new Error(`Missing standalone scenic photograph: ${asset}`);
+  const bytes = fs.readFileSync(target);
+  if (bytes.toString('ascii', 0, 4) !== 'RIFF' || bytes.toString('ascii', 8, 12) !== 'WEBP' ||
+      bytes.length < 40000 || bytes.length > 800000) {
+    throw new Error(`Invalid or oversized scenic WebP photograph: ${asset}`);
+  }
+}
+for (const obsolete of ['mountain-lake', 'soft-coast', 'green-meadow', 'misty-forest']) {
   for (const ext of ['mp4', 'webp', 'svg']) {
-    const asset = `scenes/${name}.${ext}`;
-    const target = path.join(output, asset);
-    if (!fs.existsSync(target)) throw new Error(`Missing self-hosted homepage scene asset: ${asset}`);
-    const contents = fs.readFileSync(target);
-    if (ext === 'mp4') {
-      if (contents.toString('ascii', 4, 8) !== 'ftyp' || contents.length > 6500000 || contents.length < 50000) {
-        throw new Error(`Invalid or oversized local MP4: ${asset}`);
-      }
-    }
-    if (ext === 'webp') {
-      if (contents.toString('ascii', 0, 4) !== 'RIFF' || contents.toString('ascii', 8, 12) !== 'WEBP' || contents.length > 600000) {
-        throw new Error(`Invalid or oversized WebP poster: ${asset}`);
-      }
+    if (fs.existsSync(path.join(output, 'scenes', `${obsolete}.${ext}`))) {
+      throw new Error(`Legacy video or poster should have been removed: ${obsolete}.${ext}`);
     }
   }
 }
@@ -165,4 +168,22 @@ const robots = fs.readFileSync(path.join(output, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`) || robots.includes('Disallow: /')) throw new Error('Production robots.txt blocks indexing');
 const worker = fs.readFileSync(path.join(output, 'service-worker.js'), 'utf8');
 if (!worker.includes('edgeone-page-') || worker.includes('Date.now')) throw new Error('Service worker cache version is unstable');
+// Detect stale references throughout HTML, CSS and JavaScript, not only on the homepage.
+const removedScenes = ['mountain-lake', 'soft-coast', 'green-meadow', 'misty-forest'];
+function auditNoLegacyScenes(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const location = path.join(directory, entry.name);
+    if (entry.isDirectory()) { auditNoLegacyScenes(location); continue; }
+    if (!['.html', '.css', '.js'].some(ext => entry.name.endsWith(ext))) continue;
+    const body = fs.readFileSync(location, 'utf8');
+    for (const scene of removedScenes) {
+      for (const ext of ['mp4', 'webp', 'svg']) {
+        if (body.includes(`/scenes/${scene}.${ext}`)) {
+          throw new Error(`Legacy media reference found in published file: ${location}`);
+        }
+      }
+    }
+  }
+}
+auditNoLegacyScenes(output);
 console.log(`[astro audit] ${articleCount} articles, bilingual project pages and project references passed.`);
