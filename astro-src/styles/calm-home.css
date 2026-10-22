@@ -13,30 +13,15 @@
 .calm-content h1{margin:0;color:#fff;font-size:clamp(50px,6.2vw,92px);font-weight:440;line-height:1.14;letter-spacing:-.06em;text-wrap:balance}
 .calm-content h1 span{display:block}
 .calm-description{max-width:420px;margin:25px 0 0;color:rgba(255,255,255,.91);font-size:clamp(14px,1.35vw,17px);line-height:1.9}
-.calm-links{display:flex;align-items:center;flex-wrap:wrap;gap:16px 25px;margin-top:34px;text-shadow:none}
-.calm-links a{display:inline-flex;align-items:center;gap:18px;min-height:45px;color:#fff;text-decoration:none;font-size:14px;font-weight:650;transition:transform .25s ease,background .25s ease}
-.calm-links a:first-child{padding:0 23px;border:1px solid rgba(255,255,255,.65);border-radius:999px;background:rgba(255,255,255,.13);backdrop-filter:blur(12px)}
-.calm-links a:last-child{border-bottom:1px solid rgba(255,255,255,.7)}
-.calm-links a:hover{transform:translateY(-2px)}
-.calm-links a:first-child:hover{background:rgba(255,255,255,.26)}
 .calm-caption{position:absolute;left:clamp(28px,6vw,112px);bottom:35px;z-index:2;display:flex;gap:16px;align-items:baseline;color:rgba(255,255,255,.94);font-size:13px;font-weight:550;letter-spacing:.04em;text-shadow:0 1px 9px rgba(17,41,39,.42)}
 .calm-caption span:first-child{font-variant-numeric:tabular-nums;opacity:.7;font-size:11px}
 .calm-caption small{font-size:10px;letter-spacing:.17em;opacity:.68}
-.calm-controls{position:absolute;right:clamp(24px,4vw,68px);bottom:25px;z-index:3;display:flex;align-items:center;gap:24px}
-.calm-dots,.calm-control-buttons{display:flex;align-items:center;gap:8px}
-.calm-dot{display:grid;place-items:center;width:26px;height:44px;padding:0;border:0;background:none;cursor:pointer}
-.calm-dot span{display:block;width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.53);transition:width .3s ease,background .3s ease,border-radius .3s ease}
-.calm-dot.is-active span{width:23px;border-radius:99px;background:#fff}
-.calm-arrow,.calm-toggle{display:inline-grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(20,49,47,.19);color:#fff;backdrop-filter:blur(12px);font-size:19px;cursor:pointer;transition:background .24s ease,transform .24s ease}
-.calm-toggle{font-size:13px}
-.calm-arrow:hover,.calm-toggle:hover{background:rgba(255,255,255,.24);transform:translateY(-2px)}
 .calm-home :is(a,button):focus-visible{outline:2px solid #fff;outline-offset:4px}
 .calm-home [data-calm-announcement]{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 @media(max-width:900px){
   .calm-home{width:calc(100% - 28px);margin-top:85px;height:clamp(560px,calc(100svh - 112px),850px)}
   .calm-content{left:42px;width:min(510px,calc(100% - 84px))}
   .calm-caption{left:42px}
-  .calm-controls{right:30px}
   .calm-overlay{background:linear-gradient(90deg,rgba(15,39,39,.62),rgba(24,46,46,.18) 90%),linear-gradient(0deg,rgba(15,36,35,.43),transparent 45%)}
 }
 @media(max-width:600px){
@@ -47,22 +32,15 @@
   .calm-eyebrow{font-size:10px;letter-spacing:.12em;margin-bottom:21px}
   .calm-content h1{font-size:clamp(40px,10vw,62px);line-height:1.17}
   .calm-description{max-width:320px;font-size:14px;line-height:1.8;margin-top:19px}
-  .calm-links{gap:10px 19px;margin-top:25px}
-  .calm-links a{font-size:12px;min-height:42px}
-  .calm-links a:first-child{padding:0 16px}
   .calm-caption{left:26px;bottom:96px;gap:10px;font-size:12px}
   .calm-caption small{font-size:9px}
-  .calm-controls{left:18px;right:18px;bottom:17px;justify-content:space-between}
-  .calm-control-buttons{gap:7px}
-  .calm-arrow,.calm-toggle{width:40px;height:40px}
 }
 @media(max-width:370px){
   .calm-content{top:40%}
   .calm-caption small{display:none}
-  .calm-links{flex-direction:column;align-items:flex-start}
 }
 @media(prefers-reduced-motion:reduce){
-  .calm-slide,.calm-dot span,.calm-links a,.calm-arrow,.calm-toggle{transition:none!important}
+  .calm-slide{transition:none!important}
 }
 
 /* Real landscape video, photo fallback, subtle fade-in. */
@@ -70,11 +48,10 @@
 .calm-slide .calm-poster{background-size:cover;background-position:center;background-color:#72928a}
 .calm-slide .calm-video{opacity:0;pointer-events:none;transition:opacity .7s ease}
 .calm-slide.has-live-video .calm-video{opacity:1}
-.calm-toggle:disabled{cursor:not-allowed;opacity:.65}
 @media(max-width:600px){.calm-slide .calm-poster,.calm-slide .calm-video{object-position:53% center}}
 @media(prefers-reduced-motion:reduce){.calm-slide .calm-video{display:none}.calm-slide .calm-poster{transition:none}}
 
-/* Quiet immersive viewing: keep an always-visible exit control and Escape shortcut. */
+/* Immersive scenery: keyboard-only utility actions reveal an exit while active. */
 .calm-immersive .calm-home{
   position:fixed!important;
   inset:0!important;
@@ -88,19 +65,50 @@
 .calm-immersive .personal-hub-navbar{transform:translateY(-120%);pointer-events:none}
 .calm-immersive body{overflow:hidden}
 .calm-home.is-immersive .calm-content,
-.calm-home.is-immersive .calm-caption,
-.calm-home.is-immersive .calm-dots,
-.calm-home.is-immersive .calm-arrow,
-.calm-home.is-immersive .calm-toggle{opacity:0;visibility:hidden;pointer-events:none}
-.calm-home .calm-immersive{display:inline-grid;place-items:center;width:42px;height:42px;padding:0;border:1px solid rgba(255,255,255,.55);border-radius:50%;background:rgba(20,49,47,.19);color:#fff;font-size:22px;cursor:pointer;backdrop-filter:blur(12px);transition:background .25s ease,transform .25s ease}
-.calm-home .calm-immersive:hover{background:rgba(255,255,255,.24);transform:translateY(-2px)}
-.calm-home.is-immersive .calm-controls{right:28px;left:auto;bottom:calc(24px + env(safe-area-inset-bottom));gap:0}
-.calm-home.is-immersive .calm-control-buttons{gap:0}
-.calm-home.is-immersive .calm-immersive{width:48px;height:48px;background:rgba(13,36,34,.48)}
+.calm-home.is-immersive .calm-caption{opacity:0;visibility:hidden;pointer-events:none}
 @media(max-width:600px){
-  .calm-home .calm-immersive{width:40px;height:40px}
-  .calm-home.is-immersive .calm-controls{right:18px}
 }
 @media(prefers-reduced-motion:reduce){
-  .calm-home .calm-immersive{transition:none}
+}
+
+/* No permanent CTA buttons or carousel bar. Keep pause and immersive options
+   in the accessibility order, reveal them only when focused. */
+.calm-accessibility-actions{
+  position:absolute;
+  top:18px;
+  right:18px;
+  z-index:5;
+  display:flex;
+  gap:8px;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+}
+.calm-accessibility-actions:focus-within,
+.calm-home.is-immersive .calm-accessibility-actions{
+  width:auto;
+  height:auto;
+  overflow:visible;
+  clip-path:none;
+}
+.calm-accessibility-actions button{
+  min-height:44px;
+  padding:10px 14px;
+  border:1px solid rgba(255,255,255,.65);
+  border-radius:999px;
+  background:rgba(19,47,44,.65);
+  color:#fff;
+  font:inherit;
+  font-size:13px;
+  line-height:1.4;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+}
+.calm-accessibility-actions button:disabled{opacity:.6;cursor:not-allowed}
+.calm-home.is-immersive .calm-accessibility-actions{
+  top:auto;
+  right:max(20px,env(safe-area-inset-right));
+  bottom:max(20px,env(safe-area-inset-bottom));
 }
