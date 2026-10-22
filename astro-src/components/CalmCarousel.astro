@@ -50,23 +50,11 @@ const slides = [
     <p class="calm-eyebrow">{zh ? '稻田鼠 · 一处安静的角落' : 'A QUIET CORNER OF THE WEB'}</p>
     <h1>{zh ? '慢一点，' : 'Take a moment,'}<span>{zh ? '也很好。' : 'stay a while.'}</span></h1>
     <p class="calm-description">{zh ? '看看山川和光影。生活不只有忙碌，也有值得停留的风景。' : 'For the mountains, the light, and the little things worth noticing.'}</p>
-    <div class="calm-links">
-      <a href={`/${lang}/archives/`}>{zh ? '读一读我的故事' : 'Read the journal'} <span aria-hidden="true">↗</span></a>
-      <a href={`/${lang}/projects/`}>{zh ? '看看我在做什么' : 'Explore my work'} <span aria-hidden="true">↗</span></a>
-    </div>
   </div>
-  <div class="calm-controls" aria-label={zh ? '轮播控制' : 'Slideshow controls'}>
-    <div class="calm-dots">
-      {slides.map((slide, index) => (
-        <button type="button" class:list={['calm-dot', { 'is-active': index === 0 }]} data-calm-dot={index} aria-label={zh ? `查看第 ${index + 1} 张：${slide.caption}` : `Show slide ${index + 1}: ${slide.caption}`} aria-current={index === 0 ? 'true' : undefined}><span></span></button>
-      ))}
-    </div>
-    <div class="calm-control-buttons">
-      <button class="calm-immersive" type="button" data-calm-immersive aria-pressed="false" aria-label={zh ? '进入沉浸模式' : 'Enter immersive mode'} title={zh ? '沉浸模式' : 'Immersive mode'}>⛶</button>
-      <button class="calm-arrow" type="button" data-calm-prev aria-label={zh ? '上一张图片' : 'Previous image'}>←</button>
-      <button class="calm-toggle" type="button" data-calm-pause aria-label={zh ? '暂停轮播' : 'Pause slideshow'} aria-pressed="false">Ⅱ</button>
-      <button class="calm-arrow" type="button" data-calm-next aria-label={zh ? '下一张图片' : 'Next image'}>→</button>
-    </div>
+  <!-- Pause and immersive controls are available by keyboard without cluttering the scene. -->
+  <div class="calm-accessibility-actions">
+    <button type="button" data-calm-pause aria-label={zh ? '暂停自动轮播' : 'Pause automatic slideshow'} aria-pressed="false">{zh ? '暂停风景动画' : 'Pause scenery'}</button>
+    <button type="button" data-calm-immersive aria-label={zh ? '进入沉浸模式' : 'Enter immersive mode'} aria-pressed="false">{zh ? '沉浸模式' : 'Immersive view'}</button>
   </div>
   <p class="sr-only" aria-live="polite" aria-atomic="true" data-calm-announcement></p>
 </section>

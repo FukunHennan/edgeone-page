@@ -5,11 +5,8 @@ export function initCalmCarousel(signal: AbortSignal) {
   const slides = [...root.querySelectorAll<HTMLElement>('[data-calm-slide]')];
   if (slides.length < 2) return;
 
-  const dots = [...root.querySelectorAll<HTMLButtonElement>('[data-calm-dot]')];
   const videos = slides.map((slide) => slide.querySelector<HTMLVideoElement>('[data-calm-video]'));
   const posters = slides.map((slide) => slide.querySelector<HTMLImageElement>('.calm-poster'));
-  const prev = root.querySelector<HTMLButtonElement>('[data-calm-prev]');
-  const next = root.querySelector<HTMLButtonElement>('[data-calm-next]');
   const toggle = root.querySelector<HTMLButtonElement>('[data-calm-pause]');
   const immersiveButton = root.querySelector<HTMLButtonElement>('[data-calm-immersive]');
   const announcement = root.querySelector<HTMLElement>('[data-calm-announcement]');
@@ -47,7 +44,7 @@ export function initCalmCarousel(signal: AbortSignal) {
       toggle.setAttribute('aria-label', off ?
         (zh ? '播放轮播' : 'Play slideshow') :
         (zh ? '暂停轮播' : 'Pause slideshow'));
-      toggle.textContent = off ? '▶' : 'Ⅱ';
+      toggle.textContent = off ? (zh ? '继续风景动画' : 'Resume scenery') : (zh ? '暂停风景动画' : 'Pause scenery');
       toggle.disabled = reduceMotion.matches;
     }
     if (immersiveButton) {
@@ -55,7 +52,7 @@ export function initCalmCarousel(signal: AbortSignal) {
       immersiveButton.setAttribute('aria-label', immersive ?
         (zh ? '退出沉浸模式' : 'Exit immersive mode') :
         (zh ? '进入沉浸模式' : 'Enter immersive mode'));
-      immersiveButton.textContent = immersive ? '↙' : '⛶';
+      immersiveButton.textContent = immersive ? (zh ? '退出沉浸模式' : 'Exit immersive view') : (zh ? '沉浸模式' : 'Immersive view');
       immersiveButton.title = immersiveButton.getAttribute('aria-label') || '';
     }
   };
@@ -85,15 +82,9 @@ export function initCalmCarousel(signal: AbortSignal) {
       slide.classList.toggle('is-active', active);
       slide.setAttribute('aria-hidden', String(!active));
     });
-    dots.forEach((dot, position) => {
-      const active = position === index;
-      dot.classList.toggle('is-active', active);
-      if (active) dot.setAttribute('aria-current', 'true');
-      else dot.removeAttribute('aria-current');
-    });
     syncVideo();
     if (userAction && announcement) {
-      announcement.textContent = dots[index]?.getAttribute('aria-label') || '';
+      announcement.textContent = slides[index]?.querySelector<HTMLImageElement>('.calm-poster')?.alt || '';
     }
   };
 
@@ -125,12 +116,6 @@ export function initCalmCarousel(signal: AbortSignal) {
   }, { signal }));
 
   const move = (offset: number) => { show(index + offset, true); schedule(); };
-  prev?.addEventListener('click', () => move(-1), { signal });
-  next?.addEventListener('click', () => move(1), { signal });
-  dots.forEach((dot, position) => dot.addEventListener('click', () => {
-    show(position, true);
-    schedule();
-  }, { signal }));
   toggle?.addEventListener('click', () => {
     paused = !paused;
     updateControls();
@@ -146,6 +131,9 @@ export function initCalmCarousel(signal: AbortSignal) {
     // When exiting immersive mode the original keyboard focus remains available.
   };
   immersiveButton?.addEventListener('click', () => setImmersive(!immersive), { signal });
+  root.addEventListener('dblclick', (event) => {
+    if (!(event.target as HTMLElement).closest('button, a, select, input')) setImmersive(!immersive);
+  }, { signal });
 
   root.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowLeft') { event.preventDefault(); move(-1); }
