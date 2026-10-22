@@ -8,22 +8,22 @@ const zh = lang === 'zh-CN';
 // These are the four self-hosted nature photographs available in the repository.
 const slides = [
   {
-    src: '/scenes/mountain-lake.webp', fallback: '/scenes/mountain-lake.svg',
+    src: '/scenes/gallery-mountain.webp',
     alt: zh ? '清晨的群山与湖泊' : 'Mountain lake in the morning',
     caption: zh ? '山间清晨' : 'Morning by the lake',
   },
   {
-    src: '/scenes/soft-coast.webp', fallback: '/scenes/soft-coast.svg',
+    src: '/scenes/gallery-coast.webp',
     alt: zh ? '宁静海岸与海浪' : 'Peaceful coastline',
     caption: zh ? '宁静海岸' : 'Along the coast',
   },
   {
-    src: '/scenes/green-meadow.webp', fallback: '/scenes/green-meadow.svg',
+    src: '/scenes/gallery-meadow.webp',
     alt: zh ? '微风中的青绿草甸' : 'Meadow in a gentle breeze',
     caption: zh ? '风吹草甸' : 'Green meadow',
   },
   {
-    src: '/scenes/misty-forest.webp', fallback: '/scenes/misty-forest.svg',
+    src: '/scenes/gallery-forest.webp',
     alt: zh ? '林间溪流与柔和晨光' : 'Forest stream in morning light',
     caption: zh ? '林间微光' : 'Forest stream',
   },
@@ -33,8 +33,8 @@ const slides = [
   <div class="calm-slides" aria-live="off">
     {slides.map((slide, index) => (
       <figure class:list={['calm-slide', { 'is-active': index === 0 }]} data-calm-slide aria-hidden={index !== 0}>
-        <img class="calm-poster" src={slide.src} data-fallback-src={slide.fallback}
-          alt={slide.alt} width="1280" height="720"
+        <img class="calm-poster" src={slide.src}
+          alt={slide.alt} width="1920" height="1080"
           loading={index === 0 ? 'eager' : 'lazy'} decoding="async"
           fetchpriority={index === 0 ? 'high' : 'auto'}/>
       </figure>
