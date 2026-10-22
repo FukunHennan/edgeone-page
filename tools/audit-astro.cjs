@@ -63,14 +63,24 @@ for (const lang of ['zh-CN', 'en']) {
   for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-dot', 'data-calm-pause', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
     if (!home.includes(marker)) throw new Error(`Missing calm homepage element in ${lang}: ${marker}`);
   }
-  for (const marker of ['data-calm-video', 'data-video-src', 'mixkit.co/videos/preview/', 'calm-poster', 'hub-language-select']) {
-    if (!home.includes(marker)) throw new Error(`Missing live scenery or header language selection: ${lang}: ${marker}`);
+  for (const marker of ['data-calm-video', 'data-video-src', 'mixkit-landscape-with-mountains-and-a-lake-seen-from-above-42490-large.mp4', 'mixkit-countryside-meadow-4075-large.mp4', 'calm-poster', 'data-fallback-src', 'data-calm-immersive', 'hub-language-select']) {
+    if (!home.includes(marker)) throw new Error(`Missing homepage media or control element: ${lang}: ${marker}`);
+  }
+  if (!home.includes(`data-alternate-href="/${lang === 'zh-CN' ? 'en' : 'zh-CN'}/"`)) {
+    throw new Error(`Homepage language selector does not link to its translation: ${lang}`);
   }
   if (home.includes('class="astro-language"') || home.includes('class="lang-select lang-select-mobile"')) {
     throw new Error(`A language switch is incorrectly placed outside the header: ${lang}`);
   }
   if (home.includes('hub-quick-grid') || home.includes('hub-dashboard-grid')) {
     throw new Error(`Legacy dashboard leaked into the calm homepage: ${lang}`);
+  }
+  // Article translation links are emitted from Shell, not guessed by replacing slug prefixes.
+  if (available.length) {
+    const article = fs.readFileSync(path.join(output, available[0].url, 'index.html'), 'utf8');
+    if (!article.includes('data-alternate-href="/' + (lang === 'zh-CN' ? 'en' : 'zh-CN') + '/')) {
+      throw new Error(`Missing article translation destination in navigation: ${lang}`);
+    }
   }
   const projectHtml = fs.readFileSync(path.join(root, 'astro-dist', lang, 'projects', 'index.html'), 'utf8');
   if (!projectHtml.includes('workspace-sidebar') || !projectHtml.includes('project-workspace-grid')) throw new Error(`Original project layout missing: ${lang}`);

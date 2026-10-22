@@ -45,7 +45,7 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
   <body>
     <a class="astro-skip" href="#main">{lang === 'zh-CN' ? '跳至内容' : 'Skip to content'}</a>
     <div id="swup" class:list={['page-container', { 'home-mimo-page': home }]}>
-      <Fragment set:html={themePartial('navbar', lang, Astro.url.pathname)} />
+      <Fragment set:html={themePartial('navbar', lang, Astro.url.pathname, [], otherPath)} />
       <slot name="hero" />
       <div class="main-content-container flex flex-col justify-between min-h-dvh"><main id="main" class="main-content-body transition-fade-up"><div class="main-content"><slot /></div></main></div>
       {!home && <a class="page-back" href={`/${lang}/`} data-no-swup data-history-back>

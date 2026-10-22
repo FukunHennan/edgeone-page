@@ -7,8 +7,9 @@ import { postPath, type Post, type Language } from './content';
 const require = createRequire(import.meta.url);
 const ejs = require('ejs') as { render: (template: string, data: Record<string, unknown>) => string };
 const registry = compatibilityRegistry as { renderProjects: (language: string, items: unknown[]) => string };
-export function themePartial(part: 'hero' | 'dashboard' | 'navbar', lang: Language, pathname: string, posts: Post[] = []) {
+export function themePartial(part: 'hero' | 'dashboard' | 'navbar', lang: Language, pathname: string, posts: Post[] = [], alternatePath?: string) {
   return ejs.render({ hero, dashboard, navbar }[part], {
+    alternatePath,
     config: { language: lang, root: `/${lang}/` }, theme: { navbar: { search: { enable: true } } },
     page: { posts: posts.map((post) => ({ ...post.data, path: postPath(post), tags: { length: post.data.tags.length, data: post.data.tags.map((name) => ({ name })) } })) },
     is_home: () => pathname === `/${lang}/`, is_current: (path: string) => pathname.startsWith(`/${lang}${path}`),
