@@ -393,3 +393,46 @@
 @media(prefers-reduced-motion:reduce){
   .scenic-story-image img,.scenic-inner .project-workspace-grid article,.scenic-inner .note-list article{transition:none!important}
 }
+
+/* Mobile drawer should follow the dark cinematic navigation in the reference. */
+.scenic-inner .personal-hub-navbar .navbar-drawer{
+  background:linear-gradient(152deg,#273b3e,#18282a 58%,#111e23)!important;
+  color:#f6faf5!important;
+}
+.scenic-inner .navbar-drawer .hub-drawer-head,
+.scenic-inner .navbar-drawer .hub-drawer-head strong,
+.scenic-inner .navbar-drawer .drawer-navbar-item a,
+.scenic-inner .navbar-drawer .hub-drawer-bottom a,
+.scenic-inner .navbar-drawer .hub-drawer-head small{color:#f6faf5!important}
+.scenic-inner .navbar-drawer .drawer-navbar-item a{
+  border-color:rgba(255,255,255,.13)!important;
+  font-size:18px;
+  font-weight:550;
+}
+.scenic-inner .navbar-drawer .drawer-navbar-item a.active,
+.scenic-inner .navbar-drawer .drawer-navbar-item a:hover{color:#cce4c4!important}
+.scenic-inner .navbar-drawer .drawer-theme-toggle{
+  color:#fff;
+  border-color:rgba(255,255,255,.27);
+  background:rgba(255,255,255,.07);
+}
+.scenic-inner .navbar-drawer .hub-drawer-bottom{
+  border-top:1px solid rgba(255,255,255,.12);
+}
+/* Taxonomies and dated archive pages share the same light reading surface. */
+.scenic-inner .astro-collection{
+  width:min(1140px,calc(100% - 24px));
+  max-width:none;
+  margin:92px auto 55px;
+  padding:clamp(24px,4vw,54px);
+  border:1px solid var(--scenic-outline);
+  border-radius:15px;
+  background:var(--scenic-white);
+}
+.scenic-inner .astro-collection h1{color:var(--scenic-ink)}
+.scenic-inner .astro-collection a{color:var(--scenic-green)}
+.scenic-inner .astro-term-list a{border-color:var(--scenic-outline);color:var(--scenic-ink)}
+.scenic-inner .astro-term-list small{color:var(--scenic-muted)}
+@media(max-width:768px){
+  .scenic-inner .astro-collection{margin-top:82px}
+}
