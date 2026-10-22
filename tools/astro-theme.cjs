@@ -13,16 +13,21 @@ const SOURCE = path.join(ROOT, 'themes/edg-one-page/source');
 // 上游 themes/edg-one-page/source 目录本身保持完整，删掉的只是产物中的副本。
 // ---------------------------------------------------------------------------
 
-// 字体：subset.min.css 只声明了下面三个 @font-face，其余字重/风格没有任何
-// 页面会请求，拷贝过去只会白白占部署体积（duotone/light/thin/sharp 合计 3.8MB）。
+// 字体：发布 `assets/fa-subset/` 里已按图标裁剪过的版本，而不是上游完整字体。
+// 上游 fa-solid/fa-regular 各有 3157 个字形、合计 812KB，本站只用 9 个图标；
+// 裁剪后三套字体合计约 2.5KB。重新生成用 `npm run subset:icons`。
+// 注意：不要改回 themes/…/source/webfonts —— 那是未裁剪的完整字体。
+const WEBFONT_DIR = path.join(ROOT, 'assets/fa-subset');
 const WEBFONT_FILES = [
   'fa-solid-900.woff2',
   'fa-regular-400.woff2',
   'fa-brands-400.woff2',
 ];
 
-// 图标样式表：只发布我们实际引用的一份子集，完整 Pro 样式表留在源目录备查。
-const FONTAWESOME_FILES = ['subset.min.css'];
+// 图标样式表：同样放在 WEBFONT_DIR，和字体是一对必须同步的搭档
+// （CSS 里的 :before 码点 ↔ 字体里的字形）。上游完整 Pro 样式表留在
+// themes/…/source/fontawesome 备查，不进产物。
+const FONTAWESOME_FILE = 'subset.min.css';
 
 // 图片：只保留站点真正引用的资源。
 const THEME_IMAGE_FILES = ['稻田鼠.jpg'];
@@ -45,11 +50,9 @@ function prepareTheme() {
   fs.mkdirSync(output, { recursive: true });
 
   for (const name of WEBFONT_FILES) {
-    copyFile(path.join(SOURCE, 'webfonts', name), path.join(output, 'webfonts', name));
+    copyFile(path.join(WEBFONT_DIR, name), path.join(output, 'webfonts', name));
   }
-  for (const name of FONTAWESOME_FILES) {
-    copyFile(path.join(SOURCE, 'fontawesome', name), path.join(output, 'fontawesome', name));
-  }
+  copyFile(path.join(WEBFONT_DIR, FONTAWESOME_FILE), path.join(output, 'fontawesome', FONTAWESOME_FILE));
   for (const name of THEME_IMAGE_FILES) {
     copyFile(path.join(SOURCE, 'images', name), path.join(output, 'images', name));
   }

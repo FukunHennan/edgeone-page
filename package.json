@@ -20,7 +20,8 @@
     "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
     "preview:production": "node tools/check-runtime.js && npm run build:production && npm run preview:astro",
-    "server": "npm run dev"
+    "server": "npm run dev",
+    "subset:icons": "python3 tools/subset-icons.py"
   },
   "repository": {
     "type": "git",
