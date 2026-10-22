@@ -6,10 +6,10 @@ const { lang } = Astro.props;
 const zh = lang === 'zh-CN';
 const slides = [
   {
-    video: 'https://assets.mixkit.co/videos/preview/mixkit-landscape-of-the-snowy-mountain-with-a-lake-4732-large.mp4',
+    video: 'https://assets.mixkit.co/videos/preview/mixkit-landscape-with-mountains-and-a-lake-seen-from-above-42490-large.mp4',
     poster: 'https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=1600&q=80',
     fallback: '/scenes/mountain-lake.svg',
-    alt: zh ? '雪山与湖泊的真实风景' : 'Real mountain and lake scenery',
+    alt: zh ? '群山与湖泊的自然实景' : 'Real aerial view of mountains and a lake',
     caption: zh ? '山间清晨' : 'Morning by the lake', english: 'MOUNTAIN LAKE',
   },
   {
@@ -20,7 +20,7 @@ const slides = [
     caption: zh ? '日落海岸' : 'Along the coast', english: 'SOFT COAST',
   },
   {
-    video: 'https://assets.mixkit.co/videos/preview/mixkit-countryside-meadow-4077-large.mp4',
+    video: 'https://assets.mixkit.co/videos/preview/mixkit-countryside-meadow-4075-large.mp4',
     poster: 'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1600&q=80',
     fallback: '/scenes/green-meadow.svg',
     alt: zh ? '阳光下的乡间草甸实景' : 'Real countryside meadow in warm light',
@@ -39,7 +39,7 @@ const slides = [
   <div class="calm-slides" aria-live="off">
     {slides.map((slide, index) => (
       <figure class:list={['calm-slide', { 'is-active': index === 0 }]} data-calm-slide aria-hidden={index !== 0}>
-        <img class="calm-poster" src={slide.poster} alt={slide.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} width="1600" height="900" style={`background-image: url('${slide.fallback}')`} />
+        <img class="calm-poster" src={slide.poster} data-fallback-src={slide.fallback} alt={slide.alt} loading={index === 0 ? 'eager' : 'lazy'} decoding="async" fetchpriority={index === 0 ? 'high' : 'auto'} width="1600" height="900" style={`background-image: url('${slide.fallback}')`} />
         <video class="calm-video" data-calm-video data-video-src={slide.video} poster={slide.poster} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
         <figcaption class="calm-caption"><span>{String(index + 1).padStart(2, '0')} / 04</span><span>{slide.caption}</span><small>{slide.english}</small></figcaption>
       </figure>
@@ -62,6 +62,7 @@ const slides = [
       ))}
     </div>
     <div class="calm-control-buttons">
+      <button class="calm-immersive" type="button" data-calm-immersive aria-pressed="false" aria-label={zh ? '进入沉浸模式' : 'Enter immersive mode'} title={zh ? '沉浸模式' : 'Immersive mode'}>⛶</button>
       <button class="calm-arrow" type="button" data-calm-prev aria-label={zh ? '上一张图片' : 'Previous image'}>←</button>
       <button class="calm-toggle" type="button" data-calm-pause aria-label={zh ? '暂停轮播' : 'Pause slideshow'} aria-pressed="false">Ⅱ</button>
       <button class="calm-arrow" type="button" data-calm-next aria-label={zh ? '下一张图片' : 'Next image'}>→</button>
