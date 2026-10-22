@@ -92,6 +92,20 @@ for (const lang of ['zh-CN', 'en']) {
       throw new Error(`Missing article translation destination in navigation: ${lang}`);
     }
   }
+  const archiveHtml = fs.readFileSync(path.join(output, lang, 'archives', 'index.html'), 'utf8');
+  for (const marker of ['scenic-interior-banner', 'scenic-archive-sidebar', 'data-archive-search', 'scenic-story']) {
+    if (!archiveHtml.includes(marker)) throw new Error(`Scenic blog archive is incomplete: ${lang}: ${marker}`);
+  }
+  const aboutHtml = fs.readFileSync(path.join(output, lang, 'about', 'index.html'), 'utf8');
+  for (const marker of ['scenic-about-card', 'scenic-about-profile', 'scenic-about-skills']) {
+    if (!aboutHtml.includes(marker)) throw new Error(`Scenic about page is incomplete: ${lang}: ${marker}`);
+  }
+  if (available.length) {
+    const articleHtml = fs.readFileSync(path.join(output, available[0].url, 'index.html'), 'utf8');
+    if (!articleHtml.includes('scenic-article-banner') || !articleHtml.includes('astro-article-rail')) {
+      throw new Error(`Scenic article reading layout is incomplete: ${lang}`);
+    }
+  }
   const projectHtml = fs.readFileSync(path.join(root, 'astro-dist', lang, 'projects', 'index.html'), 'utf8');
   if (!projectHtml.includes('workspace-sidebar') || !projectHtml.includes('project-workspace-grid')) throw new Error(`Original project layout missing: ${lang}`);
   if (projectHtml.match(/<h3>(.*?)<\/h3>/)?.[1] !== projects[0].title) throw new Error(`Original project ordering changed: ${lang}`);

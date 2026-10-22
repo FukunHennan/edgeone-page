@@ -1,0 +1,20 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  label?: string;
+  compact?: boolean;
+  scene?: 'lake' | 'coast' | 'meadow' | 'forest';
+}
+const { title, subtitle, label, compact = false, scene = 'lake' } = Astro.props;
+const poster = { lake: '/scenes/mountain-lake.webp', coast: '/scenes/soft-coast.webp', meadow: '/scenes/green-meadow.webp', forest: '/scenes/misty-forest.webp' }[scene];
+---
+<section class:list={['scenic-interior-banner', { 'scenic-interior-banner-compact': compact }]} aria-label={title || label || 'Nature landscape'}>
+  <img src={poster} alt="" role="presentation" loading="eager" width="1280" height="720" />
+  <div class="scenic-interior-banner-shade" aria-hidden="true"></div>
+  {(!compact && (title || subtitle || label)) && <div class="scenic-interior-banner-copy">
+    {label && <span class="scenic-interior-eyebrow">{label}</span>}
+    {title && <h1>{title}</h1>}
+    {subtitle && <p>{subtitle}</p>}
+  </div>}
+</section>
