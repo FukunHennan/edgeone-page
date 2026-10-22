@@ -1,6 +1,7 @@
 ---
 import { render, getCollection, type CollectionEntry } from 'astro:content';
 import Shell from '../layouts/Shell.astro';
+import ScenicBanner from '../components/ScenicBanner.astro';
 import { languages, postsFor, postPath, termSlug, type Post, type Language } from '../lib/content';
 export async function getStaticPaths() {
   const posts = (await Promise.all(languages.map(postsFor))).flat();
@@ -26,7 +27,7 @@ const termLink = (section: string, name: string) => `/${lang}/${section}/${termS
 const tocHeadings = headings.filter((heading) => heading.depth <= 3);
 ---
 <Shell lang={lang} title={post.data.title} description={'description' in post.data ? post.data.description : ''} alternate={alternate} published={'date' in post.data ? post.data.date : undefined} updated={'updated' in post.data ? post.data.updated : undefined}>
-  {'date' in post.data ? <article class="astro-article">
+  {'date' in post.data ? <><div class="scenic-article-banner"><ScenicBanner compact scene="forest" /></div><article class="astro-article">
     <header class="astro-article-head">
       <p class="astro-article-date"><time datetime={post.data.date.toISOString()}>{day(post.data.date)}</time></p>
       <h1>{post.data.title}</h1>
@@ -54,5 +55,23 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
       </nav>
     </details>}
     <div class="astro-article-body"><div class="astro-prose"><Content /></div></div>
-  </article> : <Content />}
+  </article></> : post.id === 'about' ?
+    <div class="scenic-interior-wrap">
+      <ScenicBanner scene="coast" label="ABOUT · THE MAKER" title={lang === 'zh-CN' ? '关于我' : 'About me'} subtitle={lang === 'zh-CN' ? '一个喜欢折腾的开发者，记录学习与创造。' : 'Learning, making, and enjoying the journey.'} />
+      <section class="scenic-about-card">
+        <div class="scenic-about-profile">
+          <img src="/theme/images/稻田鼠.jpg" alt={lang === 'zh-CN' ? '稻田鼠个人头像' : 'Personal site avatar'} width="124" height="124" loading="lazy" />
+          <div><strong>{lang === 'zh-CN' ? '稻田鼠' : 'Datianshu'}</strong><p>BUILD · LEARN · CREATE</p></div>
+        </div>
+        <div class="scenic-about-prose astro-prose"><Content /></div>
+        <aside class="scenic-about-skills">
+          <h2>{lang === 'zh-CN' ? '探索方向' : 'Areas of interest'}</h2>
+          <div><span>Embedded & ESP32</span><span>Linux</span><span>KiCad & PCB</span><span>Astro & Web</span><span>Robotics</span></div>
+        </aside>
+      </section>
+    </div> : post.id === 'experience' ?
+    <div class="scenic-interior-wrap">
+      <ScenicBanner scene="meadow" label="JOURNEY · LEARNING · MAKING" title={lang === 'zh-CN' ? '我的经历' : 'My journey'} subtitle={lang === 'zh-CN' ? '沿着技术、创造与实践，记录成长。' : 'A personal path through learning and making.'} />
+      <Content />
+    </div> : <Content />}
 </Shell>
