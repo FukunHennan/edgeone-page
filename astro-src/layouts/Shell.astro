@@ -10,6 +10,13 @@ const scenicInterior = !home && !Astro.url.pathname.startsWith(`/${lang}/resume/
 const other = lang === 'zh-CN' ? 'en' : 'zh-CN';
 const otherPath = alternate || Astro.url.pathname.replace(`/${lang}/`, `/${other}/`);
 const canonical = new URL(Astro.url.pathname, Astro.site);
+// --- OG / Twitter 分享卡片（P0 修复）---
+const ogImage = new URL('/scenes/gallery-mountain.webp', Astro.site).href;
+const siteName = lang === 'zh-CN' ? '稻田鼠' : 'Daotianshu';
+const ogLocale = lang === 'zh-CN' ? 'zh_CN' : 'en_US';
+const ogLocaleAlt = lang === 'zh-CN' ? 'en_US' : 'zh_CN';
+const shareTitle = description ? `${title} · ${siteName}` : siteName;
+const modified = updated || published;
 const isArticle = Astro.url.pathname.includes('/posts/');
 const schema = {
   '@context': 'https://schema.org',
@@ -30,6 +37,23 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
     <title>{title} · 稻田鼠</title><meta name="description" content={description} />
     <meta name="robots" content="index,follow" />
     <link rel="canonical" href={canonical} /><link rel="alternate" hreflang={lang} href={canonical} /><link rel="alternate" hreflang={other} href={new URL(otherPath, Astro.site)} /><link rel="alternate" hreflang="x-default" href={new URL(`/zh-CN/`, Astro.site)} />
+    <meta property="og:type" content={isArticle ? 'article' : 'website'} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={shareTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1920" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content={title} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlt} />
+    {isArticle && published && <meta property="article:published_time" content={published.toISOString()} />}
+    {isArticle && modified && <meta property="article:modified_time" content={modified.toISOString()} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={shareTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
     <link rel="alternate" type="application/rss+xml" title="RSS" href={`/${lang}/feed.xml`} />
     <link rel="manifest" href={`/${lang}/manifest.webmanifest`} /><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg" />
     <script type="application/ld+json" data-edgeone-schema set:html={JSON.stringify(schema).replace(/</g, '\\u003c')} />
@@ -38,7 +62,7 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
         window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true });
       }
     </script>
-    <link rel="stylesheet" href="/theme/tailwind.css" /><link rel="stylesheet" href="/theme/fontawesome/all.min.css" /><link rel="stylesheet" href="/theme/style.css" />
+    <link rel="stylesheet" href="/theme/tailwind.css" /><link rel="stylesheet" href="/theme/fontawesome/subset.min.css" /><link rel="stylesheet" href="/theme/style.css" />
     <style is:inline define:vars={{ fonts }}>body,input,button,select,textarea{font-family:var(--fonts)}code,pre{font-family:"Geist Mono","SFMono-Regular",Consolas,monospace}</style>
     <script is:inline>
       try { const stored = JSON.parse(localStorage.getItem('REDEFINE-THEME-STATUS') || 'null'); const dark = stored ? stored.isDark : matchMedia('(prefers-color-scheme:dark)').matches; document.documentElement.classList.add(dark ? 'dark' : 'light'); document.documentElement.style.colorScheme = dark ? 'dark' : 'light'; } catch { document.documentElement.classList.add(matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light'); }
