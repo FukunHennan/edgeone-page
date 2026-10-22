@@ -6,12 +6,52 @@ const stylus = require('stylus');
 const nib = require('nib');
 const ROOT = path.resolve(__dirname, '..');
 const SOURCE = path.join(ROOT, 'themes/edg-one-page/source');
+
+// ---------------------------------------------------------------------------
+// 资源清单：这里是「哪些主题文件会进入构建产物」的唯一来源。
+// 想增删主题资源时只改这里，不要在各处散落地写路径。
+// 上游 themes/edg-one-page/source 目录本身保持完整，删掉的只是产物中的副本。
+// ---------------------------------------------------------------------------
+
+// 字体：subset.min.css 只声明了下面三个 @font-face，其余字重/风格没有任何
+// 页面会请求，拷贝过去只会白白占部署体积（duotone/light/thin/sharp 合计 3.8MB）。
+const WEBFONT_FILES = [
+  'fa-solid-900.woff2',
+  'fa-regular-400.woff2',
+  'fa-brands-400.woff2',
+];
+
+// 图标样式表：只发布我们实际引用的一份子集，完整 Pro 样式表留在源目录备查。
+const FONTAWESOME_FILES = ['subset.min.css'];
+
+// 图片：只保留站点真正引用的资源。
+const THEME_IMAGE_FILES = ['稻田鼠.jpg'];
+
+// 注：source/fonts 下的 Chillax / Geist / GeistMono 不发布。
+// Shell.astro 通过 define:vars 注入系统字体栈，没有任何 @font-face 指向它们，
+// 浏览器实测也不会请求 theme/fonts/。
+
+function copyFile(from, to) {
+  if (!fs.existsSync(from)) throw new Error(`[astro-theme] 缺少资源: ${path.relative(ROOT, from)}`);
+  fs.mkdirSync(path.dirname(to), { recursive: true });
+  fs.copyFileSync(from, to);
+}
+
 function prepareTheme() {
   const output = path.join(ROOT, 'astro-static/theme');
+  // 每次重建前先清空，避免上一次构建留下的资源（例如已废弃的完整字体）
+  // 继续滞留在产物里。
+  fs.rmSync(output, { recursive: true, force: true });
   fs.mkdirSync(output, { recursive: true });
-  for (const folder of ['images', 'fonts', 'fontawesome', 'webfonts']) {
-    const from = path.join(SOURCE, folder);
-    if (fs.existsSync(from)) fs.cpSync(from, path.join(output, folder), { recursive: true });
+
+  for (const name of WEBFONT_FILES) {
+    copyFile(path.join(SOURCE, 'webfonts', name), path.join(output, 'webfonts', name));
+  }
+  for (const name of FONTAWESOME_FILES) {
+    copyFile(path.join(SOURCE, 'fontawesome', name), path.join(output, 'fontawesome', name));
+  }
+  for (const name of THEME_IMAGE_FILES) {
+    copyFile(path.join(SOURCE, 'images', name), path.join(output, 'images', name));
   }
   const config = yaml.load(fs.readFileSync(path.join(SOURCE, '../_config.yml'), 'utf8'));
   const file = path.join(SOURCE, 'css/style.styl');
