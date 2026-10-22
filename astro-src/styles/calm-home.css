@@ -112,3 +112,148 @@
   right:max(20px,env(safe-area-inset-right));
   bottom:max(20px,env(safe-area-inset-bottom));
 }
+
+/* Reference-design alignment, 2026-10-22.
+   The cinematic home is its own visual context: avoid the opaque paper
+   navbar and generic content gutters forced by the legacy theme. */
+.home-mimo-page{
+  --calm-frame:clamp(10px,1.15vw,19px);
+  --calm-top:8px;
+}
+.home-mimo-page .main-content-container,
+.home-mimo-page .main-content-body,
+.home-mimo-page .main-content-body .main-content{
+  padding:0!important;
+  margin:0!important;
+  min-height:0!important;
+  width:100%!important;
+  max-width:none!important;
+}
+.home-mimo-page .calm-home{
+  width:calc(100% - var(--calm-frame)*2)!important;
+  max-width:none!important;
+  height:calc(100svh - var(--calm-frame)*2)!important;
+  min-height:580px;
+  max-height:none!important;
+  margin:var(--calm-top) auto var(--calm-frame)!important;
+  border-radius:12px;
+  box-shadow:0 9px 35px rgba(15,28,24,.15);
+}
+.home-mimo-page .personal-hub-navbar{
+  position:absolute!important;
+  left:var(--calm-frame)!important;
+  right:var(--calm-frame)!important;
+  top:var(--calm-top)!important;
+  width:auto!important;
+  height:72px!important;
+  padding:0 clamp(20px,4vw,72px)!important;
+  background:rgba(17,34,38,.28)!important;
+  border:0!important;
+  border-radius:12px 12px 0 0!important;
+  box-shadow:none!important;
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px);
+}
+.home-mimo-page .personal-hub-navbar .navbar-content{
+  max-width:none!important;
+  height:72px!important;
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+}
+.home-mimo-page .personal-hub-navbar .hub-brand-copy strong,
+.home-mimo-page .personal-hub-navbar .hub-brand-copy small,
+.home-mimo-page .personal-hub-navbar .hub-nav-item a,
+.home-mimo-page .personal-hub-navbar .hub-nav-icon,
+.home-mimo-page .personal-hub-navbar .hub-github-link{
+  color:#fff!important;
+}
+.home-mimo-page .personal-hub-navbar .hub-nav-item a:hover,
+.home-mimo-page .personal-hub-navbar .hub-nav-item a.active{
+  color:#efffdb!important;
+}
+.home-mimo-page .personal-hub-navbar .hub-nav-item a.active:after{
+  background:#d2e6ba!important;
+}
+.home-mimo-page .personal-hub-navbar .hub-language-select{
+  color:#fff!important;
+  background:rgba(255,255,255,.13)!important;
+  border:1px solid rgba(255,255,255,.24)!important;
+}
+.home-mimo-page .personal-hub-navbar .hub-language-select option{
+  color:#172a25;
+  background:#fff;
+}
+.home-mimo-page .personal-hub-navbar .hub-github-link{
+  background:rgba(255,255,255,.13)!important;
+  border:1px solid rgba(255,255,255,.19)!important;
+}
+.home-mimo-page .calm-overlay{
+  background:linear-gradient(90deg,rgba(9,29,31,.43) 0%,rgba(9,29,31,.17) 46%,rgba(9,29,31,.03) 100%),
+    linear-gradient(0deg,rgba(9,29,31,.28),transparent 35%);
+}
+.home-mimo-page .calm-content{
+  left:clamp(46px,7.2vw,132px);
+  top:52%;
+  width:min(680px,calc(100% - 100px));
+  transform:translateY(-45%);
+}
+.home-mimo-page .calm-content h1{
+  font-size:clamp(46px,4.7vw,78px);
+  line-height:1.2;
+  letter-spacing:-.05em;
+  font-weight:480;
+}
+.home-mimo-page .calm-content h1 span{display:inline}
+.home-mimo-page .calm-content h1 span:before{content:" "}
+.home-mimo-page .calm-eyebrow{font-size:11px;opacity:.88;letter-spacing:.09em;margin:0 0 16px}
+.home-mimo-page .calm-description{
+  max-width:600px;
+  margin-top:18px;
+  font-size:clamp(15px,1.25vw,18px);
+  line-height:1.8;
+}
+.home-mimo-page .calm-caption{
+  bottom:25px;
+  left:clamp(46px,7.2vw,132px);
+  opacity:.76;
+  font-size:11px;
+}
+@media(max-width:900px){
+  .home-mimo-page .personal-hub-navbar{height:64px!important;padding:0 20px!important}
+  .home-mimo-page .personal-hub-navbar .navbar-content{height:64px!important}
+  .home-mimo-page .calm-content{left:clamp(28px,5vw,55px);width:calc(100% - 64px)}
+  .home-mimo-page .calm-caption{left:clamp(28px,5vw,55px)}
+}
+@media(max-width:600px){
+  .home-mimo-page{--calm-frame:9px;--calm-top:9px}
+  .home-mimo-page .calm-home{
+    height:calc(100svh - 18px)!important;
+    min-height:520px;
+    border-radius:13px;
+  }
+  .home-mimo-page .personal-hub-navbar{
+    left:9px!important;right:9px!important;top:9px!important;
+    height:60px!important;padding:0 13px!important;
+    background:rgba(17,34,38,.26)!important;
+  }
+  .home-mimo-page .personal-hub-navbar .navbar-content{height:60px!important}
+  .home-mimo-page .personal-hub-navbar :is(.hub-mobile-actions .search,.navbar-bar){color:#fff!important}
+  .home-mimo-page .calm-content{
+    top:53%;
+    left:26px;
+    width:calc(100% - 52px);
+  }
+  .home-mimo-page .calm-content h1{
+    font-size:clamp(34px,8.3vw,47px);
+    line-height:1.26;
+  }
+  .home-mimo-page .calm-content h1 span{display:block}
+  .home-mimo-page .calm-content h1 span:before{content:none}
+  .home-mimo-page .calm-description{font-size:13px;max-width:310px;margin-top:15px}
+  .home-mimo-page .calm-caption{left:25px;bottom:20px}
+}
+@media(max-width:400px){
+  .home-mimo-page .personal-hub-navbar .hub-brand-copy small{display:none}
+  .home-mimo-page .personal-hub-navbar .hub-brand-copy strong{font-size:15px}
+}
