@@ -1,10 +1,12 @@
 ---
 import '../styles/site.css';
+import '../styles/interior-pages.css';
 import { themePartial } from '../lib/theme';
 import type { Language } from '../lib/content';
 interface Props { lang: Language; title: string; description?: string; alternate?: string; published?: Date; updated?: Date }
 const { lang, title, description = '', alternate, published, updated } = Astro.props;
 const home = Astro.url.pathname === `/${lang}/`;
+const scenicInterior = !home && !Astro.url.pathname.startsWith(`/${lang}/resume/`);
 const other = lang === 'zh-CN' ? 'en' : 'zh-CN';
 const otherPath = alternate || Astro.url.pathname.replace(`/${lang}/`, `/${other}/`);
 const canonical = new URL(Astro.url.pathname, Astro.site);
@@ -44,7 +46,7 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
   </head>
   <body>
     <a class="astro-skip" href="#main">{lang === 'zh-CN' ? '跳至内容' : 'Skip to content'}</a>
-    <div id="swup" class:list={['page-container', { 'home-mimo-page': home }]}>
+    <div id="swup" class:list={['page-container', { 'home-mimo-page': home, 'scenic-inner': scenicInterior }]}>
       <Fragment set:html={themePartial('navbar', lang, Astro.url.pathname, [], otherPath)} />
       <slot name="hero" />
       <div class="main-content-container flex flex-col justify-between min-h-dvh"><main id="main" class="main-content-body transition-fade-up"><div class="main-content"><slot /></div></main></div>

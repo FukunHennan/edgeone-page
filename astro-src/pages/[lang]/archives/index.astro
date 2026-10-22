@@ -1,16 +1,32 @@
 ---
 import Shell from '../../../layouts/Shell.astro';
+import ScenicBanner from '../../../components/ScenicBanner.astro';
 import ArticleList from '../../../components/ArticleList.astro';
 import { languages, postsFor, type Language } from '../../../lib/content';
 export function getStaticPaths() { return languages.map((lang) => ({ params: { lang } })); }
 const lang = Astro.params.lang as Language;
 const posts = await postsFor(lang);
+const zh = lang === 'zh-CN';
 ---
-<Shell lang={lang} title={lang === 'zh-CN' ? '文章' : 'Writing'}>
-  <section class="workspace-hero"><h1>{lang === 'zh-CN' ? '工程与学习记录' : 'Engineering and learning'}</h1></section>
-  <nav class="astro-browse" aria-label={lang === 'zh-CN' ? '浏览文章' : 'Browse writing'}>
-    <a href={`/${lang}/categories/`}>{lang === 'zh-CN' ? '按分类' : 'Categories'}</a>
-    <a href={`/${lang}/tags/`}>{lang === 'zh-CN' ? '按标签' : 'Tags'}</a>
-  </nav>
-  <ArticleList posts={posts} lang={lang} />
+<Shell lang={lang} title={zh ? '博客' : 'Writing'}>
+  <div class="scenic-interior-wrap scenic-archive">
+    <ScenicBanner scene="coast" label="JOURNAL · IDEAS · ENGINEERING" title={zh ? '博客' : 'Journal'} subtitle={zh ? '记录学习、开发与生活中的思考。' : 'Notes on learning, building and life.'} />
+    <div class="scenic-archive-body">
+      <aside class="scenic-archive-sidebar" aria-label={zh ? '文章浏览' : 'Browse articles'}>
+        <p class="scenic-archive-sidebar-title">{zh ? '浏览内容' : 'Browse'}</p>
+        <a href={`/${lang}/archives/`} aria-current="page"><span>{zh ? '全部文章' : 'All writing'}</span><span>{posts.length}</span></a>
+        <a href={`/${lang}/categories/`}>{zh ? '文章分类' : 'Categories'} <span aria-hidden="true">↗</span></a>
+        <a href={`/${lang}/tags/`}>{zh ? '文章标签' : 'Tags'} <span aria-hidden="true">↗</span></a>
+        <p class="scenic-sidebar-note">{zh ? '认真记录，每一点进步。' : 'Small progress, thoughtfully recorded.'}</p>
+      </aside>
+      <section class="scenic-archive-results" aria-label={zh ? '博客文章列表' : 'Journal entries'}>
+        <div class="scenic-results-toolbar">
+          <label class="scenic-search" for="scenic-archive-search"><span aria-hidden="true">⌕</span><input id="scenic-archive-search" data-archive-search type="search" placeholder={zh ? '搜索标题、摘要或标签…' : 'Search titles, notes or tags…'} autocomplete="off"/></label>
+          <span class="scenic-results-count" data-archive-count aria-live="polite">{zh ? `${posts.length} 篇文章` : `${posts.length} articles`}</span>
+        </div>
+        <ArticleList posts={posts} lang={lang} />
+        <p class="scenic-no-results" data-archive-empty hidden>{zh ? '没有找到匹配的文章，换个关键词试试。' : 'No matching articles. Try another search.'}</p>
+      </section>
+    </div>
+  </div>
 </Shell>

@@ -4,10 +4,31 @@ import { initArticleToc } from './article-toc';
 import { initCalmCarousel } from './calm-carousel';
 type SwupInstance = { hooks: { on: (event: string, callback: () => void) => void; before: (event: string, callback: () => void) => void } };
 const globals = window as unknown as Record<string, new (options?: Record<string, unknown>) => unknown>;
+function initArchiveSearch(signal: AbortSignal) {
+  const input = document.querySelector<HTMLInputElement>('[data-archive-search]');
+  if (!input) return;
+  const rows = [...document.querySelectorAll<HTMLElement>('.scenic-archive .scenic-story')];
+  const count = document.querySelector<HTMLElement>('[data-archive-count]');
+  const empty = document.querySelector<HTMLElement>('[data-archive-empty]');
+  const zh = document.documentElement.lang === 'zh-CN';
+  const apply = () => {
+    const query = input.value.trim().toLocaleLowerCase();
+    let visible = 0;
+    rows.forEach((row) => {
+      const matches = !query || (row.dataset.articleSearch || '').includes(query);
+      row.hidden = !matches;
+      if (matches) visible++;
+    });
+    if (count) count.textContent = zh ? `${visible} 篇文章` : `${visible} articles`;
+    if (empty) empty.hidden = visible !== 0;
+  };
+  input.addEventListener('input', apply, { signal });
+  apply();
+}
 let pageScope = new AbortController();
 function initPage() {
   pageScope.abort(); pageScope = new AbortController(); const signal = pageScope.signal;
-  initMimoInspired({ signal }); initWorkspaces({ signal }); initArticleToc(signal); initCalmCarousel(signal);
+  initMimoInspired({ signal }); initWorkspaces({ signal }); initArticleToc(signal); initCalmCarousel(signal); initArchiveSearch(signal);
   const backLink = document.querySelector<HTMLAnchorElement>('[data-history-back]');
   const backLabel = backLink?.querySelector('[data-history-back-label]');
   const state = history.state || {};

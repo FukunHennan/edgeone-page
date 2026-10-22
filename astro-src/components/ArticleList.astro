@@ -2,15 +2,19 @@
 import { postPath, termSlug, type Post, type Language } from '../lib/content';
 interface Props { posts: Post[]; lang: Language }
 const { posts, lang } = Astro.props;
+const images = ['/scenes/mountain-lake.webp', '/scenes/misty-forest.webp', '/scenes/green-meadow.webp', '/scenes/soft-coast.webp'];
 ---
 <div class="astro-writing">
-  {posts.map((post) => <article>
-    <time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10)}</time>
-    <h2><a href={postPath(post)}>{post.data.title}</a></h2>
-    <p>{post.data.description}</p>
-    <div class="astro-article-terms">
-      {post.data.categories.map((name) => <a href={`/${lang}/categories/${termSlug(name)}/`}>{name}</a>)}
-      {post.data.tags.map((name) => <a href={`/${lang}/tags/${termSlug(name)}/`}>#{name}</a>)}
+  {posts.map((post, index) => <article class="scenic-story" data-article-search={`${post.data.title} ${post.data.description || ''} ${post.data.categories.join(' ')} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}>
+    <a class="scenic-story-image" href={postPath(post)} aria-label={post.data.title}><img src={images[index % images.length]} alt="" loading="lazy" width="320" height="180" /></a>
+    <div class="scenic-story-copy">
+      <time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10)}</time>
+      <h2><a href={postPath(post)}>{post.data.title}</a></h2>
+      {post.data.description && <p>{post.data.description}</p>}
+      <div class="astro-article-terms">
+        {post.data.categories.map((name) => <a href={`/${lang}/categories/${termSlug(name)}/`}>{name}</a>)}
+        {post.data.tags.map((name) => <a href={`/${lang}/tags/${termSlug(name)}/`}>#{name}</a>)}
+      </div>
     </div>
   </article>)}
 </div>
