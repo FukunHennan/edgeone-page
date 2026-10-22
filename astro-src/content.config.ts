@@ -6,6 +6,7 @@ import yaml from 'js-yaml';
 const postSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
+  cover: z.string().optional(),
   lang: z.enum(['zh-CN', 'en']),
   translation_key: z.string(),
   content_type: z.enum(['article', 'showcase', 'interactive']),
@@ -27,6 +28,7 @@ const projectSchema = z.object({
   label: z.string(),
   title: z.string(),
   description: z.string(),
+  cover: z.string().optional(),
   tags: z.array(z.string()),
   github: z.url(),
   post: z.string(),

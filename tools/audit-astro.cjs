@@ -96,6 +96,15 @@ for (const lang of ['zh-CN', 'en']) {
   for (const marker of ['scenic-interior-banner', 'scenic-archive-sidebar', 'data-archive-search', 'scenic-story']) {
     if (!archiveHtml.includes(marker)) throw new Error(`Scenic blog archive is incomplete: ${lang}: ${marker}`);
   }
+  for (const marker of ['/covers/article-light.webp', '/covers/article-dark.webp']) {
+    if (!archiveHtml.includes(marker)) throw new Error(`Missing temporary blog cover art: ${lang}: ${marker}`);
+  }
+  // Landscape scenes remain in banners, but must not be reused as card covers.
+  const thumbnailBlocks = archiveHtml.split('class="scenic-story-image"').slice(1)
+    .map((section) => section.split('</a>')[0]);
+  if (thumbnailBlocks.some((markup) => markup.includes('src="/scenes/'))) {
+    throw new Error(`Old landscape photo still used as blog card cover: ${lang}`);
+  }
   const aboutHtml = fs.readFileSync(path.join(output, lang, 'about', 'index.html'), 'utf8');
   for (const marker of ['scenic-about-card', 'scenic-about-profile', 'scenic-about-skills']) {
     if (!aboutHtml.includes(marker)) throw new Error(`Scenic about page is incomplete: ${lang}: ${marker}`);
@@ -108,6 +117,9 @@ for (const lang of ['zh-CN', 'en']) {
   }
   const projectHtml = fs.readFileSync(path.join(root, 'astro-dist', lang, 'projects', 'index.html'), 'utf8');
   if (!projectHtml.includes('workspace-sidebar') || !projectHtml.includes('project-workspace-grid')) throw new Error(`Original project layout missing: ${lang}`);
+  for (const marker of ['/covers/project-light.webp', '/covers/project-dark.webp', 'class="project-cover"']) {
+    if (!projectHtml.includes(marker)) throw new Error(`Missing temporary project cover art: ${lang}: ${marker}`);
+  }
   if (projectHtml.match(/<h3>(.*?)<\/h3>/)?.[1] !== projects[0].title) throw new Error(`Original project ordering changed: ${lang}`);
   for (const project of projects) {
     const url = new URL(project.post, `https://chenfukun.space/${lang}/projects/`).pathname;
@@ -115,6 +127,14 @@ for (const lang of ['zh-CN', 'en']) {
   }
   for (const page of ['projects', 'archives', 'notes', 'experience', 'resume', 'about']) {
     if (!fs.existsSync(path.join(root, 'astro-dist', lang, page, 'index.html'))) throw new Error(`Missing ${lang}/${page}`);
+  }
+}
+for (const asset of ['article-light.webp', 'article-dark.webp', 'project-light.webp', 'project-dark.webp']) {
+  const target = path.join(output, 'covers', asset);
+  if (!fs.existsSync(target)) throw new Error(`Missing generated placeholder cover: ${asset}`);
+  const bytes = fs.readFileSync(target);
+  if (bytes.toString('ascii', 0, 4) !== 'RIFF' || bytes.toString('ascii', 8, 12) !== 'WEBP' || bytes.length > 30000) {
+    throw new Error(`Invalid or excessive temporary WebP cover: ${asset}`);
   }
 }
 for (const name of ['mountain-lake', 'soft-coast', 'green-meadow', 'misty-forest']) {
