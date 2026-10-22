@@ -13,10 +13,11 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - name: Check image preparation tools
+      - name: Install image preparation tools
         run: |
-          command -v ffmpeg
-          command -v ffprobe
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg
+          command -v ffmpeg && command -v ffprobe
       - name: Fetch and optimize four licensed still photographs
         run: bash tools/import-gallery-photos.sh
       - name: Commit new photo gallery
