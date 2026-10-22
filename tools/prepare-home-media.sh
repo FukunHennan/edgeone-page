@@ -6,30 +6,30 @@ set -euo pipefail
 command -v ffmpeg >/dev/null || { echo "ffmpeg is required"; exit 1; }
 command -v ffprobe >/dev/null || { echo "ffprobe is required"; exit 1; }
 
-base="https://assets.mixkit.co/videos/preview"
 outdir="astro-static/scenes"
 mkdir -p "$outdir"
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
 
-# All four are landscape Free License clips on official Mixkit pages.
+# Wikimedia Commons files individually verified as CC0 (see documentation).
+# Exact URLs resolve the original uploaded media. These clips are not third-party
+# hotlinked at runtime: they are transcoded and committed to this repository.
 names=(
-  "mountain-lake|mixkit-landscape-with-mountains-and-a-lake-seen-from-above-42490-large.mp4"
-  "soft-coast|mixkit-beautiful-aerial-shot-of-beach-shore-1085-large.mp4"
-  "green-meadow|mixkit-countryside-meadow-4075-large.mp4"
-  "misty-forest|mixkit-forest-stream-in-the-sunlight-529-large.mp4"
+  "mountain-lake|https://upload.wikimedia.org/wikipedia/commons/7/71/Mikata_Five_Lakes_%28Video%29.webm"
+  "soft-coast|https://upload.wikimedia.org/wikipedia/commons/5/5d/Ocean_in_Sommaroy.webm"
+  "green-meadow|https://upload.wikimedia.org/wikipedia/commons/c/c9/The_wind_plays_with_grasses_by_a_stream_in_Nickel_Plate_Park.webm"
+  "misty-forest|https://upload.wikimedia.org/wikipedia/commons/8/83/Overlooking_a_forest_creek_in_the_Tsimpsean_Peninsula.webm"
 )
 for item in "${names[@]}"; do
   name="${item%%|*}"
-  filename="${item#*|}"
-  url="$base/$filename"
-  src="$tmp/$filename"
+  url="${item#*|}"
+  src="$tmp/$name.webm"
   video="$outdir/$name.mp4"
   poster="$outdir/$name.webp"
 
   echo "::group::Preparing $name"
   echo "Source: $url"
-  curl --fail --location --retry 3 --retry-delay 3 --connect-timeout 20 --max-time 180 --silent --show-error "$url" -o "$src"
+  curl --user-agent "EdgeOnePageScenery/1.0 (personal CC0 media processing)" --fail --location --retry 3 --retry-delay 3 --connect-timeout 20 --max-time 240 --silent --show-error "$url" -o "$src"
   test "$(stat -c %s "$src")" -gt 100000 || { echo "Source is suspiciously small: $name"; exit 1; }
   ffprobe -v error -select_streams v:0 -show_entries stream=codec_name,width,height -of default=noprint_wrappers=1 "$src"
   ffmpeg -nostdin -hide_banner -loglevel error -y -i "$src" -t 12 \
