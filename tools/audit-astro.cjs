@@ -60,11 +60,18 @@ for (const lang of ['zh-CN', 'en']) {
   const projects = yaml.load(fs.readFileSync(path.join(root, 'data', lang, 'projects.yml'), 'utf8'));
   const home = fs.readFileSync(path.join(root, 'astro-dist', lang, 'index.html'), 'utf8');
   // The homepage intentionally replaces the old dense dashboard with a quiet gallery.
-  for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-dot', 'data-calm-pause', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
+  for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-pause', 'calm-accessibility-actions', '/scenes/mountain-lake.svg', '/theme/style.css', 'personal-hub-navbar']) {
     if (!home.includes(marker)) throw new Error(`Missing calm homepage element in ${lang}: ${marker}`);
   }
   for (const marker of ['data-calm-video', 'data-video-src', '/scenes/mountain-lake.mp4', '/scenes/soft-coast.mp4', '/scenes/green-meadow.mp4', '/scenes/misty-forest.mp4', '/scenes/mountain-lake.webp', 'calm-poster', 'data-fallback-src', 'data-calm-immersive', 'hub-language-select']) {
     if (!home.includes(marker)) throw new Error(`Missing self-hosted media or control element: ${lang}: ${marker}`);
+  }
+  // Intentional low-distraction homepage: no prominent hero CTA or carousel button bar.
+  for (const obsolete of ['class="calm-links"', 'class="calm-controls"', 'data-calm-dot=', 'data-calm-prev', 'data-calm-next']) {
+    if (home.includes(obsolete)) throw new Error(`Removed homepage control still rendered in ${lang}: ${obsolete}`);
+  }
+  if (!home.includes('data-calm-immersive') || !home.includes('data-calm-pause')) {
+    throw new Error(`Missing keyboard-accessible media controls in ${lang}`);
   }
   if (home.includes('assets.mixkit.co') || home.includes('images.unsplash.com')) {
     throw new Error(`Homepage still depends on external scenic media hosts: ${lang}`);
