@@ -45,8 +45,12 @@ function initPage() {
     picker.addEventListener('change', () => {
       const selected = picker.value;
       if (selected !== 'zh-CN' && selected !== 'en') return;
+      if (selected === document.documentElement.lang) return;
+      // Shell supplies the exact translated permalink, which need not share a slug.
+      const counterpart = picker.dataset.alternateHref;
       const remaining = location.pathname.replace(/^\/(?:zh-CN|en)(?=\/|$)/, '') || '/';
-      location.assign(`/${selected}${remaining}${location.search}${location.hash}`);
+      const target = counterpart?.startsWith(`/${selected}/`) ? counterpart : `/${selected}${remaining}`;
+      location.assign(`${target}${location.search}${location.hash}`);
     }, { signal });
   });
   const language = document.documentElement.lang;
