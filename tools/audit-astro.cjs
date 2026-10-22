@@ -168,4 +168,20 @@ const robots = fs.readFileSync(path.join(output, 'robots.txt'), 'utf8');
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`) || robots.includes('Disallow: /')) throw new Error('Production robots.txt blocks indexing');
 const worker = fs.readFileSync(path.join(output, 'service-worker.js'), 'utf8');
 if (!worker.includes('edgeone-page-') || worker.includes('Date.now')) throw new Error('Service worker cache version is unstable');
+// Detect stale references throughout HTML, CSS and JavaScript, not only on the homepage.
+const removedScenes = ['mountain-lake', 'soft-coast', 'green-meadow', 'misty-forest'];
+function auditNoLegacyScenes(directory) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    const location = path.join(directory, entry.name);
+    if (entry.isDirectory()) { auditNoLegacyScenes(location); continue; }
+    if (!/\\.(?:html|css|js)$/.test(entry.name)) continue;
+    const body = fs.readFileSync(location, 'utf8');
+    for (const scene of removedScenes) {
+      if (new RegExp(`/scenes/${scene}\\\\.(?:mp4|webp|svg)`).test(body)) {
+        throw new Error(`Legacy media reference found in published file: ${location}`);
+      }
+    }
+  }
+}
+auditNoLegacyScenes(output);
 console.log(`[astro audit] ${articleCount} articles, bilingual project pages and project references passed.`);
