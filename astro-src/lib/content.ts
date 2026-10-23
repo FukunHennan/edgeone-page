@@ -17,6 +17,10 @@ export async function projectsFor(lang: Language) {
 }
 
 export type TaxonomyKind = 'tags' | 'categories';
+export function archiveFilterPath(lang: Language, kind: TaxonomyKind, name: string) {
+  const key = kind === 'categories' ? 'category' : 'tag';
+  return `/${lang}/archives/?${key}=${encodeURIComponent(termSlug(name))}`;
+}
 export function termSlug(value: string) {
   return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[\u0000-\u001f]/g, '')

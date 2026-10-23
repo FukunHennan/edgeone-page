@@ -2,6 +2,7 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+const yaml = require("js-yaml");
 const { collectLanguagePosts, isPublished, validDate } = require("./content-records");
 const { finalizeServiceWorker } = require("./finalize-service-worker");
 const { walkFiles } = require("./output-hash");
@@ -9,6 +10,9 @@ const { walkFiles } = require("./output-hash");
 const root = path.resolve(__dirname, "..", "astro-dist");
 const origin = "https://edgeone.chenfukun.space";
 const languages = ["zh-CN", "en"];
+const projectUrlsFor = (lang) => new Set(yaml.load(fs.readFileSync(
+  path.join(__dirname, "..", "data", lang, "projects.yml"), "utf8",
+)).map((project) => new URL(project.post, `${origin}/${lang}/projects/`).pathname));
 const xml = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&apos;",
 })[char]);
@@ -27,12 +31,13 @@ fs.mkdirSync(path.join(root, "icons"), { recursive: true });
 fs.copyFileSync(icon, path.join(root, "icons", "稻田鼠.jpg"));
 
 for (const lang of languages) {
+  const projectUrls = projectUrlsFor(lang);
   const posts = collectLanguagePosts(lang)
-    .filter((post) => isPublished(post.data) && validDate(post.data.date) <= new Date())
+    .filter((post) => isPublished(post.data) && validDate(post.data.date) <= new Date() && projectUrls.has(post.url))
     .sort((a, b) => validDate(b.data.date) - validDate(a.data.date));
   const en = lang === "en";
   const name = en ? "Fukun's Personal Hub" : "稻田鼠的个人空间";
-  const description = en ? "Engineering projects, notes and writing." : "工程项目、知识笔记与技术文章。";
+  const description = en ? "Engineering, research and software projects." : "工程、研究与软件项目。";
   const items = posts.slice(0, 30).map((post) => {
     const link = `${origin}${post.url}`;
     const date = validDate(post.data.date).toUTCString();
@@ -59,8 +64,12 @@ for (const lang of languages) {
 
 const routes = walkFiles(root).filter((file) => file.endsWith("index.html"));
 for (const lang of languages) {
+  const publicRoutes = new Set([`/${lang}/`, `/${lang}/projects/`, `/${lang}/experience/`,
+    `/${lang}/resume/`, `/${lang}/about/`, ...projectUrlsFor(lang)]);
   const entries = routes.filter((file) => path.relative(root, file).split(path.sep)[0] === lang)
-    .map((file) => `  <url><loc>${xml(`${origin}/${path.relative(root, path.dirname(file)).split(path.sep).join("/")}/`)}</loc></url>`)
+    .map((file) => `/${path.relative(root, path.dirname(file)).split(path.sep).join("/")}/`)
+    .filter((pathname) => publicRoutes.has(pathname))
+    .map((pathname) => `  <url><loc>${xml(`${origin}${pathname}`)}</loc></url>`)
     .sort();
   write(`${lang}/sitemap.xml`, `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries.join("\n")}\n</urlset>\n`);
 }

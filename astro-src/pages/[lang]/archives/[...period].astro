@@ -21,7 +21,7 @@ const { posts } = Astro.props;
 const lang = Astro.params.lang as Language;
 const period = Astro.params.period as string;
 ---
-<Shell lang={lang} title={`${lang === 'zh-CN' ? '文章归档' : 'Writing'} · ${period.replace('/', '.')}`}>
+<Shell lang={lang} title={`${lang === 'zh-CN' ? '文章归档' : 'Writing'} · ${period.replace('/', '.')}`} noindex>
   <section class="astro-collection">
     <a class="astro-collection-back" href={`/${lang}/archives/`}>{lang === 'zh-CN' ? '全部文章' : 'All writing'}</a>
     <h1>{period.replace('/', '.')}</h1>

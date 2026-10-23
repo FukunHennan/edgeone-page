@@ -25,7 +25,7 @@ const lang = Astro.params.lang as Language;
 const section = Astro.params.section as TaxonomyKind;
 const label = section === 'categories' ? (lang === 'zh-CN' ? '分类' : 'Categories') : (lang === 'zh-CN' ? '标签' : 'Tags');
 ---
-<Shell lang={lang} title={`${label} · ${name}`} alternate={alternate}>
+<Shell lang={lang} title={`${label} · ${name}`} alternate={alternate} noindex>
   <section class="astro-collection">
     <a class="astro-collection-back" href={`/${lang}/${section}/`}>{label}</a>
     <h1>{name}</h1>

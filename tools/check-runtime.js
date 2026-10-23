@@ -30,8 +30,9 @@ const expectedNpmMajor = versionParts(expectedNpm)[0];
 if (actualMajor !== expectedMajor || !versionAtLeast(actualNode, expectedNode)) {
   failures.push(`Node.js must be compatible with ${expectedNode} (${expectedMajor}.x), got ${actualNode}`);
 }
-if (expectedNpm && actualNpm && versionParts(actualNpm)[0] !== expectedNpmMajor) {
-  failures.push(`npm must be a ${expectedNpmMajor}.x release, got ${actualNpm}`);
+const minimumNpm = pkg.engines.npm.match(/>=([\d.]+)/)?.[1];
+if (expectedNpm && actualNpm && (versionParts(actualNpm)[0] !== expectedNpmMajor || (minimumNpm && !versionAtLeast(actualNpm, minimumNpm)))) {
+  failures.push(`npm must satisfy ${pkg.engines.npm}, got ${actualNpm}`);
 }
 
 if (failures.length) {

@@ -1,5 +1,4 @@
 /* Astro integration only. Visual rules remain in the existing theme source. */
-/* 返回控件样式来自主题 source/css/layout/page-back.styl，随 /theme/style.css 一起加载。 */
 [hidden]{display:none!important}.astro-skip{position:fixed;top:-100px;left:12px;z-index:1000;padding:12px;background:var(--hub-surface);color:var(--hub-text)}.astro-skip:focus{top:12px}a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--mimo-green);outline-offset:4px}
 .astro-article{width:min(1052px,100% - 32px);margin:30px auto 48px;color:var(--hub-text);display:grid;grid-template-columns:minmax(0,1fr) 240px;gap:0 32px;grid-template-areas:"head rail" "body rail";align-items:start}.astro-article-head{grid-area:head;max-width:780px}.astro-article-body{grid-area:body;min-width:0}.astro-article-rail{grid-area:rail;align-self:start;position:sticky;top:92px;max-height:calc(100vh - 120px);overflow:auto;scrollbar-width:thin}.astro-article h1{font-size:clamp(26px,4.5vw,32px);font-weight:750;line-height:1.3;letter-spacing:-.02em;margin:10px 0 0}.astro-article-date{margin:0;color:var(--hub-muted);font-size:13px}.astro-lede{margin:16px 0 0;padding-left:16px;border-left:1px solid var(--mimo-green);color:var(--hub-muted);font-size:1.0625em;line-height:1.8}.astro-rail-title{margin:0 0 10px;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--hub-muted);text-transform:uppercase}.astro-toc{padding:16px;border:1px solid var(--hub-line);border-radius:13px;background:var(--hub-surface)}.astro-toc ul{list-style:none;margin:0;padding:0}.astro-toc a{display:block;padding:5px 0 5px 12px;border-left:2px solid transparent;color:var(--hub-muted);font-size:13px;line-height:1.5;overflow-wrap:anywhere;transition:color .2s var(--hub-ease),border-color .2s var(--hub-ease),background-color .2s var(--hub-ease)}.astro-toc a:hover{color:var(--hub-text)}.astro-toc a.is-active{color:var(--hub-text);font-weight:650;border-left-color:var(--mimo-green);background:rgba(102,124,91,.08)}.astro-toc li.depth-3>a{padding-left:24px;font-size:12px}.astro-article-meta{margin-top:16px;padding:17px;border:1px solid var(--hub-line);border-radius:13px;background:var(--hub-surface)}.astro-article-meta dl{margin:0;display:flex;flex-direction:column;gap:10px}.astro-article-meta dl>div{display:grid;grid-template-columns:52px minmax(0,1fr);gap:8px;align-items:baseline}.astro-article-meta dt{color:var(--hub-muted);font-size:11px}.astro-article-meta dd{margin:0;font-size:12px;overflow-wrap:anywhere}.astro-terms{display:flex;flex-wrap:wrap;gap:4px 10px}.astro-terms a{color:var(--mimo-green);font-size:12px;text-decoration:none}.astro-terms a:hover{text-decoration:underline}.astro-prose{overflow-wrap:anywhere;line-height:1.85}/* Tailwind preflight 把 h1–h6 重置成 font-size:inherit，这里显式补回文章页的字号层级 */
 .astro-prose h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin-top:2em;margin-bottom:.55em;scroll-margin-top:96px}
@@ -7,7 +6,6 @@
 .astro-prose h4{font-size:16px;font-weight:700;margin-top:1.5em}
 @media(max-width:768px){.astro-article{width:100%;margin-top:18px;grid-template-columns:1fr;grid-template-areas:"head" "rail" "body";gap:22px 0}.astro-article-head{max-width:none}.astro-article-rail{position:static;top:auto;max-height:none;overflow:visible;display:flex;flex-direction:column;gap:14px}.astro-article-meta{margin-top:0}}.astro-prose pre{overflow:auto;padding:20px;border-radius:12px}.astro-prose img{max-width:100%;height:auto}.astro-prose table{display:block;max-width:100%;overflow:auto;border-collapse:collapse}.astro-prose td,.astro-prose th{border:1px solid var(--hub-line);padding:8px}.astro-writing article{border-bottom:1px solid var(--hub-line);padding:20px 0}.astro-writing h2{font-size:21px}.astro-writing p,.astro-writing time{color:var(--hub-muted)}
 .astro-collection{max-width:900px;margin:28px auto 64px;color:var(--hub-text)}.astro-collection h1{font-size:32px;line-height:1.3;margin:18px 0 10px}.astro-collection>p{color:var(--hub-muted);font-size:14px}.astro-collection-back{color:var(--mimo-green);font-size:13px}.astro-browse{display:flex;flex-wrap:wrap;gap:20px;margin:18px 0 6px}.astro-browse a,.astro-article-terms a{color:var(--mimo-green);font-size:13px}.astro-article-terms{display:flex;flex-wrap:wrap;gap:6px 16px}.astro-term-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:0 24px;margin-top:24px}.astro-term-list a{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;padding:14px 0;border-bottom:1px solid var(--hub-line);color:var(--hub-text)}.astro-term-list span{overflow-wrap:anywhere}.astro-term-list small{color:var(--hub-muted);font-size:12px}
-#astro-search{width:min(650px,calc(100% - 32px));max-height:80vh;border:1px solid var(--hub-line);border-radius:16px;background:var(--hub-surface);color:var(--hub-text);padding:24px}#astro-search::backdrop{background:rgba(0,0,0,.4)}#astro-search input{width:100%;padding:10px;border:1px solid var(--hub-line);background:var(--hub-bg);color:var(--hub-text)}#astro-search form{text-align:right}#astro-search-results{padding:0;list-style:none}#astro-search-results li{padding:12px 0;border-bottom:1px solid var(--hub-line)}
 html.astro-menu-open .personal-hub-navbar .navbar-drawer{transform:none!important;opacity:1!important;visibility:visible!important;display:flex!important;z-index:101}html.astro-menu-open .personal-hub-navbar .navbar-bar{z-index:102}
 @media(prefers-reduced-motion:reduce){html.is-changing *,html.is-animating *{transition:none!important;animation:none!important}}@media print{.personal-hub-navbar,.astro-skip,.astro-article-rail{display:none!important}.astro-article{width:100%;margin:0;display:block}.main-content-container{padding-top:0!important}body{background:#fff!important;color:#000!important}}
 
@@ -35,19 +33,36 @@ html.astro-menu-open .personal-hub-navbar .navbar-drawer{visibility:visible;poin
 html.astro-menu-open .personal-hub-navbar .window-mask{visibility:visible;opacity:1;pointer-events:auto}
 html.astro-menu-open{overflow:hidden}
 .drawer-theme-toggle{padding:10px 12px;border:1px solid var(--hub-line);border-radius:9px;background:transparent;color:var(--hub-text);cursor:pointer;font-size:13px}
-#astro-search-results a{display:block;min-height:42px;padding:8px 2px;color:var(--hub-text);text-decoration:none}
-#astro-search-results a:hover,#astro-search-results a:focus-visible{color:var(--mimo-green)}
-#astro-search-results .search-feedback{color:var(--hub-muted);font-size:14px;border:0}
 
 @media(max-width:600px){
   .hub-drawer-bottom{flex-wrap:wrap;gap:12px}
   .hub-mobile-actions button.icon-item{min-height:44px}
 }
 
-/* Language switch remains available in the header at every viewport width. */
-.personal-hub-navbar .hub-language-select{min-width:108px;max-width:148px;height:40px;padding:0 11px;border:1px solid var(--hub-line);border-radius:10px;background:var(--hub-surface);color:var(--hub-text);font-family:inherit;font-size:13px;cursor:pointer}
-.personal-hub-navbar .hub-language-select:focus-visible{outline:2px solid var(--mimo-green);outline-offset:3px}
-.personal-hub-navbar .hub-language-select-mobile{min-width:96px;max-width:112px;height:40px;font-size:12px;padding:0 5px}
-@media(max-width:600px){.personal-hub-navbar .hub-language-select-mobile{min-width:88px;max-width:100px;height:38px}}
+/* Compact header links keep the photograph and navigation in one visual plane. */
+.personal-hub-navbar .hub-nav-actions{gap:2px;margin-left:4px}
+.personal-hub-navbar :is(.hub-language-link,.hub-github-link){display:inline-flex;align-items:center;justify-content:center;flex:none;width:40px;height:40px;min-width:40px;padding:0;border:0!important;border-radius:6px;background:transparent!important;color:var(--hub-text);text-decoration:none;font-size:13px;font-weight:700;line-height:1;opacity:.9;transition:background-color .18s ease,opacity .18s ease}
+.personal-hub-navbar .hub-github-link{font-size:20px}
+.personal-hub-navbar .hub-github-link i{color:inherit!important}
+.personal-hub-navbar :is(.hub-language-link,.hub-github-link):hover{background:rgba(255,255,255,.14)!important;opacity:1}
+.personal-hub-navbar :is(.hub-language-link,.hub-github-link):focus-visible{outline:2px solid var(--mimo-green);outline-offset:2px}
+.personal-hub-navbar .hub-language-link-mobile{width:40px;min-width:40px;height:40px}
+@media(max-width:1100px){.personal-hub-navbar .hub-nav-actions .hub-language-link{display:none}}
 
-@media(max-width:1100px){.personal-hub-navbar .hub-nav-actions .hub-language-select{display:none}}
+/* Navbar is hidden by default and slides in when the pointer nears the top edge,
+   or when keyboard focus enters it. Touch devices keep it always visible. */
+@media (hover:hover) and (pointer:fine){
+  .personal-hub-navbar{
+    transform:translateY(-100%);
+    opacity:0;
+    pointer-events:none;
+    transition:transform .35s cubic-bezier(.4,0,.2,1),opacity .3s ease;
+  }
+  html.nav-reveal .personal-hub-navbar,
+  .personal-hub-navbar:focus-within,
+  html.astro-menu-open .personal-hub-navbar{
+    transform:translateY(0);
+    opacity:1;
+    pointer-events:auto;
+  }
+}

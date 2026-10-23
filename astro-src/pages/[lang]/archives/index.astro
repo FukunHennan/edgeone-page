@@ -2,27 +2,38 @@
 import Shell from '../../../layouts/Shell.astro';
 import ScenicBanner from '../../../components/ScenicBanner.astro';
 import ArticleList from '../../../components/ArticleList.astro';
-import { languages, postsFor, type Language } from '../../../lib/content';
+import { languages, postsFor, taxonomyFor, type Language } from '../../../lib/content';
 export function getStaticPaths() { return languages.map((lang) => ({ params: { lang } })); }
 const lang = Astro.params.lang as Language;
 const posts = await postsFor(lang);
+const categories = await taxonomyFor(lang, 'categories');
+const tags = await taxonomyFor(lang, 'tags');
 const zh = lang === 'zh-CN';
 ---
-<Shell lang={lang} title={zh ? '博客' : 'Writing'}>
+<Shell lang={lang} title={zh ? '博客' : 'Writing'} noindex>
   <div class="scenic-interior-wrap scenic-archive">
     <ScenicBanner scene="coast" label="JOURNAL · IDEAS · ENGINEERING" title={zh ? '博客' : 'Journal'} subtitle={zh ? '记录学习、开发与生活中的思考。' : 'Notes on learning, building and life.'} />
     <div class="scenic-archive-body">
-      <aside class="scenic-archive-sidebar" aria-label={zh ? '文章浏览' : 'Browse articles'}>
-        <p class="scenic-archive-sidebar-title">{zh ? '浏览内容' : 'Browse'}</p>
-        <a href={`/${lang}/archives/`} aria-current="page"><span>{zh ? '全部文章' : 'All writing'}</span><span>{posts.length}</span></a>
-        <a href={`/${lang}/categories/`}>{zh ? '文章分类' : 'Categories'} <span aria-hidden="true">↗</span></a>
-        <a href={`/${lang}/tags/`}>{zh ? '文章标签' : 'Tags'} <span aria-hidden="true">↗</span></a>
-        <p class="scenic-sidebar-note">{zh ? '认真记录，每一点进步。' : 'Small progress, thoughtfully recorded.'}</p>
-      </aside>
       <section class="scenic-archive-results" aria-label={zh ? '博客文章列表' : 'Journal entries'}>
         <div class="scenic-results-toolbar">
-          <label class="scenic-search" for="scenic-archive-search"><span aria-hidden="true">⌕</span><input id="scenic-archive-search" data-archive-search type="search" placeholder={zh ? '搜索标题、摘要或标签…' : 'Search titles, notes or tags…'} autocomplete="off"/></label>
+          <label class="scenic-search" for="scenic-archive-search"><span aria-hidden="true">⌕</span><input id="scenic-archive-search" data-archive-search type="search" aria-label={zh ? '搜索文章' : 'Search articles'} placeholder={zh ? '搜索标题、摘要或标签…' : 'Search titles, summaries or tags…'} autocomplete="off"/></label>
           <span class="scenic-results-count" data-archive-count aria-live="polite">{zh ? `${posts.length} 篇文章` : `${posts.length} articles`}</span>
+        </div>
+        <div class="scenic-archive-filters" aria-label={zh ? '文章筛选' : 'Filter articles'}>
+          <div class="scenic-filter-group">
+            <span class="scenic-filter-label">{zh ? '分类' : 'Categories'}</span>
+            <div class="scenic-filter-chips" role="group" aria-label={zh ? '按分类筛选文章' : 'Filter by category'}>
+              <button type="button" data-archive-filter="category" data-filter-value="" aria-pressed="true">{zh ? '全部' : 'All'}</button>
+              {categories.map((term) => <button type="button" data-archive-filter="category" data-filter-value={term.slug} aria-pressed="false"><span>{term.name}</span><small>{term.posts.length}</small></button>)}
+            </div>
+          </div>
+          <label class="scenic-tag-filter"><span>{zh ? '标签' : 'Tag'}</span>
+            <select data-archive-tag aria-label={zh ? '按标签筛选文章' : 'Filter articles by tag'}>
+              <option value="">{zh ? '全部标签' : 'All tags'}</option>
+              {tags.map((term) => <option value={term.slug}>{term.name} ({term.posts.length})</option>)}
+            </select>
+          </label>
+          <button class="scenic-clear-filters" type="button" data-archive-clear hidden>{zh ? '清除筛选' : 'Clear filters'}</button>
         </div>
         <ArticleList posts={posts} lang={lang} />
         <p class="scenic-no-results" data-archive-empty hidden>{zh ? '没有找到匹配的文章，换个关键词试试。' : 'No matching articles. Try another search.'}</p>

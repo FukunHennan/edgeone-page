@@ -76,6 +76,15 @@ source/en/_posts/my-article-slug.md
 
 ## 本地预览
 
+使用 Node.js ≥ 22.21.1 且 < 23、npm ≥ 10.9.0 且 < 11。仓库通过
+`.node-version` 和 `.nvmrc` 固定本地版本为 22.23.2。
+Windows 已安装 fnm 时，可在当前 PowerShell 会话执行：
+
+```powershell
+fnm env --shell powershell | Out-String | Invoke-Expression
+fnm use
+```
+
 安装依赖：
 
 ```bash

@@ -35,7 +35,7 @@ en      English
 - `outDir: ./astro-dist`（生产产物，不提交到 Git）
 - `output: static`、`trailingSlash: always`
 
-构建前会检查 Node 版本，低于 22.12 直接报错。
+开发和构建前都会检查 Node 版本，仅接受 ≥ 22.21.1 且低于 23 的版本，与依赖安装要求一致。
 
 ### Node 版本口径
 
@@ -43,7 +43,7 @@ en      English
 | --- | --- | --- |
 | 本地开发 | 22.23.2 | `.node-version` |
 | EdgeOne 平台构建 | 22.21.1 | `edgeone.json` 的 `nodeVersion` |
-| 最低要求 | ≥ 22.12 | `astro.config.mjs` 的启动检查 |
+| 最低要求 | ≥ 22.21.1 且 < 23 | `edgeone.json`、`package.json` 与启动检查 |
 
 npm 使用 10.x（`package.json` 的 `engines` 限定 `>=10.9.0 <11`）。
 

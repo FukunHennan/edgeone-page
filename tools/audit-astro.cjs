@@ -50,17 +50,28 @@ for (const lang of ['zh-CN', 'en']) {
       }
     }
   }
-  for (const asset of ['feed.xml', 'sitemap.xml', 'manifest.webmanifest', 'offline.html', '404.html', 'search.json']) {
+  for (const asset of ['feed.xml', 'sitemap.xml', 'manifest.webmanifest', 'offline.html', '404.html']) {
     if (!fs.existsSync(path.join(output, lang, asset))) throw new Error(`Missing ${lang}/${asset}`);
   }
   const manifest = JSON.parse(fs.readFileSync(path.join(output, lang, 'manifest.webmanifest'), 'utf8'));
   if (manifest.lang !== lang || manifest.start_url !== `/${lang}/`) throw new Error(`Invalid ${lang} manifest`);
   const feed = fs.readFileSync(path.join(output, lang, 'feed.xml'), 'utf8');
-  if ((feed.match(/<item>/g) || []).length !== Math.min(available.length, 30)) throw new Error(`Invalid ${lang} RSS feed`);
   const projects = yaml.load(fs.readFileSync(path.join(root, 'data', lang, 'projects.yml'), 'utf8'));
+  const projectUrls = projects.map((project) => new URL(project.post, `https://chenfukun.space/${lang}/projects/`).pathname);
+  if ((feed.match(/<item>/g) || []).length !== projects.length ||
+      projectUrls.some((url) => !feed.includes(`${origin}${url}`))) throw new Error(`Invalid ${lang} project feed`);
+  const sitemap = fs.readFileSync(path.join(output, lang, 'sitemap.xml'), 'utf8');
+  if (projectUrls.some((url) => !sitemap.includes(`${origin}${url}`)) ||
+      /\/(?:archives|notes|tags|categories)\//.test(sitemap)) throw new Error(`Invalid ${lang} project sitemap`);
   const home = fs.readFileSync(path.join(root, 'astro-dist', lang, 'index.html'), 'utf8');
+  for (const page of ['index.html', 'archives/index.html', 'notes/index.html', 'projects/index.html']) {
+    const html = fs.readFileSync(path.join(output, lang, page), 'utf8');
+    if (/search-popup-trigger|id="astro-search"/.test(html)) {
+      throw new Error(`Removed global search still rendered: ${lang}/${page}`);
+    }
+  }
   // The homepage is photo-only and fills the viewport; no video node or legacy posters.
-  for (const marker of ['calm-home', 'data-calm-slide', 'data-calm-pause', 'calm-accessibility-actions',
+  for (const marker of ['calm-home', 'data-calm-slide', 'calm-accessibility-actions',
     '/scenes/gallery-mountain.webp', '/scenes/gallery-coast.webp',
     '/scenes/gallery-meadow.webp', '/scenes/gallery-forest.webp',
     '/theme/style.css', 'personal-hub-navbar']) {
@@ -71,17 +82,23 @@ for (const lang of ['zh-CN', 'en']) {
     if (home.includes(obsolete)) throw new Error(`Obsolete video markup still rendered in ${lang}: ${obsolete}`);
   }
   // Intentional low-distraction homepage: no prominent hero CTA or carousel button bar.
-  for (const obsolete of ['class="calm-links"', 'class="calm-controls"', 'data-calm-dot=', 'data-calm-prev', 'data-calm-next']) {
+  for (const obsolete of ['class="calm-links"', 'class="calm-controls"', 'data-calm-dot=', 'data-calm-prev', 'data-calm-next', 'data-calm-pause']) {
     if (home.includes(obsolete)) throw new Error(`Removed homepage control still rendered in ${lang}: ${obsolete}`);
   }
-  if (!home.includes('data-calm-immersive') || !home.includes('data-calm-pause')) {
+  if (!home.includes('data-calm-immersive')) {
     throw new Error(`Missing keyboard-accessible media controls in ${lang}`);
   }
   if (home.includes('assets.mixkit.co') || home.includes('images.unsplash.com')) {
     throw new Error(`Homepage still depends on external media hosts: ${lang}`);
   }
-  if (!home.includes(`data-alternate-href="/${lang === 'zh-CN' ? 'en' : 'zh-CN'}/"`)) {
-    throw new Error(`Homepage language selector does not link to its translation: ${lang}`);
+  const counterpart = lang === 'zh-CN' ? 'en' : 'zh-CN';
+  if (!home.includes(`class="hub-language-link" href="/${counterpart}/"`) ||
+      !home.includes(`class="hub-language-link hub-language-link-mobile" href="/${counterpart}/"`) ||
+      home.includes('class="hub-language-select')) {
+    throw new Error(`Homepage language links do not switch directly to the translation: ${lang}`);
+  }
+  if (!home.includes('class="hub-github-link"') || !home.includes('aria-label="GitHub" title="GitHub"')) {
+    throw new Error(`Compact GitHub navigation link is missing: ${lang}`);
   }
   if (home.includes('class="astro-language"') || home.includes('class="lang-select lang-select-mobile"')) {
     throw new Error(`A language switch is incorrectly placed outside the header: ${lang}`);
@@ -97,7 +114,12 @@ for (const lang of ['zh-CN', 'en']) {
     }
   }
   const archiveHtml = fs.readFileSync(path.join(output, lang, 'archives', 'index.html'), 'utf8');
-  for (const marker of ['scenic-interior-banner', 'scenic-archive-sidebar', 'data-archive-search', 'scenic-story']) {
+  const notesHtml = fs.readFileSync(path.join(output, lang, 'notes', 'index.html'), 'utf8');
+  if (!archiveHtml.includes('name="robots" content="noindex,follow"') ||
+      !notesHtml.includes('name="robots" content="noindex,follow"')) {
+    throw new Error(`Retired ${lang} sections must not be indexed`);
+  }
+  for (const marker of ['scenic-interior-banner', 'scenic-archive-filters', 'data-archive-filter="category"', 'data-archive-tag', 'data-archive-search', 'scenic-story']) {
     if (!archiveHtml.includes(marker)) throw new Error(`Scenic blog archive is incomplete: ${lang}: ${marker}`);
   }
   for (const marker of ['/covers/article-light.webp', '/covers/article-dark.webp']) {
@@ -110,6 +132,20 @@ for (const lang of ['zh-CN', 'en']) {
     throw new Error(`Old landscape photo still used as blog card cover: ${lang}`);
   }
   const aboutHtml = fs.readFileSync(path.join(output, lang, 'about', 'index.html'), 'utf8');
+  // Pages without a description must still retain their title when shared.
+  const siteName = lang === 'zh-CN' ? '稻田鼠' : 'Daotianshu';
+  for (const [page, html] of [['about', aboutHtml], ...available.map((post) => [post.url, fs.readFileSync(path.join(output, post.url, 'index.html'), 'utf8')])]) {
+    const schemaText = html.match(/<script\b[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+    const schema = schemaText && JSON.parse(schemaText);
+    const escape = (value) => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+    const expectedTitle = schema && escape(`${schema.headline} · ${siteName}`);
+    if (!expectedTitle || !html.includes(`property="og:title" content="${expectedTitle}"`) || !html.includes(`name="twitter:title" content="${expectedTitle}"`)) {
+      throw new Error(`Missing page title in sharing metadata: ${lang}/${page}`);
+    }
+    if (schema['@type'] !== (page === 'about' ? 'WebPage' : 'BlogPosting')) {
+      throw new Error(`Incorrect structured page type: ${lang}/${page}`);
+    }
+  }
   for (const marker of ['scenic-about-card', 'scenic-about-profile', 'scenic-about-skills']) {
     if (!aboutHtml.includes(marker)) throw new Error(`Scenic about page is incomplete: ${lang}: ${marker}`);
   }
@@ -121,6 +157,15 @@ for (const lang of ['zh-CN', 'en']) {
   }
   const projectHtml = fs.readFileSync(path.join(root, 'astro-dist', lang, 'projects', 'index.html'), 'utf8');
   if (!projectHtml.includes('workspace-sidebar') || !projectHtml.includes('project-workspace-grid')) throw new Error(`Original project layout missing: ${lang}`);
+  if (projectHtml.includes(`href="/${lang}/notes/"`) || projectHtml.includes(`href="/${lang}/archives/"`) ||
+      !projectHtml.includes(lang === 'zh-CN' ? '查看详情' : 'View details')) {
+    throw new Error(`Project page still exposes a duplicate section: ${lang}`);
+  }
+  const detailHtml = fs.readFileSync(path.join(output, projectUrls[0], 'index.html'), 'utf8');
+  if (!detailHtml.includes('scenic-project-back') || !detailHtml.includes(`href="/${lang}/projects/"`) ||
+      !detailHtml.includes('name="robots" content="index,follow"')) {
+    throw new Error(`Project detail does not return to projects: ${lang}`);
+  }
   for (const marker of ['/covers/project-light.webp', '/covers/project-dark.webp', 'class="project-cover"']) {
     if (!projectHtml.includes(marker)) throw new Error(`Missing temporary project cover art: ${lang}: ${marker}`);
   }

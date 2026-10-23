@@ -6,33 +6,22 @@ export function initCalmCarousel(signal: AbortSignal) {
   if (slides.length < 2) return;
 
   const photos = slides.map(slide => slide.querySelector<HTMLImageElement>('.calm-poster'));
-  const pauseButton = root.querySelector<HTMLButtonElement>('[data-calm-pause]');
   const immersiveButton = root.querySelector<HTMLButtonElement>('[data-calm-immersive]');
   const announcement = root.querySelector<HTMLElement>('[data-calm-announcement]');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   const zh = document.documentElement.lang === 'zh-CN';
   const HOLD_MS = 14000;
   let index = 0;
-  let paused = reduceMotion.matches;
   let focused = false;
   let immersive = false;
   let timer: number | undefined;
   let startTouch: {x: number; y: number} | undefined;
 
   const stop = () => { if (timer !== undefined) clearTimeout(timer); timer = undefined; };
-  const canAdvance = () => !signal.aborted && root.isConnected && !paused &&
+  const canAdvance = () => !signal.aborted && root.isConnected &&
     !reduceMotion.matches && !focused && document.visibilityState === 'visible';
 
   const updateControls = () => {
-    if (pauseButton) {
-      pauseButton.setAttribute('aria-pressed', String(paused));
-      pauseButton.setAttribute('aria-label', paused ?
-        (zh ? '继续照片轮播' : 'Resume photo slideshow') :
-        (zh ? '暂停照片轮播' : 'Pause photo slideshow'));
-      pauseButton.textContent = paused ? (zh ? '继续轮播' : 'Resume slideshow') :
-        (zh ? '暂停轮播' : 'Pause slideshow');
-      pauseButton.disabled = reduceMotion.matches;
-    }
     if (immersiveButton) {
       immersiveButton.setAttribute('aria-pressed', String(immersive));
       const label = immersive ?
@@ -65,12 +54,6 @@ export function initCalmCarousel(signal: AbortSignal) {
     // A failed image uses the smooth gradient already painted by CSS; no old assets.
     if (photo) photo.style.opacity = '0';
   }, { signal }));
-
-  pauseButton?.addEventListener('click', () => {
-    paused = !paused;
-    updateControls();
-    schedule();
-  }, { signal });
 
   const setImmersive = (next: boolean) => {
     immersive = next;
@@ -124,7 +107,6 @@ export function initCalmCarousel(signal: AbortSignal) {
 
   document.addEventListener('visibilitychange', schedule, { signal });
   reduceMotion.addEventListener('change', () => {
-    if (reduceMotion.matches) paused = true;
     updateControls();
     schedule();
   }, { signal });

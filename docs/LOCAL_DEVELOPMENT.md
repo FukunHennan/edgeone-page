@@ -3,6 +3,17 @@
 生产站点使用 Astro。需要 Node 22.21.1 或更新的 22.x、npm 10.x；建议按
 `.node-version` 使用 Node 22.23.2。`npm ci` 安装锁定依赖。
 
+Windows 使用 fnm 时，先在当前 PowerShell 会话切换版本：
+
+```powershell
+fnm env --shell powershell | Out-String | Invoke-Expression
+fnm use
+node --version
+npm --version
+```
+
+无需改变全局 Node。也可直接运行 `fnm exec --using 22.23.2 npm.cmd run check`。
+
 ## 开发预览
 
 ```bash

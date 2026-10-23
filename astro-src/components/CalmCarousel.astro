@@ -1,5 +1,4 @@
 ---
-import '../styles/calm-home.css';
 import type { Language } from '../lib/content';
 interface Props { lang: Language }
 const { lang } = Astro.props;
@@ -60,7 +59,6 @@ const slides = scenes.map((scene) => ({
     <p class="calm-description">{zh ? '在自然的节奏里，找到更平静的自己。' : 'Find a quieter moment in the rhythm of nature.'}</p>
   </div>
   <div class="calm-accessibility-actions">
-    <button type="button" data-calm-pause aria-label={zh ? '暂停照片轮播' : 'Pause photo slideshow'} aria-pressed="false">{zh ? '暂停轮播' : 'Pause slideshow'}</button>
     <button type="button" data-calm-immersive aria-label={zh ? '进入沉浸模式' : 'Enter immersive mode'} aria-pressed="false">{zh ? '沉浸模式' : 'Immersive view'}</button>
   </div>
   <p class="calm-sr-only" aria-live="polite" aria-atomic="true" data-calm-announcement></p>

@@ -6,4 +6,4 @@ export function getStaticPaths() { return languages.map((lang) => ({ params: { l
 const lang = Astro.params.lang as Language;
 const projects = await projectsFor(lang);
 ---
-<Shell lang={lang} title={lang === 'zh-CN' ? '项目中心' : 'Projects'}><Fragment set:html={registryMarkup(lang, projects.map((project) => project.data))} /></Shell>
+<Shell lang={lang} title={lang === 'zh-CN' ? '项目' : 'Projects'}><Fragment set:html={registryMarkup(lang, projects.map((project) => project.data))} /></Shell>

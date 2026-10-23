@@ -4,20 +4,15 @@ layout: page
 comments: false
 ---
 
-<div class="resume-page">
+<div class="resume-page" role="region" aria-label="简历内容" tabindex="0">
   <div class="resume-toolbar">
-    <p class="resume-toolbar-note">可编辑内容并导出 A4 PDF</p>
-    <div class="resume-toolbar-actions">
-      <button type="button" class="resume-btn ghost" id="resume-edit" title="直接点击简历文字即可修改，改动自动保存在本机浏览器">编辑内容</button>
-      <button type="button" class="resume-btn ghost" id="resume-reset" title="清空本机保存的修改，恢复默认简历">重置内容</button>
-      <button type="button" class="resume-btn primary" id="resume-print" title="生成并下载 A4 简历 PDF 文件">导出 PDF</button>
-    </div>
+    <button type="button" class="resume-btn primary" id="resume-print" title="生成并下载 A4 简历 PDF 文件">导出 PDF</button>
   </div>
   <div class="resume-sheet-wrap">
     <div class="resume-sheet" id="resume-sheet">
 <header class="r-head">
 <div class="r-head-main">
-<h2 class="r-name" data-field="name">陈富坤</h2>
+<h1 class="r-name" data-field="name">陈富坤</h1>
 <p class="r-target" data-field="target">求职意向：嵌入式 / 自动化工程师</p>
 </div>
 <ul class="r-contact">
@@ -83,24 +78,16 @@ comments: false
 
 <style>
 /* ===== 屏幕显示样式 ===== */
-.resume-page{padding:6px 0 48px}
-.resume-toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;width:fit-content;max-width:100%;margin:0 auto 18px;padding:5px 6px 5px 16px;border:1px solid var(--border-color,#e5e7eb);border-radius:999px;background:var(--card-bg,rgba(255,255,255,.72))}
-.resume-toolbar-note{margin:0;font-size:.76rem;opacity:.62;white-space:nowrap}
-.resume-toolbar-actions{display:flex;gap:6px;flex-wrap:wrap}
-.resume-btn{appearance:none;border:none;cursor:pointer;padding:6px 14px;border-radius:999px;font-size:.8rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s}
+.resume-page{padding:24px 0 96px}
+.resume-toolbar{position:fixed;right:max(20px,env(safe-area-inset-right));bottom:max(20px,env(safe-area-inset-bottom));z-index:60}
+.resume-btn{appearance:none;border:none;cursor:pointer;min-height:44px;padding:0 18px;border-radius:8px;font-size:.85rem;font-weight:600;transition:transform .15s,box-shadow .15s,background .15s,opacity .15s}
 .resume-btn:active{transform:translateY(1px)}
 .resume-btn:disabled{opacity:.6;cursor:wait}
-.resume-btn.primary{background:linear-gradient(135deg,#4f46e5,#8b5cf6);color:#fff;box-shadow:0 6px 16px rgba(79,70,229,.28)}
-.resume-btn.ghost{background:transparent;border:1px solid var(--border-color,#d1d5db);color:inherit}
-.resume-btn.is-on{background:#4f46e5;color:#fff;border-color:#4f46e5}
-@media(max-width:600px){.resume-toolbar{padding:5px 6px;border-radius:16px}.resume-toolbar-note{display:none}}
+.resume-btn.primary{background:#55704d;color:#fff;box-shadow:0 4px 14px rgba(85,112,77,.22)}
+.resume-btn:focus-visible{outline:2px solid #55704d;outline-offset:3px}
 
 .resume-sheet-wrap{display:flex;justify-content:center}
 .resume-sheet{width:210mm;flex:0 0 auto;min-height:297mm;background:#fff;color:#1f2937;padding:14mm 15mm;box-sizing:border-box;box-shadow:0 18px 50px rgba(15,23,42,.18);border-radius:2px;font-size:10pt;line-height:1.55;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
-
-/* 编辑模式 */
-.resume-sheet.is-editing [data-field]:hover{outline:1px dashed #a5b4fc;outline-offset:2px;border-radius:3px;cursor:text}
-.resume-sheet [data-field]:focus{outline:2px solid #6366f1;outline-offset:2px;border-radius:3px;background:rgba(99,102,241,.05)}
 
 /* ===== A4 简历内部排版 ===== */
 .r-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;padding-bottom:10px;border-bottom:2.5px solid #1f2937;margin-bottom:12px}
@@ -109,7 +96,7 @@ comments: false
 .r-contact{list-style:none;margin:0;padding:0;text-align:right;font-size:9pt;color:#374151;line-height:1.75}
 
 .r-block{margin-bottom:11px}
-.r-title{margin:0 0 5px;font-size:11.5pt;font-weight:700;color:#111827;padding-left:9px;border-left:4px solid #4f46e5;line-height:1.2}
+.r-title{margin:0 0 5px;font-size:11.5pt;font-weight:700;color:#111827;padding-left:9px;border-left:4px solid #55704d;line-height:1.2}
 .r-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .r-org{font-weight:700;font-size:10pt;color:#1f2937}
 .r-date{font-size:9pt;color:#6b7280;white-space:nowrap}
@@ -118,7 +105,7 @@ comments: false
 .r-item:last-child{margin-bottom:0}
 .r-skills{list-style:none;margin:0;padding:0}
 .r-skills li{font-size:9.8pt;color:#374151;margin-bottom:2.5px;padding-left:14px;position:relative}
-.r-skills li::before{content:"";position:absolute;left:2px;top:8px;width:5px;height:5px;border-radius:50%;background:#8b5cf6}
+.r-skills li::before{content:"";position:absolute;left:2px;top:8px;width:5px;height:5px;border-radius:50%;background:#78966f}
 .r-skills b{color:#111827}
 </style>
 
@@ -131,13 +118,11 @@ comments: false
     root.dataset.ready="1";
 
     var sheet=document.getElementById("resume-sheet");
-    var editBtn=document.getElementById("resume-edit");
     var printBtn=document.getElementById("resume-print");
-    var resetBtn=document.getElementById("resume-reset");
     if(!sheet)return;
 
     var fields=sheet.querySelectorAll("[data-field]");
-    var editing=false,saveTimer=null,prevMinHeight="";
+    var prevMinHeight="";
     var values={};
     try{values=JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")||{};}catch(e){values={};}
 
@@ -148,45 +133,6 @@ comments: false
     });
 
     function nextFrame(){return new Promise(function(r){setTimeout(r,30);});}
-
-    function setEditing(on){
-      editing=on;
-      fields.forEach(function(el){
-        if(on)el.setAttribute("contenteditable","true");
-        else el.removeAttribute("contenteditable");
-      });
-      sheet.classList.toggle("is-editing",on);
-      editBtn.classList.toggle("is-on",on);
-      editBtn.textContent=on?"完成编辑":"编辑内容";
-    }
-
-    // 粘贴强制纯文本
-    sheet.addEventListener("paste",function(e){
-      if(!editing)return;
-      e.preventDefault();
-      var text=(e.clipboardData||window.clipboardData).getData("text/plain");
-      document.execCommand("insertText",false,text);
-    });
-
-    // 自动保存
-    sheet.addEventListener("input",function(e){
-      var el=e.target.closest&&e.target.closest("[data-field]");
-      if(!el)return;
-      values[el.getAttribute("data-field")]=el.textContent;
-      clearTimeout(saveTimer);
-      saveTimer=setTimeout(function(){
-        try{localStorage.setItem(STORAGE_KEY,JSON.stringify(values));}catch(err){}
-      },300);
-    });
-
-    editBtn.addEventListener("click",function(){setEditing(!editing);});
-
-    resetBtn.addEventListener("click",function(){
-      if(window.confirm("确定清空所有本地修改并恢复默认简历吗？")){
-        try{localStorage.removeItem(STORAGE_KEY);}catch(e){}
-        window.location.reload();
-      }
-    });
 
     /* ===== 直接导出 PDF：html2canvas-pro + jsPDF ===== */
 
@@ -247,8 +193,7 @@ comments: false
 
     function exportPDF(){
       if(printBtn.disabled)return;
-      var wasEditing=editing;
-      setEditing(false);
+      var previousScrollTop=root.scrollTop;
       printBtn.disabled=true;
       var oldText=printBtn.textContent;
       printBtn.textContent="正在生成 PDF…";
@@ -256,6 +201,7 @@ comments: false
       ensureLibs().then(nextFrame).then(function(){
         // 让画布按实际内容高度渲染，去掉 A4 空白尾页
         prevMinHeight=sheet.style.minHeight;
+        root.classList.add("resume-exporting");
         sheet.style.minHeight="0";
         return nextFrame();
       }).then(stripExternalFonts).then(function(){
@@ -265,6 +211,13 @@ comments: false
           useCORS:true,
           logging:false,
           onclone:function(doc){
+            // 只在导出副本中展开阅读容器，完整渲染屏幕外的简历内容。
+            var exportSheet=doc.getElementById("resume-sheet");
+            for(var ancestor=exportSheet&&exportSheet.parentElement;ancestor;ancestor=ancestor.parentElement){
+              ancestor.style.setProperty("overflow","visible","important");
+              ancestor.style.setProperty("height","auto","important");
+              ancestor.scrollTop=0;
+            }
             // 简历样式完全自包含：移除外部样式表，避免等待网络资源导致挂起
             doc.querySelectorAll('link[rel="stylesheet"],link[as="font"]').forEach(function(node){
               node.parentNode.removeChild(node);
@@ -280,6 +233,7 @@ comments: false
         });
       }).then(function(canvas){
         sheet.style.minHeight=prevMinHeight||"";
+        root.classList.remove("resume-exporting");
 
         var jsPDF=window.jspdf.jsPDF;
         var pdf=new jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
@@ -320,11 +274,12 @@ comments: false
         pdf.save("陈富坤-简历.pdf");
       }).catch(function(err){
         sheet.style.minHeight=prevMinHeight||"";
+        root.classList.remove("resume-exporting");
         alert("PDF 生成失败："+((err&&err.message)||err));
       }).then(function(){
+        root.scrollTop=previousScrollTop;
         printBtn.disabled=false;
         printBtn.textContent=oldText;
-        if(wasEditing)setEditing(true);
       });
     }
 

@@ -1,10 +1,10 @@
 ---
-import { postPath, termSlug, type Post, type Language } from '../lib/content';
+import { postPath, termSlug, archiveFilterPath, type Post, type Language } from '../lib/content';
 interface Props { posts: Post[]; lang: Language }
 const { posts, lang } = Astro.props;
 ---
 <div class="astro-writing">
-  {posts.map((post) => <article class="scenic-story" data-article-search={`${post.data.title} ${post.data.description || ''} ${post.data.categories.join(' ')} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}>
+  {posts.map((post) => <article class="scenic-story" data-article-categories={JSON.stringify(post.data.categories.map(termSlug))} data-article-tags={JSON.stringify(post.data.tags.map(termSlug))} data-article-search={`${post.data.title} ${post.data.description || ''} ${post.data.categories.join(' ')} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}>
     <a class="scenic-story-image" href={postPath(post)} aria-label={post.data.title}>
       {post.data.cover
         ? <img class="cover-image" src={post.data.cover} alt="" loading="lazy" decoding="async" width="520" height="293" />
@@ -18,8 +18,8 @@ const { posts, lang } = Astro.props;
       <h2><a href={postPath(post)}>{post.data.title}</a></h2>
       {post.data.description && <p>{post.data.description}</p>}
       <div class="astro-article-terms">
-        {post.data.categories.map((name) => <a href={`/${lang}/categories/${termSlug(name)}/`}>{name}</a>)}
-        {post.data.tags.map((name) => <a href={`/${lang}/tags/${termSlug(name)}/`}>#{name}</a>)}
+        {post.data.categories.map((name) => <a href={archiveFilterPath(lang, 'categories', name)} data-archive-kind="category" data-archive-value={termSlug(name)}>{name}</a>)}
+        {post.data.tags.map((name) => <a href={archiveFilterPath(lang, 'tags', name)} data-archive-kind="tag" data-archive-value={termSlug(name)}>#{name}</a>)}
       </div>
     </div>
   </article>)}
