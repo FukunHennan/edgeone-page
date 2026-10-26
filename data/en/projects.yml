@@ -3,7 +3,8 @@
   category: embedded
   label: ACTIVE · ROBOTICS
   title: Fish Robot Platform
-  description: ESP32 robot-fish platform with a Go controller, WebSocket, HMAC auth, OTA, servo/RGB control and a React UI.
+  cover: /projects/fish/cover.svg
+  description: Browser control of ESP32 robot fish, camera video, and competition workflows, with control leases, device authentication, and OTA maintenance.
   tags: [ESP32, Go, WebSocket, OTA]
   github: https://github.com/FukunHennan/fish
   post: ../posts/fish-robot-platform/

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 490" role="img" aria-labelledby="title desc">
+<title id="title">运动指令生命周期</title><desc id="desc">控制权租约、队列截止时间与固件连接检查是不同的安全边界。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#65756f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;letter-spacing:0;fill:#263630}.heading{font-size:30px;font-weight:700}.title{font-size:22px;font-weight:700;text-anchor:middle}.detail{font-size:18px;text-anchor:middle;fill:#4c5a55}.lane-title{font-size:23px;font-weight:700}.lane-detail{font-size:18px;fill:#4c5a55}.edge-label{font-size:16px;text-anchor:middle;fill:#53645e}.footer{font-size:17px;fill:#64716d}</style>
+<rect width="1200" height="490" fill="#fff"/><text x="30" y="44" class="heading">运动指令生命周期</text>
+<g><polyline points="216,203 263,203" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="453,203 500,203" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="690,203 737,203" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="927,203 974,203" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="358,255 358,310 475,310 475,342" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="398" y="297" class="edge-label">无权限</text></g>
+<g><polyline points="595,255 595,310 475,310 475,342" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="576" y="291" class="edge-label">过期 / 其他持有者</text></g>
+<g><polyline points="832,255 832,342" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="870" y="301" class="edge-label">超时</text></g>
+<g><polyline points="967,382 1072,382 1072,255" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/></g>
+<g><rect x="30" y="150" width="186" height="105" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="123" y="181" class="title">浏览器输入</text><text x="123" y="209" class="detail">按键 / 按钮</text><text x="123" y="228" class="detail">账号 + 客户端</text></g>
+<g><rect x="263" y="150" width="190" height="105" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="358" y="181" class="title">Go 接入检查</text><text x="358" y="209" class="detail">会话 + 角色</text><text x="358" y="228" class="detail">设备已分配？</text></g>
+<g><rect x="500" y="150" width="190" height="105" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="595" y="181" class="title">控制权租约</text><text x="595" y="209" class="detail">设备 + 账号</text><text x="595" y="228" class="detail">客户端 + 有效期</text></g>
+<g><rect x="737" y="150" width="190" height="105" rx="6" fill="#e9f5f3" stroke="#3e7771" stroke-width="1.5"/><text x="832" y="181" class="title">运动队列</text><text x="832" y="209" class="detail">送达前检查过期</text><text x="832" y="228" class="detail">停止时清理旧运动</text></g>
+<g><rect x="974" y="150" width="196" height="105" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="1072" y="181" class="title">ESP32 固件</text><text x="1072" y="209" class="detail">执行舵机运动</text><text x="1072" y="228" class="detail">心跳 / 停止检查</text></g>
+<g><rect x="380" y="342" width="190" height="80" rx="6" fill="#f1f2f1" stroke="#7a8580" stroke-width="1.5"/><text x="475" y="373" class="title">拒绝指令</text><text x="475" y="401" class="detail">不下发运动</text></g>
+<g><rect x="777" y="342" width="190" height="80" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="872" y="373" class="title">停止并重置</text><text x="872" y="401" class="detail">租约 / 运动过期</text></g>
+<text x="30" y="464" class="footer">控制权租约、队列截止时间与固件连接检查是不同的安全边界。</text></svg>

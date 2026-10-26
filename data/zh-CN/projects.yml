@@ -3,7 +3,8 @@
   category: embedded
   label: ACTIVE · ROBOTICS
   title: Fish Robot Platform
-  description: ESP32 机器人鱼控制平台：Go 中央控制器、WebSocket、HMAC 认证、OTA、舵机/RGB 控制和 React Web UI。
+  cover: /projects/fish/cover-zh.svg
+  description: 在浏览器中操作 ESP32 机器鱼、查看相机画面并管理赛事，支持控制权租约、设备认证与 OTA 固件维护。
   tags: [ESP32, Go, WebSocket, OTA]
   github: https://github.com/FukunHennan/fish
   post: ../posts/fish-robot-platform/

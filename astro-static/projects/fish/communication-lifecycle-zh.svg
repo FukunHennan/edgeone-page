@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 485" role="img" aria-labelledby="title desc">
+<title id="title">控制消息与断线恢复</title><desc id="desc">ESP32 主动连接 /ws/device；连接存活与运动资格分别判断。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#65756f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;letter-spacing:0;fill:#263630}.heading{font-size:30px;font-weight:700}.title{font-size:22px;font-weight:700;text-anchor:middle}.detail{font-size:18px;text-anchor:middle;fill:#4c5a55}.lane-title{font-size:23px;font-weight:700}.lane-detail{font-size:18px;fill:#4c5a55}.edge-label{font-size:16px;text-anchor:middle;fill:#53645e}.footer{font-size:17px;fill:#64716d}</style>
+<rect width="1000" height="485" fill="#fff"/><text x="30" y="44" class="heading">控制消息与断线恢复</text>
+<g><polyline points="270,183 380,183" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="325" y="105" class="edge-label">控制帧</text></g>
+<g><polyline points="620,183 730,183" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="675" y="105" class="edge-label">指令 JSON</text></g>
+<g><polyline points="150,241 150,316" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/></g>
+<g><polyline points="500,241 500,316" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/></g>
+<g><polyline points="850,241 850,316" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/></g>
+<g><rect x="30" y="125" width="240" height="116" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="150" y="156" class="title">浏览器</text><text x="150" y="184" class="detail">/ws/control</text><text x="150" y="203" class="detail">输入 + 租约续期</text></g>
+<g><rect x="380" y="125" width="240" height="116" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="500" y="156" class="title">Go 控制器</text><text x="500" y="184" class="detail">授权 + 租约 + 队列</text><text x="500" y="203" class="detail">指令路由</text></g>
+<g><rect x="730" y="125" width="240" height="116" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="850" y="156" class="title">ESP32 固件</text><text x="850" y="184" class="detail">/ws/device</text><text x="850" y="203" class="detail">运动 + 状态回传</text></g>
+<g><rect x="30" y="316" width="240" height="105" rx="6" fill="#f1f2f1" stroke="#7a8580" stroke-width="1.5"/><text x="150" y="347" class="title">浏览器断线</text><text x="150" y="375" class="detail">重连控制通道</text><text x="150" y="394" class="detail">续期或重取租约</text></g>
+<g><rect x="380" y="316" width="240" height="105" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="500" y="347" class="title">Go 安全边界</text><text x="500" y="375" class="detail">Ping / Pong、租约过期</text><text x="500" y="394" class="detail">清旧运动；下发 STOP</text></g>
+<g><rect x="730" y="316" width="240" height="105" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="850" y="347" class="title">设备安全边界</text><text x="850" y="375" class="detail">动作 / 心跳超时</text><text x="850" y="394" class="detail">本地停止；重新连接</text></g>
+<text x="30" y="459" class="footer">ESP32 主动连接 /ws/device；连接存活与运动资格分别判断。</text></svg>

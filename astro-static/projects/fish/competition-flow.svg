@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1190 520" role="img" aria-labelledby="title desc">
+<title id="title">Competition state and recording</title><desc id="desc">Match timing, device control, and camera recording remain separate states.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#65756f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;letter-spacing:0;fill:#263630}.heading{font-size:26px;font-weight:700}.title{font-size:19px;font-weight:700;text-anchor:middle}.detail{font-size:16px;text-anchor:middle;fill:#4c5a55}.lane-title{font-size:21px;font-weight:700}.lane-detail{font-size:16px;fill:#4c5a55}.edge-label{font-size:14px;text-anchor:middle;fill:#53645e}.footer{font-size:15px;fill:#64716d}</style>
+<rect width="1190" height="520" fill="#fff"/><text x="30" y="44" class="heading">Competition state and recording</text>
+<g><polyline points="208,192 250,192" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="430,192 472,192" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="652,192 694,192" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="673" y="126" class="edge-label">success</text></g>
+<g><polyline points="562,239 562,345" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="601" y="290" class="edge-label">failure</text></g>
+<g><polyline points="874,192 916,192" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="895" y="126" class="edge-label">pause</text></g>
+<g><polyline points="1038,145 1038,89 784,89 784,145" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="913" y="74" class="edge-label">resume</text></g>
+<g><polyline points="784,239 784,345" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="815" y="290" class="edge-label">end</text></g>
+<g><polyline points="1038,239 1038,306 784,306 784,345" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="874,389 916,389" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><rect x="28" y="145" width="180" height="94" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="118" y="176" class="title">Assign devices</text><text x="118" y="204" class="detail">Blue / red seats</text></g>
+<g><rect x="250" y="145" width="180" height="94" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="340" y="176" class="title">Prepare field</text><text x="340" y="204" class="detail">Camera + readiness</text></g>
+<g><rect x="472" y="145" width="180" height="94" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="562" y="176" class="title">Start recording</text><text x="562" y="204" class="detail">Must succeed first</text></g>
+<g><rect x="694" y="145" width="180" height="94" rx="6" fill="#e9f5f3" stroke="#3e7771" stroke-width="1.5"/><text x="784" y="176" class="title">Running</text><text x="784" y="204" class="detail">Timer + scoring</text></g>
+<g><rect x="916" y="145" width="246" height="94" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="1039" y="176" class="title">Paused</text><text x="1039" y="204" class="detail">Timer stops; control and</text><text x="1039" y="223" class="detail">recording continue</text></g>
+<g><rect x="472" y="345" width="180" height="88" rx="6" fill="#f1f2f1" stroke="#7a8580" stroke-width="1.5"/><text x="562" y="376" class="title">Start blocked</text><text x="562" y="404" class="detail">Camera / record failed</text></g>
+<g><rect x="694" y="345" width="180" height="88" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="784" y="376" class="title">Finish</text><text x="784" y="404" class="detail">Finalize match + MP4</text></g>
+<g><rect x="916" y="345" width="246" height="88" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="1039" y="376" class="title">Replay</text><text x="1039" y="404" class="detail">Scores, events, video</text></g>
+<text x="30" y="494" class="footer">Match timing, device control, and camera recording remain separate states.</text></svg>

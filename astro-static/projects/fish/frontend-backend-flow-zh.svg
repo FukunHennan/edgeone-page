@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 475" role="img" aria-labelledby="title desc">
+<title id="title">前后端请求与设备、视频流程</title><desc id="desc">Go 处理控制和信令；正常 WebRTC 画面不经过 Go。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#65756f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;letter-spacing:0;fill:#263630}.heading{font-size:30px;font-weight:700}.title{font-size:22px;font-weight:700;text-anchor:middle}.detail{font-size:18px;text-anchor:middle;fill:#4c5a55}.lane-title{font-size:23px;font-weight:700}.lane-detail{font-size:18px;fill:#4c5a55}.edge-label{font-size:16px;text-anchor:middle;fill:#53645e}.footer{font-size:17px;fill:#64716d}</style>
+<rect width="1000" height="475" fill="#fff"/><text x="30" y="44" class="heading">前后端请求与设备、视频流程</text>
+<g><polyline points="270,183 380,183" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="325" y="105" class="edge-label">HTTP / WebSocket</text></g>
+<g><polyline points="620,183 730,183" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="675" y="105" class="edge-label">设备 WS / JSON</text></g>
+<g><polyline points="500,246 500,320" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="611" y="288" class="edge-label">视频 API / 信令</text></g>
+<g><polyline points="380,371 150,371 150,246" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" stroke-dasharray="6 5"/><text x="265" y="352" class="edge-label">直连 / TURN 媒体</text></g>
+<g><rect x="30" y="120" width="240" height="126" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="150" y="151" class="title">浏览器前端</text><text x="150" y="179" class="detail">赛事页 + 管理台</text><text x="150" y="198" class="detail">操作输入与视频展示</text></g>
+<g><rect x="380" y="120" width="240" height="126" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="500" y="151" class="title">Go 服务</text><text x="500" y="179" class="detail">账号 + 赛事状态</text><text x="500" y="198" class="detail">控制准入 + API</text></g>
+<g><rect x="730" y="120" width="240" height="126" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="850" y="151" class="title">ESP32 固件</text><text x="850" y="179" class="detail">运动 + 状态回传</text><text x="850" y="198" class="detail">本地停止检查</text></g>
+<g><rect x="380" y="320" width="240" height="102" rx="6" fill="#e9f5f3" stroke="#3e7771" stroke-width="1.5"/><text x="500" y="351" class="title">Python 视频</text><text x="500" y="379" class="detail">相机 + WebRTC + 录像</text></g>
+<text x="30" y="449" class="footer">Go 处理控制和信令；正常 WebRTC 画面不经过 Go。</text></svg>

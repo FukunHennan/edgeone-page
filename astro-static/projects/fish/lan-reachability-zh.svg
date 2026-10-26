@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 440" role="img" aria-labelledby="title desc">
+<title id="title">浏览器能否使用直连视频路径？</title><desc id="desc">当前程序依据 ICE 与实际画面判断，不通过 IP 比较认定局域网。</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#65756f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;letter-spacing:0;fill:#263630}.heading{font-size:30px;font-weight:700}.title{font-size:22px;font-weight:700;text-anchor:middle}.detail{font-size:18px;text-anchor:middle;fill:#4c5a55}.lane-title{font-size:23px;font-weight:700}.lane-detail{font-size:18px;fill:#4c5a55}.edge-label{font-size:16px;text-anchor:middle;fill:#53645e}.footer{font-size:17px;fill:#64716d}</style>
+<rect width="1100" height="440" fill="#fff"/><text x="30" y="44" class="heading">浏览器能否使用直连视频路径？</text>
+<g><polyline points="245,203 295,203" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="515,203 565,203" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="785,178 810,178 810,121 835,121" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="796" y="95" class="edge-label">可用</text></g>
+<g><polyline points="785,228 810,228 810,311 835,311" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /><text x="796" y="289" class="edge-label">失败</text></g>
+<g><rect x="25" y="145" width="220" height="116" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="135" y="176" class="title">打开网站</text><text x="135" y="204" class="detail">稳定域名经 Tunnel</text><text x="135" y="223" class="detail">网页入口可达</text></g>
+<g><rect x="295" y="145" width="220" height="116" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="405" y="176" class="title">尝试 host 候选</text><text x="405" y="204" class="detail">浏览器 + Python</text><text x="405" y="223" class="detail">本阶段不使用 TURN</text></g>
+<g><rect x="565" y="145" width="220" height="116" rx="6" fill="#e9f5f3" stroke="#3e7771" stroke-width="1.5"/><text x="675" y="176" class="title">验证画面</text><text x="675" y="204" class="detail">ICE 连通</text><text x="675" y="223" class="detail">首帧 + 后续画面</text></g>
+<g><rect x="835" y="65" width="235" height="112" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="952.5" y="96" class="title">直连可用</text><text x="952.5" y="124" class="detail">保持当前画面</text></g>
+<g><rect x="835" y="255" width="235" height="112" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="952.5" y="286" class="title">直连不可用</text><text x="952.5" y="314" class="detail">继续尝试其他路径</text></g>
+<text x="30" y="414" class="footer">当前程序依据 ICE 与实际画面判断，不通过 IP 比较认定局域网。</text></svg>

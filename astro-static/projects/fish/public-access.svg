@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 420" role="img" aria-labelledby="title desc">
+<title id="title">Public web access through Cloudflare Tunnel</title><desc id="desc">Tunnel publishes the web entry; WebRTC media uses a separate path.</desc>
+<defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M1 1 L7 4.5 L1 8" fill="none" stroke="#65756f" stroke-width="1.5"/></marker></defs>
+<style>text{font-family:Arial,Helvetica,sans-serif;letter-spacing:0;fill:#263630}.heading{font-size:26px;font-weight:700}.title{font-size:19px;font-weight:700;text-anchor:middle}.detail{font-size:16px;text-anchor:middle;fill:#4c5a55}.lane-title{font-size:21px;font-weight:700}.lane-detail{font-size:16px;fill:#4c5a55}.edge-label{font-size:14px;text-anchor:middle;fill:#53645e}.footer{font-size:15px;fill:#64716d}</style>
+<rect width="1160" height="420" fill="#fff"/><text x="30" y="44" class="heading">Public web access through Cloudflare Tunnel</text>
+<g><polyline points="258,181 315,181" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="545,181 602,181" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="832,181 889,181" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><polyline points="1009,237 1009,282" fill="none" stroke="#65756f" stroke-width="2" stroke-linejoin="round" marker-end="url(#arrow)" /></g>
+<g><rect x="28" y="125" width="230" height="112" rx="6" fill="#edf4ee" stroke="#58775e" stroke-width="1.5"/><text x="143" y="156" class="title">Remote browser</text><text x="143" y="184" class="detail">Pages, API, WebSocket</text></g>
+<g><rect x="315" y="125" width="230" height="112" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="430" y="156" class="title">Cloudflare edge</text><text x="430" y="184" class="detail">Public hostname</text></g>
+<g><rect x="602" y="125" width="230" height="112" rx="6" fill="#e9f5f3" stroke="#3e7771" stroke-width="1.5"/><text x="717" y="156" class="title">cloudflared</text><text x="717" y="184" class="detail">Outbound tunnel</text></g>
+<g><rect x="889" y="125" width="240" height="112" rx="6" fill="#edf3f9" stroke="#537391" stroke-width="1.5"/><text x="1009" y="156" class="title">Go :8081</text><text x="1009" y="184" class="detail">Web + signaling</text></g>
+<g><rect x="889" y="282" width="240" height="82" rx="6" fill="#fff3e8" stroke="#aa7447" stroke-width="1.5"/><text x="1009" y="313" class="title">Python :8091</text><text x="1009" y="341" class="detail">Local HTTP API</text></g>
+<text x="30" y="394" class="footer">Tunnel publishes the web entry; WebRTC media uses a separate path.</text></svg>
