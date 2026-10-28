@@ -25,7 +25,7 @@ for name in files:
     if not os.path.isfile(name) or os.path.getsize(name) > 250_000:
         sys.exit(f"Deletion or oversized file: {name}")
 status = git("diff", "--name-status", "HEAD")
-if re.search(r"(?m)^D\\s", status):
+if re.search(r"(?m)^D\s", status):
     sys.exit("Deletions are not allowed")
 diffstat = git("diff", "--numstat", "HEAD")
 for ln in diffstat.splitlines():
@@ -34,7 +34,7 @@ for ln in diffstat.splitlines():
         sys.exit("Binary change rejected")
     if len(cols) >= 2 and int(cols[0])+int(cols[1]) > 350:
         sys.exit("Change too large")
-low_risk = all(name.startswith("docs/") or name == ".codex/PROGRESS.md" for name in files)
+low_risk = all(name.startswith("docs/") or name == ".codex/PROGRESS.md" for name in files) and any(name.startswith("docs/") for name in files)
 with open(os.environ["GITHUB_OUTPUT"], "a") as out:
     out.write(f"low_risk={'true' if low_risk else 'false'}\n")
 print("Validated changed files:", ", ".join(files), "; low risk:", low_risk)
