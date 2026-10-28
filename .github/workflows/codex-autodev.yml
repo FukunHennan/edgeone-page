@@ -1,0 +1,87 @@
+name: Codex autonomous development
+
+on:
+  schedule:
+    # Scheduled UTC clock slots; not a precise rolling five-hour interval.
+    - cron: "17 0,5,10,15,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: codex-autodev
+  cancel-in-progress: false
+
+jobs:
+  develop:
+    if: github.repository == 'FukunHennan/edgeone-page'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Skip if an automated PR is already pending
+        id: pending
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          count=$(gh pr list --head codex/autodev --state open --json number --jq 'length')
+          if [ "$count" -gt 0 ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Capture trusted guard before AI edits
+        if: steps.pending.outputs.skip != 'true'
+        run: cp .codex/scripts/guard.py /tmp/codex-autodev-guard.py
+      - uses: actions/setup-node@v4
+        if: steps.pending.outputs.skip != 'true'
+        with:
+          node-version-file: .node-version
+          cache: npm
+      - name: Install dependencies
+        if: steps.pending.outputs.skip != 'true'
+        run: npm ci --ignore-scripts
+      - name: Run Codex (one bounded task)
+        if: steps.pending.outputs.skip != 'true'
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          safety-strategy: drop-sudo
+          prompt: |
+            Read AGENTS.md, .codex/TASKS.json, and .codex/PROGRESS.md.
+            Pick the earliest unfinished task in priority order, one task only.
+            Implement a small, safe improvement within its scope, or make no changes if blocked.
+            Update .codex/PROGRESS.md with a proposal entry (not a completion claim).
+            Do not edit any .github files, dependencies, configuration, secrets or the guard.
+            Do not use network access. Do not commit, push or merge.
+      - name: Check safe changed-file boundaries
+        if: steps.pending.outputs.skip != 'true'
+        id: guard
+        run: python3 /tmp/codex-autodev-guard.py
+      - name: Test production build and bilingual content
+        if: steps.pending.outputs.skip != 'true'
+        run: npm run check
+      - name: Create or update review PR
+        if: steps.pending.outputs.skip != 'true'
+        id: pr
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          branch: codex/autodev
+          title: "Codex: next bounded development task"
+          body: |
+            Automated proposal. All functional changes require human review.
+            The workflow checks changed-file boundaries and runs npm run check.
+            Documentation-only changes can be auto-merged by the guarded step.
+          commit-message: "chore(codex): propose bounded improvement"
+          delete-branch: true
+      - name: Auto-merge strictly docs-only changes
+        if: steps.guard.outputs.low_risk == 'true' && steps.pr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
+        run: |
+          # This succeeds only when repository merge permissions allow it.
+          # All executable/source changes are excluded by the guard.
+          gh pr merge "$PR_NUMBER" --squash --delete-branch
