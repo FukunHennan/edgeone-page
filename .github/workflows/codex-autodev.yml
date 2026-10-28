@@ -40,7 +40,7 @@ jobs:
           cache: npm
       - name: Install dependencies
         if: steps.pending.outputs.skip != 'true'
-        run: npm ci --ignore-scripts
+        run: npm ci
       - name: Run Codex (one bounded task)
         if: steps.pending.outputs.skip != 'true'
         uses: openai/codex-action@v1
@@ -76,12 +76,24 @@ jobs:
             Documentation-only changes can be auto-merged by the guarded step.
           commit-message: "chore(codex): propose bounded improvement"
           delete-branch: true
-      - name: Auto-merge strictly docs-only changes
+      - name: Queue auto-merge only with protected branch and passing required checks
         if: steps.guard.outputs.low_risk == 'true' && steps.pr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ steps.pr.outputs.pull-request-number }}
         run: |
-          # This succeeds only when repository merge permissions allow it.
-          # All executable/source changes are excluded by the guard.
-          gh pr merge "$PR_NUMBER" --squash --delete-branch
+          set -euo pipefail
+          # Fail closed: no branch protection or no required status checks means no auto-merge.
+          checks=$(gh api "repos/$GITHUB_REPOSITORY/branches/master/protection/required_status_checks" --jq '.contexts | length' 2>/dev/null) || {
+            echo "::notice::Branch protection unavailable; leaving PR for manual review."
+            exit 0
+          }
+          if [ "$checks" -lt 1 ]; then
+            echo "::notice::No required checks; leaving PR for manual review."
+            exit 0
+          fi
+          # GitHub enforces required checks when --auto is used.
+          # Bot-authored PRs may not trigger pull_request checks with GITHUB_TOKEN.
+          gh pr merge "$PR_NUMBER" --auto --squash --delete-branch || {
+            echo "::notice::Auto-merge not enabled or blocked; leave PR for review."
+          }
