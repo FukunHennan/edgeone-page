@@ -27,7 +27,7 @@ export async function GET({ params }: { params: { lang?: string } }) {
     title: project.data.title,
     description: project.data.description,
     tags: project.data.tags,
-    url: `/${lang}/projects/`,
+    url: new URL(project.data.post, `https://edgeone.chenfukun.space/${lang}/projects/`).pathname,
     github: project.data.github,
     content: project.data.description,
   }));
