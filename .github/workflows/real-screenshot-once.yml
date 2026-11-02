@@ -5,6 +5,7 @@ on:
     branches: [V1]
     paths:
       - .github/maintenance/real-screenshot-trigger.txt
+      - .github/workflows/real-screenshot-once.yml
 
 permissions:
   contents: write
@@ -26,6 +27,12 @@ jobs:
         run: |
           npm ci --ignore-scripts
           npm run build:production
+      - name: Install Chinese fonts for faithful browser rendering
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fonts-noto-cjk
+          fc-cache -f
+          fc-match 'Noto Sans CJK SC'
       - name: Capture actual pages with headless Chrome
         shell: bash
         run: |
