@@ -18,7 +18,7 @@ export async function GET({ params }: { params: { lang?: string } }) {
     tags: post.data.tags,
     url: postPath(post),
     // Bounded index size and model context; get_article supplies this excerpt.
-    content: post.body.slice(0, 12000),
+    content: (post.body || '').slice(0, 12000),
   }));
   const projectDocs = projects.map((project) => ({
     id: project.data.key,
