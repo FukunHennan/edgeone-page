@@ -1,1 +1,0 @@
-Capture the current actual V1 build in Chromium for user inspection. Do not generate mockup images.
