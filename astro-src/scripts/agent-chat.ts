@@ -81,6 +81,7 @@ export function initAgentChat(signal: AbortSignal) {
   };
   signal.addEventListener('abort', () => active?.abort(), { once: true });
   const restore = async () => {
+    const restoringId = conversationId;
     try {
       const response = await fetch('/agent-history', {
         method: 'POST',
@@ -89,7 +90,7 @@ export function initAgentChat(signal: AbortSignal) {
       });
       if (!response.ok) return;
       const data = await response.json() as { messages?: HistoryItem[] };
-      if (signal.aborted || !Array.isArray(data.messages) || !data.messages.length) return;
+      if (signal.aborted || restoringId !== conversationId || !Array.isArray(data.messages) || !data.messages.length) return;
       list.replaceChildren();
       data.messages.forEach((m) => {
         if ((m.role === 'assistant' || m.role === 'user') && typeof m.content === 'string') append(m.role, m.content);
