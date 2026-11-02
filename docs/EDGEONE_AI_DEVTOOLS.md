@@ -35,3 +35,34 @@ npx skills add TencentEdgeOne/edgeone-makers-tools -a codex -y --copy
 ## 注意
 
 当前聊天的 ChatGPT 运行环境不继承本项目 `.codex/config.toml` 的 MCP 配置。该文件用于本地或能读取仓库的 Codex IDE/CLI。安装配置不表示 MCP 已登录或部署已完成。
+
+## 只读诊断（Windows）
+
+若本地已安装 `edgeone-makers` MCP，可以在仓库 `V1` 根目录执行：
+
+```powershell
+git switch V1
+git pull --ff-only origin V1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\\tools\\verify-edgeone-mcp.ps1
+```
+
+诊断首先按用户电脑上的本地安装路径启动 MCP，通过标准 JSON-RPC 调用 `initialize` 和 `tools/list`。它**不会**调用 `deploy_html` 或 `deploy_folder_or_zip`。如果 MCP 安装在不同位置，可通过本机环境变量 `EDGEONE_MCP_ENTRY` 指定入口 `index.js`。
+
+接着脚本通过官方只读 `DescribePagesProjects` 接口验证 `EDGEONE_PAGES_API_TOKEN`。如果本机还没有 Token，PowerShell 会用隐藏输入提示你填写；该 Token 仅用于当前测试进程，不会写入 Git 文件。请勿将 Token、终端环境变量原文或凭据截图发到聊天中。
+
+成功输出示例（仅示意，不是实际测试结果）：
+
+```text
+[PASS] MCP initialized: ...
+[PASS] MCP tools/list succeeded (... tools): ...
+[PASS] Tencent EdgeOne read-only API authorized ...; Code=0
+[RESULT] MCP=PASS; CloudAPI=PASS
+```
+
+如果输出 `CloudAPI=NOT_TESTED`，表示未提供 Token，不能证明云端授权成功。如果出现 `CloudAPI=FAIL`，需要检查 Token 区域、权限或网络。这个脚本无法验证实际部署权限，但可以确认只读云端 API 调用是否成功。
+
+仅检查本机 MCP（跳过 API 授权）可运行：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\\tools\\verify-edgeone-mcp.ps1 -SkipCloudApi
+```
