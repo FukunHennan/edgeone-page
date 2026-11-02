@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "policy": "Tasks are selected in priority order. Completion is recorded in PROGRESS.md after PR merge.",
+  "tasks": [
+    {
+      "id": "WEB-001",
+      "priority": 1,
+      "title": "Improve small-screen layout without visual redesign",
+      "scope": [
+        "astro-src/"
+      ],
+      "acceptance": [
+        "Preserve desktop appearance",
+        "Avoid mobile horizontal overflow",
+        "Keep bilingual navigation usable"
+      ],
+      "risk": "medium"
+    },
+    {
+      "id": "WEB-002",
+      "priority": 2,
+      "title": "Improve keyboard accessibility in navigation",
+      "scope": [
+        "astro-src/"
+      ],
+      "acceptance": [
+        "Keyboard focus visible",
+        "Navigation operable without a pointer",
+        "No regressions in language switching"
+      ],
+      "risk": "medium"
+    },
+    {
+      "id": "DOC-001",
+      "priority": 3,
+      "title": "Clarify developer build and preview documentation",
+      "scope": [
+        "docs/"
+      ],
+      "acceptance": [
+        "Document commands validated against package.json",
+        "No code or deployment configuration changes"
+      ],
+      "risk": "low"
+    }
+  ]
+}
