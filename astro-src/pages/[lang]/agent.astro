@@ -1,0 +1,30 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import AgentChat from '../../components/AgentChat.astro';
+import { languages, type Language } from '../../lib/content';
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Language;
+const zh = lang === 'zh-CN';
+---
+<Shell lang={lang} title={zh ? 'AI 助手' : 'AI Assistant'} description={zh ? '搜索稻田鼠的文章与项目，与 AI 助手交流。' : 'Explore Daotianshu articles and projects with the AI assistant.'} noindex>
+  <section class="agent-workspace" aria-labelledby="agent-page-title">
+    <div class="agent-intro">
+      <p class="agent-eyebrow">DAOTIANSHU / MAKERS AGENT</p>
+      <h1 id="agent-page-title">{zh ? '稻田鼠 AI 助手' : 'Daotianshu AI Assistant'}</h1>
+      <p>{zh ? '探索公开文章、项目与技术记录。回答会尽可能附上来源。' : 'Explore public articles, projects, and engineering notes. Answers include sources when available.'}</p>
+    </div>
+    <AgentChat lang={lang} />
+    <p class="agent-disclaimer">{zh ? 'AI 可能出错。本站助手仅能查询公开信息，不能修改项目或访问私人资料。' : 'AI can make mistakes. This assistant reads public content only and cannot change projects or access private files.'}</p>
+  </section>
+</Shell>
+<style>
+  .agent-workspace{max-width:1000px;margin:clamp(76px,10vw,135px) auto 70px;padding:0 clamp(18px,4vw,38px);color:#1f2b2b}
+  .agent-intro{margin-bottom:24px}
+  .agent-eyebrow{font-size:11px;letter-spacing:.22em;color:#66817e;font-weight:750;margin:0 0 12px}
+  .agent-intro h1{font-size:clamp(28px,4vw,42px);margin:0 0 14px;font-weight:780;letter-spacing:-.04em}
+  .agent-intro>p:last-child{color:#657674;font-size:15px;line-height:1.8;margin:0}
+  .agent-disclaimer{margin:16px 4px;color:#7b8885;font-size:12px;line-height:1.7}
+</style>
