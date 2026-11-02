@@ -54,7 +54,9 @@ export function makeSiteTools(lang: 'zh-CN' | 'en', env: Record<string, string |
     }),
     execute: async ({ query, kind }) => {
       const docs = await fetchDocuments(lang, env);
-      const terms = query.trim().toLocaleLowerCase().split(/[\s,，。！？、]+/).filter(Boolean).slice(0, 8);
+      let terms = query.trim().toLocaleLowerCase().split(/[\s,，。！？、]+/).filter(Boolean).slice(0, 8);
+      if (kind === 'project' && /项目|projects?|list|哪些|show|浏览/.test(query.toLocaleLowerCase())) terms = [];
+      if (kind === 'all' && /这个网站|this site|介绍|about this site/.test(query.toLocaleLowerCase())) terms = [];
       const ranked = docs.filter((doc) => kind === 'all' || doc.kind === kind)
         .map((doc) => {
           const title = doc.title.toLocaleLowerCase();
