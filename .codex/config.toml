@@ -1,0 +1,10 @@
+# Project-scoped EdgeOne Makers deployment MCP for Codex.
+# This configuration loads only after the repository is trusted.
+# Tencent Cloud international edition (the site currently uses EdgeOne global).
+# No access token is stored in Git.
+[mcp_servers.edgeone_makers]
+command = "npx"
+args = ["-y", "@edgeone/makers-mcp@latest"]
+startup_timeout_sec = 90
+tool_timeout_sec = 600
+env_vars = ["EDGEONE_PAGES_API_TOKEN", "EDGEONE_PAGES_PROJECT_NAME"]
