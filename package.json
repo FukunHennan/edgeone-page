@@ -14,14 +14,15 @@
     "build": "npm run build:production",
     "build:production": "node tools/check-runtime.js && npm run build:astro",
     "audit:production": "node tools/audit-astro.cjs",
-    "check": "npm run build:production && npm run check:articles",
+    "check": "npm run build:production && npm run check:agent && npm run check:articles",
     "check:content": "node tools/check-runtime.js && node tools/validate-bilingual.js",
     "check:articles": "node tools/check-articles.js",
     "check:runtime": "node tools/check-runtime.js",
     "new:post": "node tools/new-bilingual-post.js",
     "preview:production": "node tools/check-runtime.js && npm run build:production && npm run preview:astro",
     "server": "npm run dev",
-    "subset:icons": "python3 tools/subset-icons.py"
+    "subset:icons": "python3 tools/subset-icons.py",
+    "check:agent": "tsc -p tsconfig.agent.json --noEmit"
   },
   "repository": {
     "type": "git",
@@ -36,11 +37,14 @@
     "npm": ">=10.9.0 <11"
   },
   "dependencies": {
+    "@openai/agents": "0.11.4",
     "ejs": "^3.1.10",
     "hexo-util": "^4.0.0",
     "js-yaml": "^4.1.1",
     "nib": "^1.2.0",
-    "stylus": "^0.62.0"
+    "stylus": "^0.62.0",
+    "openai": "^6.35.0",
+    "zod": "^4.0.0"
   },
   "overrides": {
     "strip-ansi": "6.0.1"

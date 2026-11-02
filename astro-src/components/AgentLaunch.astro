@@ -1,0 +1,16 @@
+---
+import type { Language } from '../lib/content';
+interface Props { lang: Language }
+const { lang } = Astro.props;
+const zh = lang === 'zh-CN';
+---
+<a class="site-agent-launcher" href={`/${lang}/agent/`} aria-label={zh ? '打开稻田鼠 AI 助手' : 'Open Daotianshu AI assistant'} title={zh ? 'AI 助手' : 'AI Assistant'}>
+  <span aria-hidden="true">✦</span><span class="site-agent-label">{zh ? 'AI 助手' : 'AI Assistant'}</span>
+</a>
+<style is:global>
+  .site-agent-launcher{position:fixed;right:clamp(14px,2.2vw,30px);bottom:clamp(18px,2.8vw,35px);z-index:48;display:flex;align-items:center;gap:7px;padding:11px 16px;border-radius:999px;background:rgba(24,64,62,.93);border:1px solid rgba(255,255,255,.25);box-shadow:0 8px 28px rgba(10,38,36,.18);color:#fff!important;text-decoration:none!important;font-size:13px;font-weight:700;backdrop-filter:blur(12px);transition:transform .2s,background .2s}
+  .site-agent-launcher:hover,.site-agent-launcher:focus-visible{transform:translateY(-2px);background:#255c55}
+  .site-agent-launcher>span:first-child{font-size:18px;line-height:1}
+  @media(max-width:480px){.site-agent-launcher{right:14px;bottom:14px;padding:12px}.site-agent-label{display:none}}
+  @media(prefers-reduced-motion:reduce){.site-agent-launcher{transition:none}}
+</style>

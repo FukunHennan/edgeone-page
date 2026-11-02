@@ -2,6 +2,7 @@ import initMimoInspired from '../../themes/edg-one-page/source/js/layouts/mimoIn
 import initWorkspaces from '../../themes/edg-one-page/source/js/layouts/personalHubWorkspaces.js';
 import { initArticleToc } from './article-toc';
 import { initCalmCarousel } from './calm-carousel';
+import { initAgentChat } from './agent-chat';
 type SwupInstance = { hooks: { on: (event: string, callback: () => void) => void; before: (event: string, callback: () => void) => void } };
 const globals = window as unknown as Record<string, new (options?: Record<string, unknown>) => unknown>;
 function initArchiveSearch(signal: AbortSignal) {
@@ -104,7 +105,7 @@ function initNavbarReveal() {
 let pageScope = new AbortController();
 function initPage() {
   pageScope.abort(); pageScope = new AbortController(); const signal = pageScope.signal;
-  initMimoInspired({ signal }); initWorkspaces({ signal }); initArticleToc(signal); initCalmCarousel(signal); initArchiveSearch(signal);
+  initMimoInspired({ signal }); initWorkspaces({ signal }); initArticleToc(signal); initCalmCarousel(signal); initArchiveSearch(signal); initAgentChat(signal);
   const menuButton = document.querySelector<HTMLButtonElement>('.navbar-bar');
   const setMenuOpen = (open: boolean) => {
     document.documentElement.classList.toggle('astro-menu-open', open);

@@ -57,6 +57,20 @@ for (const lang of ['zh-CN', 'en']) {
   if (manifest.lang !== lang || manifest.start_url !== `/${lang}/`) throw new Error(`Invalid ${lang} manifest`);
   const feed = fs.readFileSync(path.join(output, lang, 'feed.xml'), 'utf8');
   const projects = yaml.load(fs.readFileSync(path.join(root, 'data', lang, 'projects.yml'), 'utf8'));
+  const agentPage = path.join(output, lang, 'agent', 'index.html');
+  const agentIndexPath = path.join(output, lang, 'agent-index.json');
+  if (!fs.existsSync(agentPage) || !fs.existsSync(agentIndexPath)) {
+    throw new Error(`Missing Agent page or public index: ${lang}`);
+  }
+  const agentIndex = JSON.parse(fs.readFileSync(agentIndexPath, 'utf8'));
+  const indexedArticles = (agentIndex.docs || []).filter((item) => item.kind === 'article');
+  const indexedProjects = (agentIndex.docs || []).filter((item) => item.kind === 'project');
+  if (agentIndex.lang !== lang ||
+      indexedArticles.length !== available.length ||
+      indexedProjects.length !== projects.length ||
+      agentIndex.docs.some((item) => item.lang !== lang || !item.url.startsWith(`/${lang}/`))) {
+    throw new Error(`Invalid published Agent index: ${lang}`);
+  }
   const projectUrls = projects.map((project) => new URL(project.post, `https://chenfukun.space/${lang}/projects/`).pathname);
   if ((feed.match(/<item>/g) || []).length !== projects.length ||
       projectUrls.some((url) => !feed.includes(`${origin}${url}`))) throw new Error(`Invalid ${lang} project feed`);
