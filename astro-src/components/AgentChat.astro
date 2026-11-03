@@ -27,6 +27,11 @@ const zh = lang === 'zh-CN';
       <button type="button" data-agent-stop hidden>{zh ? '停止' : 'Stop'}</button>
       <button type="submit" data-agent-send>{zh ? '发送 ↗' : 'Send ↗'}</button>
     </div>
+    <p class="agent-privacy-note">
+      {zh
+        ? '对话内容由 DeepSeek 处理并生成回复；问题与回答会被记录，仅用于改进本站内容。请勿输入密码、手机号等个人敏感信息。'
+        : 'Conversations are processed by DeepSeek to generate replies. Questions and answers are logged to improve this site only. Do not enter passwords, phone numbers or other sensitive personal data.'}
+    </p>
   </form>
 </section>
 <style>
@@ -52,5 +57,6 @@ const zh = lang === 'zh-CN';
 .agent-input-actions button{border:0;background:#295e53;color:white;border-radius:11px;padding:10px 17px;font-size:13px;font-weight:650;cursor:pointer}
 .agent-input-actions [data-agent-stop]{background:#e9eeee;color:#405851}
 .agent-input-actions button:disabled{opacity:.5;cursor:not-allowed}
+.agent-privacy-note{margin:11px 0 0;font-size:11px;line-height:1.7;color:#7b8a84}
 @media(max-width:600px){.agent-chat-top{padding:13px 15px}.agent-message-list{padding:16px;max-height:56vh}.agent-message{max-width:96%}.agent-suggestions{padding:0 15px 15px}.agent-input-form{padding:13px 15px}}
 </style>
