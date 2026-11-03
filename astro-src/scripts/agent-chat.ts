@@ -234,10 +234,17 @@ export function initAgentChat(signal: AbortSignal) {
   const initialMarkup = list.innerHTML;
   const scroll = () => { list.scrollTop = list.scrollHeight; };
   const append = (role: ChatRole, content: string) => {
+    const wrap = document.createElement('div');
+    wrap.className = `agent-turn agent-turn-${role}`;
+    const label = document.createElement('span');
+    label.className = 'agent-turn-label';
+    label.textContent = role === 'user' ? (zh ? '你' : 'You') : (zh ? '助手' : 'Assistant');
+    wrap.append(label);
     const message = document.createElement('div');
     message.className = `agent-message agent-message-${role}`;
     renderText(message, content);
-    list.append(message);
+    wrap.append(message);
+    list.append(wrap);
     scroll();
     return message;
   };
