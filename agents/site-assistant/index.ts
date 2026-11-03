@@ -29,6 +29,29 @@ const frame = (event: string, data: unknown) => `event: ${event}\ndata: ${JSON.s
 const LOG_CONVERSATION_ID = 'c_5a1e7b0c4d2f8a3e6b9c0d1f2e3a4b5c';
 const LOG_SOURCE = 'site-agent-log-v1';
 
+/**
+ * Derive an anonymous, stable session id for the maintenance log.
+ *
+ * We deliberately do NOT store the platform conversation id (which could link
+ * back to a visitor's session). Instead we hash it with SHA-256 and keep the
+ * first 12 hex chars: stable across a session, but irreversible and short
+ * enough to be unusable as a real identifier. This lets the owner reconstruct
+ * a visitor's multi-turn thread without collecting IP, cookie or identity.
+ */
+async function anonSessionId(conversationId: string): Promise<string> {
+  try {
+    const data = new TextEncoder().encode(`site-agent-log:${conversationId}`);
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(digest)).slice(0, 6)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  } catch {
+    // Fallback: still anonymous (derived from length + a static salt), never the
+    // raw id. Keeps logging working even if Web Crypto is unavailable.
+    return 'anon-' + String(conversationId.length);
+  }
+}
+
 export async function onRequest(context: AgentContext) {
   if (context.request.method && context.request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
   const env = context.env || {};
@@ -113,20 +136,23 @@ export async function onRequest(context: AgentContext) {
               await context.store.appendMessage({ conversationId, role: 'assistant', content: output, metadata: { source: 'site-agent-v1' } });
             } catch { /* session adapter already persists model context */ }
             try {
-              // Site-owner maintenance log: only the question, the answer, the language and a
-              // timestamp are kept. No IP, cookie, browser or conversation identifier is stored.
+              // Site-owner maintenance log: only the question, the answer, the language, a
+              // timestamp and an anonymous session id are kept. No IP, cookie, browser or
+              // real conversation identifier is stored. The sid is a one-way hash of the
+              // platform conversation id, stable within a session but not reversible.
               const loggedAt = new Date().toISOString();
+              const sid = await anonSessionId(conversationId);
               await context.store.appendMessage({
                 conversationId: LOG_CONVERSATION_ID,
                 role: 'user',
                 content: message.slice(0, 500),
-                metadata: { source: LOG_SOURCE, lang, at: loggedAt },
+                metadata: { source: LOG_SOURCE, lang, at: loggedAt, sid },
               });
               await context.store.appendMessage({
                 conversationId: LOG_CONVERSATION_ID,
                 role: 'assistant',
                 content: output.slice(0, 1200),
-                metadata: { source: LOG_SOURCE, lang, at: loggedAt },
+                metadata: { source: LOG_SOURCE, lang, at: loggedAt, sid },
               });
             } catch { /* logging must never break the visitor experience */ }
           }

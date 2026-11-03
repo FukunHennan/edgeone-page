@@ -48,12 +48,30 @@ export async function onRequestGet(context: CloudContext) {
         role: item.role === 'assistant' ? 'answer' : 'question',
         lang: typeof item.metadata?.lang === 'string' ? item.metadata.lang : null,
         at: typeof item.metadata?.at === 'string' ? item.metadata.at : null,
+        sid: typeof item.metadata?.sid === 'string' ? item.metadata.sid : null,
         text: item.content,
       }))
       .reverse();
+
+    // Group entries into anonymous session threads so the owner can follow a
+    // single visitor's multi-turn flow. The sid is a one-way hash, never a real
+    // conversation id. Sessions are ordered by their first message time.
+    const threads: Array<{ sid: string; startedAt: string | null; turns: number; entries: typeof entries }> = [];
+    const bySid = new Map<string, typeof entries>();
+    for (const entry of entries) {
+      const key = entry.sid || 'unknown';
+      if (!bySid.has(key)) bySid.set(key, []);
+      bySid.get(key)!.push(entry);
+    }
+    for (const [sid, list] of Array.from(bySid.entries())) {
+      const turns = list.filter((e) => e.role === 'question').length;
+      threads.push({ sid, startedAt: list[0]?.at ?? null, turns, entries: list });
+    }
+    threads.sort((a, b) => (a.startedAt ?? '').localeCompare(b.startedAt ?? ''));
+
     // `raw` is the unfiltered message count of the log conversation; it helps
     // tell "nothing was written" apart from "written but filtered out".
-    return json({ count: entries.length, raw: items.length, entries });
+    return json({ count: entries.length, raw: items.length, sessions: threads.length, threads, entries });
   } catch (err) {
     // This endpoint is owner-only (token-protected), so surfacing the read
     // error type here is safe and makes storage failures debuggable.
