@@ -32,3 +32,6 @@ npm-debug.log*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Local AI agent log exports
+agent-log-export.json
