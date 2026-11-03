@@ -1,0 +1,100 @@
+---
+import type { Language } from '../lib/content';
+interface Props { lang: Language }
+const { lang } = Astro.props;
+const zh = lang === 'zh-CN';
+const t = {
+  title: zh ? 'AI 对话看板' : 'AI Conversation Dashboard',
+  subtitle: zh ? '查看访客与站点助手的对话记录（仅站长可见，需日志令牌）' : 'Review visitor conversations with the site assistant (owner-only, requires a log token)',
+  tokenLabel: zh ? '日志令牌' : 'Log token',
+  tokenPlaceholder: zh ? '粘贴 AGENT_LOG_TOKEN 后回车加载' : 'Paste the AGENT_LOG_TOKEN and press Enter',
+  load: zh ? '加载日志' : 'Load log',
+  loading: zh ? '正在加载…' : 'Loading…',
+  error: zh ? '加载失败' : 'Load failed',
+  unauthorized: zh ? '令牌无效或未配置' : 'Invalid or missing token',
+  empty: zh ? '暂无记录' : 'No records yet',
+  overview: zh ? '概览' : 'Overview',
+  sessions: zh ? '会话数' : 'Sessions',
+  turns: zh ? '问答轮数' : 'Turns',
+  questions: zh ? '访客问题' : 'Questions',
+  answers: zh ? '助手回答' : 'Answers',
+  threadsTitle: zh ? '会话轨迹' : 'Conversation threads',
+  unknownSession: zh ? '未知会话（旧日志，无匿名 ID）' : 'Unknown session (legacy log, no anonymous id)',
+  turnsLabel: zh ? '轮' : 'turns',
+  question: zh ? '访客' : 'Visitor',
+  answer: zh ? '助手' : 'Assistant',
+  retry: zh ? '重试' : 'Retry',
+  clear: zh ? '清除令牌' : 'Clear token',
+  privacy: zh ? '本页面数据仅保存在你的浏览器内存中，不会上传或记录你的令牌。' : 'This page keeps data in your browser memory only; your token is never uploaded or stored.',
+};
+---
+<section class="log-dashboard" data-log-dashboard data-lang={lang}>
+  <div class="logd-head">
+    <h1>{t.title}</h1>
+    <p>{t.subtitle}</p>
+  </div>
+
+  <form class="logd-token-bar" data-token-form>
+    <label for="logd-token">{t.tokenLabel}</label>
+    <div class="logd-token-row">
+      <input id="logd-token" type="password" autocomplete="off" spellcheck="false" placeholder={t.tokenPlaceholder} data-token-input />
+      <button type="submit" data-load-btn>{t.load}</button>
+      <button type="button" class="logd-clear" data-clear-btn hidden>{t.clear}</button>
+    </div>
+    <p class="logd-privacy">{t.privacy}</p>
+  </form>
+
+  <div class="logd-status" data-status role="status" aria-live="polite"></div>
+
+  <div class="logd-overview" data-overview hidden>
+    <div class="logd-stat"><strong data-stat-sessions>0</strong><span>{t.sessions}</span></div>
+    <div class="logd-stat"><strong data-stat-turns>0</strong><span>{t.turns}</span></div>
+    <div class="logd-stat"><strong data-stat-questions>0</strong><span>{t.questions}</span></div>
+    <div class="logd-stat"><strong data-stat-answers>0</strong><span>{t.answers}</span></div>
+  </div>
+
+  <div class="logd-threads" data-threads></div>
+</section>
+
+<script>
+import { renderDashboard } from '../scripts/log-dashboard';
+const root = document.querySelector('[data-log-dashboard]');
+if (root) renderDashboard(root as HTMLElement);
+</script>
+
+<style is:global>
+.log-dashboard{max-width:1000px;margin:clamp(76px,10vw,135px) auto 70px;padding:0 clamp(18px,4vw,38px);color:#1f2b2b}
+.logd-head h1{font-size:clamp(28px,4vw,42px);margin:0 0 14px;font-weight:780;letter-spacing:-.04em}
+.logd-head p{color:#657674;font-size:15px;line-height:1.8;margin:0 0 26px}
+.logd-token-bar{background:rgba(255,255,255,.94);border:1px solid #dee8e4;border-radius:18px;padding:18px 20px;box-shadow:0 14px 44px rgba(24,54,50,.06)}
+.logd-token-bar label{display:block;font-size:12px;font-weight:720;color:#365b55;margin-bottom:8px}
+.logd-token-row{display:flex;gap:10px}
+.logd-token-row input{flex:1;border:1px solid #d9e5e0;background:#f7faf8;border-radius:10px;padding:11px 14px;font-size:13.5px;color:#2f3f3c}
+.logd-token-row input:focus{outline:none;border-color:#5eac85;box-shadow:0 0 0 3px rgba(94,172,133,.15)}
+.logd-token-row button{border:none;background:#27594f;color:white;border-radius:10px;padding:11px 18px;cursor:pointer;font-size:13.5px;font-weight:700;white-space:nowrap}
+.logd-token-row button:hover{background:#1f4a42}
+.logd-token-row button.logd-clear{background:#eef3f1;color:#4c625d}
+.logd-token-row button.logd-clear:hover{background:#e3ece8}
+.logd-privacy{margin:10px 2px 0;color:#8a9995;font-size:11.5px;line-height:1.6}
+.logd-status{margin:16px 4px;font-size:13px;color:#5e7a72;min-height:20px}
+.logd-status.is-error{color:#b0533f}
+.logd-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 28px}
+.logd-stat{background:rgba(255,255,255,.94);border:1px solid #dee8e4;border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:4px}
+.logd-stat strong{font-size:28px;font-weight:780;color:#27594f;letter-spacing:-.02em}
+.logd-stat span{font-size:12px;color:#7b8885}
+.logd-threads{display:flex;flex-direction:column;gap:18px}
+.logd-thread{background:rgba(255,255,255,.94);border:1px solid #dee8e4;border-radius:18px;overflow:hidden;box-shadow:0 14px 44px rgba(24,54,50,.06)}
+.logd-thread-head{padding:14px 20px;border-bottom:1px solid #e6ecea;display:flex;justify-content:space-between;align-items:center;gap:12px;background:#fbfdfc}
+.logd-thread-id{font-size:12px;font-family:"Geist Mono","SFMono-Regular",Consolas,monospace;color:#66817e}
+.logd-thread-meta{font-size:12px;color:#8a9995;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.logd-thread-meta b{color:#365b55;font-weight:720}
+.logd-turn{padding:14px 20px;border-bottom:1px solid #f0f4f2}
+.logd-turn:last-child{border-bottom:none}
+.logd-turn .logd-role{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;margin-bottom:8px}
+.logd-turn.is-q .logd-role{background:#e3f0ea;color:#2f6b56}
+.logd-turn.is-a .logd-role{background:#eef1f6;color:#4a5a75}
+.logd-turn .logd-text{font-size:13.5px;line-height:1.72;color:#344542;overflow-wrap:anywhere;white-space:pre-wrap}
+.logd-turn .logd-text a{color:#17675f}
+.logd-empty{background:rgba(255,255,255,.94);border:1px dashed #d9e5e0;border-radius:16px;padding:40px;text-align:center;color:#8a9995;font-size:13.5px}
+@media(max-width:640px){.logd-overview{grid-template-columns:repeat(2,1fr)}.logd-token-row{flex-wrap:wrap}}
+</style>

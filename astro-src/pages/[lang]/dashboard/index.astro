@@ -1,0 +1,14 @@
+---
+import Shell from '../../../layouts/Shell.astro';
+import LogDashboard from '../../../components/LogDashboard.astro';
+import { languages, type Language } from '../../../lib/content';
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({ params: { lang } }));
+}
+const lang = Astro.params.lang as Language;
+const zh = lang === 'zh-CN';
+---
+<Shell lang={lang} title={zh ? 'AI 对话看板' : 'AI Conversation Dashboard'} description={zh ? '站长查看访客与站点助手的对话记录。' : 'Owner view of visitor conversations with the site assistant.'} noindex>
+  <LogDashboard lang={lang} />
+</Shell>
