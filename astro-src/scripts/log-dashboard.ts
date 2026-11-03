@@ -21,12 +21,22 @@ type LogThread = {
   entries: LogEntry[];
 };
 
+type FeedbackItem = {
+  kind: 'visitor-feedback' | 'ai-insight';
+  lang: string | null;
+  at: string | null;
+  sid: string | null;
+  contact: string | null;
+  text: string;
+};
+
 type LogResponse = {
   count?: number;
   raw?: number;
   sessions?: number;
   threads?: LogThread[];
   entries?: LogEntry[];
+  feedback?: FeedbackItem[];
   error?: string;
   detail?: string;
 };
@@ -48,7 +58,9 @@ export function renderDashboard(root: HTMLElement): void {
   const statusEl = root.querySelector<HTMLElement>('[data-status]');
   const overview = root.querySelector<HTMLElement>('[data-overview]');
   const threadsEl = root.querySelector<HTMLElement>('[data-threads]');
-  if (!form || !input || !loadBtn || !clearBtn || !statusEl || !overview || !threadsEl) return;
+  const feedbackWrap = root.querySelector<HTMLElement>('[data-feedback-wrap]');
+  const feedbackEl = root.querySelector<HTMLElement>('[data-feedback]');
+  if (!form || !input || !loadBtn || !clearBtn || !statusEl || !overview || !threadsEl || !feedbackWrap || !feedbackEl) return;
 
   const lang = root.dataset.lang || 'zh-CN';
   const t = {
@@ -60,6 +72,9 @@ export function renderDashboard(root: HTMLElement): void {
     turnsLabel: lang === 'zh-CN' ? '轮' : 'turns',
     question: lang === 'zh-CN' ? '访客' : 'Visitor',
     answer: lang === 'zh-CN' ? '助手' : 'Assistant',
+    feedbackVisitor: lang === 'zh-CN' ? '访客反馈' : 'Visitor feedback',
+    feedbackAI: lang === 'zh-CN' ? 'AI 改进建议' : 'AI improvement note',
+    contactLabel: lang === 'zh-CN' ? '联系方式' : 'Contact',
   };
 
   const setStatus = (msg: string, isError = false) => {
@@ -138,6 +153,46 @@ export function renderDashboard(root: HTMLElement): void {
 
       threadsEl.appendChild(card);
     }
+
+    // Render owner-only feedback (visitor suggestions + AI improvement notes).
+    const feedback = data.feedback || [];
+    feedbackEl.innerHTML = '';
+    if (feedback.length === 0) {
+      feedbackWrap.hidden = true;
+    } else {
+      feedbackWrap.hidden = false;
+      for (const item of feedback) {
+        const card = document.createElement('div');
+        card.className = 'logd-feedback-item';
+
+        const head = document.createElement('div');
+        head.className = 'logd-feedback-head';
+        const kind = document.createElement('span');
+        kind.className = `logd-feedback-kind ${item.kind === 'visitor-feedback' ? 'is-visitor' : 'is-ai'}`;
+        kind.textContent = item.kind === 'visitor-feedback' ? t.feedbackVisitor : t.feedbackAI;
+        const meta = document.createElement('span');
+        meta.className = 'logd-feedback-meta';
+        const time = document.createElement('span');
+        time.textContent = fmtTime(item.at);
+        meta.appendChild(time);
+        if (item.contact) {
+          const contact = document.createElement('span');
+          contact.className = 'logd-feedback-contact';
+          contact.textContent = `${t.contactLabel}: ${item.contact}`;
+          meta.appendChild(contact);
+        }
+        head.appendChild(kind);
+        head.appendChild(meta);
+        card.appendChild(head);
+
+        const text = document.createElement('div');
+        text.className = 'logd-feedback-text';
+        text.textContent = item.text;
+        card.appendChild(text);
+
+        feedbackEl.appendChild(card);
+      }
+    }
   };
 
   const load = async () => {
@@ -177,6 +232,8 @@ export function renderDashboard(root: HTMLElement): void {
     clearBtn.hidden = true;
     overview.hidden = true;
     threadsEl.innerHTML = '';
+    feedbackEl.innerHTML = '';
+    feedbackWrap.hidden = true;
     setStatus('');
   });
 

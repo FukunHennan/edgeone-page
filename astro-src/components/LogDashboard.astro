@@ -26,6 +26,7 @@ const t = {
   retry: zh ? '重试' : 'Retry',
   clear: zh ? '清除令牌' : 'Clear token',
   privacy: zh ? '本页面数据仅保存在你的浏览器内存中，不会上传或记录你的令牌。' : 'This page keeps data in your browser memory only; your token is never uploaded or stored.',
+  feedbackTitle: zh ? '助理反馈' : 'Assistant feedback',
 };
 ---
 <section class="log-dashboard" data-log-dashboard data-lang={lang}>
@@ -54,6 +55,11 @@ const t = {
   </div>
 
   <div class="logd-threads" data-threads></div>
+
+  <div class="logd-feedback-wrap" data-feedback-wrap hidden>
+    <h2 class="logd-feedback-title" data-feedback-title>{t.feedbackTitle}</h2>
+    <div class="logd-feedback" data-feedback></div>
+  </div>
 </section>
 
 <script>
@@ -96,5 +102,16 @@ if (root) renderDashboard(root as HTMLElement);
 .logd-turn .logd-text{font-size:13.5px;line-height:1.72;color:#344542;overflow-wrap:anywhere;white-space:pre-wrap}
 .logd-turn .logd-text a{color:#17675f}
 .logd-empty{background:rgba(255,255,255,.94);border:1px dashed #d9e5e0;border-radius:16px;padding:40px;text-align:center;color:#8a9995;font-size:13.5px}
+.logd-feedback-wrap{margin-top:36px}
+.logd-feedback-title{font-size:18px;font-weight:720;color:#2f3f3c;margin:0 0 16px;letter-spacing:-.01em}
+.logd-feedback{display:flex;flex-direction:column;gap:14px}
+.logd-feedback-item{background:rgba(255,255,255,.94);border:1px solid #dee8e4;border-radius:16px;padding:16px 18px;box-shadow:0 14px 44px rgba(24,54,50,.06)}
+.logd-feedback-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px;flex-wrap:wrap}
+.logd-feedback-kind{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:99px}
+.logd-feedback-kind.is-visitor{background:#fbeaf0;color:#993556}
+.logd-feedback-kind.is-ai{background:#eef1f6;color:#4a5a75}
+.logd-feedback-meta{font-size:12px;color:#8a9995;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.logd-feedback-contact{font-size:12px;color:#993556;background:#fbeaf0;border-radius:8px;padding:2px 8px}
+.logd-feedback-text{font-size:13.5px;line-height:1.72;color:#344542;overflow-wrap:anywhere;white-space:pre-wrap}
 @media(max-width:640px){.logd-overview{grid-template-columns:repeat(2,1fr)}.logd-token-row{flex-wrap:wrap}}
 </style>

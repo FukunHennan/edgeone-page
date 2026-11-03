@@ -25,6 +25,7 @@ type CloudContext = {
 // accepts conversation ids shaped as `c_` + 32 hex characters.
 const LOG_CONVERSATION_ID = 'c_5a1e7b0c4d2f8a3e6b9c0d1f2e3a4b5c';
 const LOG_SOURCE = 'site-agent-log-v1';
+const FEEDBACK_SOURCE = 'site-agent-feedback-v1';
 
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), {
   status,
@@ -69,9 +70,23 @@ export async function onRequestGet(context: CloudContext) {
     }
     threads.sort((a, b) => (a.startedAt ?? '').localeCompare(b.startedAt ?? ''));
 
+    // Owner-only feedback: visitor suggestions (with any contact they left) and
+    // the assistant's own improvement notes. Tagged by `kind`, ordered oldest-first.
+    const feedback = items
+      .filter((item) => item.metadata?.source === FEEDBACK_SOURCE && typeof item.content === 'string')
+      .map((item) => ({
+        kind: item.metadata?.kind === 'visitor-feedback' ? 'visitor-feedback' : 'ai-insight',
+        lang: typeof item.metadata?.lang === 'string' ? item.metadata.lang : null,
+        at: typeof item.metadata?.at === 'string' ? item.metadata.at : null,
+        sid: typeof item.metadata?.sid === 'string' ? item.metadata.sid : null,
+        contact: typeof item.metadata?.contact === 'string' ? item.metadata.contact : null,
+        text: item.content,
+      }))
+      .reverse();
+
     // `raw` is the unfiltered message count of the log conversation; it helps
     // tell "nothing was written" apart from "written but filtered out".
-    return json({ count: entries.length, raw: items.length, sessions: threads.length, threads, entries });
+    return json({ count: entries.length, raw: items.length, sessions: threads.length, threads, entries, feedback });
   } catch (err) {
     // This endpoint is owner-only (token-protected), so surfacing the read
     // error type here is safe and makes storage failures debuggable.

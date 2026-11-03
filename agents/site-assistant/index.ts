@@ -28,6 +28,9 @@ const frame = (event: string, data: unknown) => `event: ${event}\ndata: ${JSON.s
 // so this id has to follow that format even though it is not a visitor session.
 const LOG_CONVERSATION_ID = 'c_5a1e7b0c4d2f8a3e6b9c0d1f2e3a4b5c';
 const LOG_SOURCE = 'site-agent-log-v1';
+// Owner-only assistant feedback: visitor suggestions and the AI's own
+// improvement notes. Written to the same protected log, tagged by `kind`.
+const FEEDBACK_SOURCE = 'site-agent-feedback-v1';
 
 /**
  * Derive an anonymous, stable session id for the maintenance log.
@@ -49,6 +52,75 @@ async function anonSessionId(conversationId: string): Promise<string> {
     // Fallback: still anonymous (derived from length + a static salt), never the
     // raw id. Keeps logging working even if Web Crypto is unavailable.
     return 'anon-' + String(conversationId.length);
+  }
+}
+
+/**
+ * Detect a contact method a visitor voluntarily left in their message
+ * (email, phone, WeChat/QQ id). We never ask for it; we only record it when the
+ * visitor provides it on their own, so the owner can follow up.
+ * Returns a short "type: value" string, or null.
+ */
+function extractContact(text: string): string | null {
+  const email = text.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+  if (email) return `email: ${email[0]}`;
+  const phone = text.match(/(?<!\d)(?:\+?86[-\s]?)?1[3-9]\d{9}(?!\d)/);
+  if (phone) return `phone: ${phone[0]}`;
+  const wechat = text.match(/微信[:：\s]*([A-Za-z0-9_-]{4,30})/);
+  if (wechat) return `wechat: ${wechat[1]}`;
+  const qq = text.match(/QQ[:：\s]*(\d{5,12})/i);
+  if (qq) return `qq: ${qq[1]}`;
+  return null;
+}
+
+/**
+ * Lightweight heuristic: does this visitor message read like feedback or a
+ * suggestion about the site/projects rather than a question? Used only to tag
+ * the maintenance log; it never changes what the assistant answers.
+ */
+function looksLikeFeedback(text: string): boolean {
+  return /建议|意见|希望|应该|可以(加|改进|优化|增加|补充)|能够|最好|如果.{0,6}就|修正|错误|问题在于|这个(地方|页面|项目).{0,8}(不好|不对|有问题|难|乱)|反馈/i.test(text);
+}
+
+/**
+ * Ask the model for a short, owner-facing improvement note based on one Q&A
+ * turn. This is best-effort: casual greetings return null (nothing to note),
+ * and any failure is swallowed by the caller so it never affects the visitor.
+ * The note is NOT shown to the visitor — only written to the protected log.
+ */
+async function generateInsight(
+  client: OpenAI,
+  modelName: string,
+  question: string,
+  answer: string,
+  lang: string,
+): Promise<string | null> {
+  // Skip pure greetings / empty chit-chat: nothing worth noting.
+  if (!/[\u4e00-\u9fa5a-zA-Z]{6,}/.test(question.trim())) return null;
+  if (/^(你好|您好|hi|hello|嗨|在吗|有人吗)[\s!！。.~～]*$/i.test(question.trim())) return null;
+  try {
+    const res = await client.chat.completions.create({
+      model: modelName,
+      messages: [
+        {
+          role: 'system',
+          content: lang === 'zh-CN'
+            ? '你是站长专属的项目助理。基于访客的问题和助手的回答，用一句话(不超过60字)指出站内文章或项目可以改进的点，或记录访客透露的重要信息。若没有任何值得记录的，只回复"NONE"。不要称呼访客，不要寒暄。'
+            : 'You are the site owner\'s assistant. From the visitor question and assistant answer, state in one sentence (under 40 words) what content could be improved or what important info the visitor revealed. If nothing worth noting, reply only "NONE". No greetings.',
+        },
+        {
+          role: 'user',
+          content: `Q: ${question.slice(0, 500)}\nA: ${answer.slice(0, 800)}`,
+        },
+      ],
+      max_tokens: 120,
+      temperature: 0.2,
+    });
+    const text = (res.choices?.[0]?.message?.content || '').trim();
+    if (!text || /^NONE$/i.test(text)) return null;
+    return text;
+  } catch {
+    return null;
   }
 }
 
@@ -76,9 +148,10 @@ export async function onRequest(context: AgentContext) {
     maxRetries: 1,
     timeout: 70000,
   });
+  const modelName = useDeepSeek ? (env.DEEPSEEK_MODEL || 'deepseek-flash') : (env.AI_GATEWAY_MODEL || '@makers/deepseek-v4-flash');
   const model = new OpenAIChatCompletionsModel(
     client,
-    useDeepSeek ? (env.DEEPSEEK_MODEL || 'deepseek-flash') : (env.AI_GATEWAY_MODEL || '@makers/deepseek-v4-flash'),
+    modelName,
   );
   const agent = new Agent({
     name: lang === 'zh-CN' ? '稻田鼠网站助手' : 'Daotianshu Site Assistant',
@@ -156,6 +229,31 @@ export async function onRequest(context: AgentContext) {
                 content: output.slice(0, 1200),
                 metadata: { source: LOG_SOURCE, lang, at: loggedAt, sid },
               });
+
+              // Owner-only feedback: record a visitor's suggestion and any contact they
+              // voluntarily left, plus an AI improvement note. Both are tagged so the owner
+              // can tell them apart in the dashboard. Everything here is optional and must
+              // never break the visitor experience.
+              const contact = extractContact(message);
+              if (looksLikeFeedback(message) || contact) {
+                await context.store.appendMessage({
+                  conversationId: LOG_CONVERSATION_ID,
+                  role: 'user',
+                  content: message.slice(0, 500),
+                  metadata: { source: FEEDBACK_SOURCE, kind: 'visitor-feedback', lang, at: loggedAt, sid, ...(contact ? { contact } : {}) },
+                });
+              }
+              try {
+                const insight = await generateInsight(client, modelName, message, output, lang);
+                if (insight) {
+                  await context.store.appendMessage({
+                    conversationId: LOG_CONVERSATION_ID,
+                    role: 'assistant',
+                    content: insight.slice(0, 600),
+                    metadata: { source: FEEDBACK_SOURCE, kind: 'ai-insight', lang, at: loggedAt, sid },
+                  });
+                }
+              } catch { /* insight is best-effort; ignore failures */ }
             } catch { /* logging must never break the visitor experience */ }
           }
         }
