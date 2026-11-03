@@ -6,16 +6,11 @@ updated: 2026-10-20 12:00:00
 lang: en
 translation_key: underwater-robot-steering-control
 content_type: article
-domain: robotics
+domain: embedded
 published: true
 categories:
-  - Embedded Systems
-tags:
-  - STM32
-  - Modbus
-  - Kalman Filter
-  - Underwater Robot
-  - Host Software
+  - embedded
+tags: []
 ---
 
 The hardest part of an underwater robot is not any single sensor or snippet of code. It is wiring attitude, servos, Modbus, Kalman filtering, and the host UI into something that actually goes in the water. Every part works on its own; integration is where everything breaks.

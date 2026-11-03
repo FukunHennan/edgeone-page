@@ -6,16 +6,11 @@ updated: 2026-09-11 14:00:00
 lang: en
 translation_key: kicad-library-builder-skill
 content_type: article
-domain: development
+domain: software
 published: true
 categories:
-  - Hardware Engineering
-tags:
-  - KiCad
-  - Component Library
-  - Codex Skill
-  - 3D Model
-  - Automation
+  - software
+tags: []
 ---
 
 The most annoying part of schematic design is not the design itself, it is "I cannot find a complete, trustworthy component". Symbols are wrong, footprints are off, 3D models are missing or mismatched. This post records how I turned KiCad library construction into a reusable Codex Skill. Repo: [FukunHennan/kicadskill](https://github.com/FukunHennan/kicadskill).

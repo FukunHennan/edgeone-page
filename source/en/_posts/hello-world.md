@@ -6,14 +6,11 @@ updated: 2026-07-18 01:30:00
 lang: en
 translation_key: hello-world
 content_type: article
-domain: site
+domain: web
 published: true
 categories:
-  - Guides
-tags:
-  - Hexo
-  - EdgeOne Pages
-  - Bilingual Web
+  - web
+tags: []
 ---
 
 Welcome to EdgeOne Page.

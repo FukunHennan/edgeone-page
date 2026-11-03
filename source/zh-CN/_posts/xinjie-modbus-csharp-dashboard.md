@@ -6,16 +6,11 @@ updated: 2025-04-22 10:00:00
 lang: zh-CN
 translation_key: xinjie-modbus-csharp-dashboard
 content_type: article
-domain: engineering
+domain: software
 published: true
 categories:
-  - 工业控制
-tags:
-  - C#
-  - Modbus
-  - PLC
-  - 信捷
-  - 上位机
+  - software
+tags: []
 ---
 
 接手一条已经跑起来的产线时，最尴尬的局面是：PLC 程序是设备厂用 XDP 写的，逻辑封装在梯形图里，没有源代码、没有注释，甚至设备厂已经联系不上。但产线要加新功能——多加一组传感器判断、加一段联锁、加一条 MES 上报。

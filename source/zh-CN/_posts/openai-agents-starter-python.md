@@ -6,16 +6,11 @@ updated: 2026-09-14 10:00:00
 lang: zh-CN
 translation_key: openai-agents-starter-python
 content_type: article
-domain: development
+domain: software
 published: true
 categories:
-  - 工程实践
-tags:
-  - OpenAI Agents
-  - EdgeOne Makers
-  - 流式对话
-  - SSE
-  - Python
+  - software
+tags: []
 ---
 
 把一个对话式 AI 上线到生产环境，挑战不在于"能否调通 API"，而在于流式输出、工具调用、会话记忆和异常取消能否在一个工程结构里协同。本文记录用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的实践。仓库地址：[FukunHennan/openai-agents-starter-python](https://github.com/FukunHennan/openai-agents-starter-python)。

@@ -6,16 +6,11 @@ updated: 2026-10-23 13:48:00
 lang: zh-CN
 translation_key: fish-intranet-access-options
 content_type: article
-domain: robotics
+domain: server
 published: true
 categories:
-  - 机器人
-tags:
-  - Fish
-  - 内网穿透
-  - Cloudflare Tunnel
-  - FRP
-  - 网络部署
+  - server
+tags: []
 ---
 
 Fish 是一个机器鱼控制项目：Go 控制器在主机上提供浏览器页面，ESP32 机器鱼与控制器通信，Python 视觉服务的 HTTP API 监听本机地址。项目架构见[Fish 项目总览](../fish-robot-platform/)。从外网查看状态或操作界面时，首先需要解决的是：**如何访问 Go 提供的 Web 入口，同时保留设备与视觉 API 的内网边界？**

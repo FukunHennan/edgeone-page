@@ -2,7 +2,7 @@
 import Shell from '../../../layouts/Shell.astro';
 import ScenicBanner from '../../../components/ScenicBanner.astro';
 import ArticleList from '../../../components/ArticleList.astro';
-import { languages, postsFor, taxonomyFor, type Language } from '../../../lib/content';
+import { languages, postsFor, taxonomyFor, domainLabel, type Language } from '../../../lib/content';
 export function getStaticPaths() { return languages.map((lang) => ({ params: { lang } })); }
 const lang = Astro.params.lang as Language;
 const posts = await postsFor(lang);
@@ -24,7 +24,7 @@ const zh = lang === 'zh-CN';
             <span class="scenic-filter-label">{zh ? '分类' : 'Categories'}</span>
             <div class="scenic-filter-chips" role="group" aria-label={zh ? '按分类筛选文章' : 'Filter by category'}>
               <button type="button" data-archive-filter="category" data-filter-value="" aria-pressed="true">{zh ? '全部' : 'All'}</button>
-              {categories.map((term) => <button type="button" data-archive-filter="category" data-filter-value={term.slug} aria-pressed="false"><span>{term.name}</span><small>{term.posts.length}</small></button>)}
+              {categories.map((term) => <button type="button" data-archive-filter="category" data-filter-value={term.slug} aria-pressed="false"><span>{domainLabel(term.name, lang)}</span><small>{term.posts.length}</small></button>)}
             </div>
           </div>
           <label class="scenic-tag-filter"><span>{zh ? '标签' : 'Tag'}</span>

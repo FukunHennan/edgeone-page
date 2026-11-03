@@ -48,7 +48,7 @@ function validateRecord(record, errors) {
     errors.push(`${label} published article description must contain 20-240 characters`);
   }
   if (!Array.isArray(data.categories) || data.categories.length === 0) errors.push(`${label} published article requires a category`);
-  if (!Array.isArray(data.tags) || data.tags.length < 2) errors.push(`${label} published article requires at least two tags`);
+  if (!Array.isArray(data.tags)) errors.push(`${label} published article tags must be an array`);
   if (record.body.length < 120) errors.push(`${label} published article body is too short`);
   if (hasPlaceholder(data.title) || hasPlaceholder(description) || hasPlaceholder(record.rawBody)) {
     errors.push(`${label} published article still contains placeholder content`);

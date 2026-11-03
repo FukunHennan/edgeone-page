@@ -6,16 +6,11 @@ updated: 2025-04-22 10:00:00
 lang: en
 translation_key: xinjie-modbus-csharp-dashboard
 content_type: article
-domain: engineering
+domain: software
 published: true
 categories:
-  - Industrial Control
-tags:
-  - C#
-  - Modbus
-  - PLC
-  - XinJie
-  - Host Software
+  - software
+tags: []
 ---
 
 Taking over a running line is awkward when the PLC program was written by the machine builder in XDP, the ladder is a black box with no source code, no comments, and the builder is unreachable — but the line needs new features: an extra sensor check, an interlock, a MES report.

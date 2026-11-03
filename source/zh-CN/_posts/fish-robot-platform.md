@@ -6,16 +6,12 @@ updated: 2026-10-26 00:00:00
 lang: zh-CN
 translation_key: fish-robot-platform
 content_type: article
-domain: robotics
+domain: embedded
 published: true
 categories:
-  - 机器人
-tags:
-  - Fish
-  - Go
-  - WebRTC
-  - Cloudflare Tunnel
-  - ESP32
+  - embedded
+  - server
+tags: []
 ---
 
 Fish 将机器鱼控制、赛事管理与实时视频接入同一平台。文章按实际开发顺序，梳理功能目标、技术选型、设备通信、公网访问、视频传输与赛事录像，重点说明技术方案与实现思路，不展示具体界面和运行效果。

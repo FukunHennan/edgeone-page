@@ -6,16 +6,11 @@ updated: 2026-09-11 14:00:00
 lang: zh-CN
 translation_key: kicad-library-builder-skill
 content_type: article
-domain: development
+domain: software
 published: true
 categories:
-  - 硬件工程
-tags:
-  - KiCad
-  - 元件库
-  - Codex Skill
-  - 3D 模型
-  - 自动化
+  - software
+tags: []
 ---
 
 绘制电路图时最烦人的不是设计本身，而是"找不到一个完整、可信的元件库"。要么符号画错，要么封装尺寸不对，要么 3D 模型缺失或与实物不符。本文记录把 KiCad 元件库构建沉淀为可复用 Codex Skill 的工程思路。仓库地址：[FukunHennan/kicadskill](https://github.com/FukunHennan/kicadskill)。

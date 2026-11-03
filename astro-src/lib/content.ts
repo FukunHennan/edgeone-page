@@ -21,6 +21,17 @@ export function archiveFilterPath(lang: Language, kind: TaxonomyKind, name: stri
   const key = kind === 'categories' ? 'category' : 'tag';
   return `/${lang}/archives/?${key}=${encodeURIComponent(termSlug(name))}`;
 }
+// 统一的领域分类标签（英文枚举 -> 各语言显示名）。项目列表与文章归档共用。
+const DOMAIN_LABELS: Record<string, { 'zh-CN': string; en: string }> = {
+  embedded: { 'zh-CN': '嵌入式', en: 'Embedded' },
+  server: { 'zh-CN': '服务器', en: 'Server' },
+  software: { 'zh-CN': '软件', en: 'Software' },
+  research: { 'zh-CN': '研究', en: 'Research' },
+  web: { 'zh-CN': '网站', en: 'Web' },
+};
+export function domainLabel(name: string, lang: Language): string {
+  return DOMAIN_LABELS[name]?.[lang] ?? name;
+}
 export function termSlug(value: string) {
   return value.normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
     .replace(/[\u0000-\u001f]/g, '')

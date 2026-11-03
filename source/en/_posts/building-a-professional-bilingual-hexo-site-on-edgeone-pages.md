@@ -6,16 +6,11 @@ updated: 2026-07-18 01:30:00
 lang: en
 translation_key: building-a-professional-bilingual-hexo-site-on-edgeone-pages
 content_type: article
-domain: site
+domain: web
 published: true
 categories:
-  - Engineering
-tags:
-  - Hexo
-  - EdgeOne Pages
-  - Bilingual Web
-  - PWA
-  - CI/CD
+  - web
+tags: []
 ---
 
 Once a blog reaches production, the important questions quickly go beyond whether the homepage loads. Language switching must remain reliable, search and RSS must exclude drafts, builds should be reproducible, caches must not preserve broken responses, and the deployment platform should use a controlled runtime.

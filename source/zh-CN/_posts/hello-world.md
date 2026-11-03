@@ -6,14 +6,11 @@ updated: 2026-07-18 01:30:00
 lang: zh-CN
 translation_key: hello-world
 content_type: article
-domain: site
+domain: web
 published: true
 categories:
-  - 指南
-tags:
-  - Hexo
-  - EdgeOne Pages
-  - 双语网站
+  - web
+tags: []
 ---
 
 欢迎使用 EdgeOne Page。

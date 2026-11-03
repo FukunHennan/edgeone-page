@@ -3,6 +3,12 @@ import { z } from 'astro/zod';
 import { glob, file } from 'astro/loaders';
 import yaml from 'js-yaml';
 
+// 统一的领域分类体系。项目列表（data/*/projects.yml 的 category）与文章归档
+// （source/*/_posts 的 categories）共用同一套领域标识，保证两处口径一致。
+export const DOMAINS = ['embedded', 'server', 'software', 'research', 'web'] as const;
+export type Domain = (typeof DOMAINS)[number];
+const domainSchema = z.enum(DOMAINS);
+
 const postSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
@@ -10,11 +16,11 @@ const postSchema = z.object({
   lang: z.enum(['zh-CN', 'en']),
   translation_key: z.string(),
   content_type: z.enum(['article', 'showcase', 'interactive']),
-  domain: z.string().min(1),
+  domain: domainSchema,
   date: z.coerce.date(),
   updated: z.coerce.date().optional(),
   tags: z.array(z.string()).default([]),
-  categories: z.array(z.string()).default([]),
+  categories: z.array(domainSchema).default([]),
   published: z.boolean().default(true),
   draft: z.boolean().default(false),
   slug: z.string().optional(),
@@ -24,12 +30,12 @@ const projectSchema = z.object({
   order: z.number().default(0),
   key: z.string(),
   status: z.string(),
-  category: z.string(),
+  category: z.array(domainSchema),
   label: z.string(),
   title: z.string(),
   description: z.string(),
   cover: z.string().optional(),
-  tags: z.array(z.string()),
+  tags: z.array(z.string()).default([]),
   github: z.url(),
   post: z.string(),
 });

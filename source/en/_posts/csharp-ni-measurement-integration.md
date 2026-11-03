@@ -6,16 +6,11 @@ updated: 2025-04-28 14:30:00
 lang: en
 translation_key: csharp-ni-measurement-integration
 content_type: article
-domain: engineering
+domain: software
 published: true
 categories:
-  - Measurement & Instrumentation
-tags:
-  - C#
-  - NI
-  - Data Acquisition
-  - Interop
-  - Measurement
+  - software
+tags: []
 ---
 
 NI hardware covers a lot of industrial and lab use cases, but the official drivers are C/C++ and LabVIEW first; C# hosts need to deal with interop, threading, and sample-clock sync. This post records how I integrated NI measurement hardware from C# and what wrapper I converged on. Repo: [FukunHennan/CSharp-NI](https://github.com/FukunHennan/CSharp-NI).

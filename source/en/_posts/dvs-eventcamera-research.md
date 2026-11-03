@@ -6,16 +6,11 @@ updated: 2026-07-16 11:00:00
 lang: en
 translation_key: dvs-eventcamera-research
 content_type: article
-domain: vision
+domain: research
 published: true
 categories:
-  - Computer Vision
-tags:
-  - DVS
-  - Event Camera
-  - Computer Vision
-  - Python
-  - Research
+  - research
+tags: []
 ---
 
 Event cameras (Dynamic Vision Sensors) work fundamentally differently from global-shutter cameras: instead of frames, they asynchronously emit per-pixel brightness-change events. This gives microsecond temporal resolution, low latency, low power, but also means frame-based algorithms do not transfer directly. This post records the engineering practice of working with DVS. Repo: [FukunHennan/DVS-Eventcrame](https://github.com/FukunHennan/DVS-Eventcrame).

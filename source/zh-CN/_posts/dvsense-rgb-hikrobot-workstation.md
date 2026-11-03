@@ -6,16 +6,11 @@ updated: 2026-08-26 10:30:00
 lang: zh-CN
 translation_key: dvsense-rgb-hikrobot-workstation
 content_type: article
-domain: vision
+domain: research
 published: true
 categories:
-  - 计算机视觉
-tags:
-  - DVS
-  - RGB
-  - MATLAB
-  - Hikrobot
-  - 多模态视觉
+  - research
+tags: []
 ---
 
 把事件相机和工业 RGB 相机接入同一套工作站不是简单的事：两家 SDK、两种数据格式、两套触发模型、两种编程语言生态。本文记录 DVSense 与 Hikrobot 多模态视觉工作站的设计取舍，重点说明 MATLAB 与 C++ MEX 的职责边界、相机资源管理与 Fusion 数据流。仓库地址：[FukunHennan/DVSenseRealtime_RGB_Hikrobot](https://github.com/FukunHennan/DVSenseRealtime_RGB_Hikrobot)。

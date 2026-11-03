@@ -6,16 +6,11 @@ updated: 2026-07-16 11:00:00
 lang: zh-CN
 translation_key: dvs-eventcamera-research
 content_type: article
-domain: vision
+domain: research
 published: true
 categories:
-  - 计算机视觉
-tags:
-  - DVS
-  - 事件相机
-  - 计算机视觉
-  - Python
-  - 研发
+  - research
+tags: []
 ---
 
 事件相机（Dynamic Vision Sensor, DVS）与传统全局曝光相机工作方式完全不同：它不是按帧输出图像，而是异步输出每个像素的亮度变化事件。这种机制带来高时间分辨率、低延迟、低功耗，但也意味着传统基于帧的视觉算法不能直接套用。本文记录使用 DVS 开展研发的工程实践。仓库地址：[FukunHennan/DVS-Eventcrame](https://github.com/FukunHennan/DVS-Eventcrame)。

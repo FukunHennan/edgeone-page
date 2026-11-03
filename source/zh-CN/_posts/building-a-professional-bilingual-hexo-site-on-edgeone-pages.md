@@ -6,16 +6,11 @@ updated: 2026-07-18 01:30:00
 lang: zh-CN
 translation_key: building-a-professional-bilingual-hexo-site-on-edgeone-pages
 content_type: article
-domain: site
+domain: web
 published: true
 categories:
-  - 工程实践
-tags:
-  - Hexo
-  - EdgeOne Pages
-  - 双语网站
-  - PWA
-  - CI/CD
+  - web
+tags: []
 ---
 
 一个博客真正进入生产环境后，问题很快就不再只是“页面能不能打开”。语言切换是否可靠、搜索和 RSS 是否只包含已发布内容、构建结果是否可重复、缓存是否会错误地保留旧页面、部署平台是否使用固定版本的 Node.js，这些细节共同决定了站点能否长期稳定运行。

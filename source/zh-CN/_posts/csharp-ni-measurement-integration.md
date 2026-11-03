@@ -6,16 +6,11 @@ updated: 2025-04-28 14:30:00
 lang: zh-CN
 translation_key: csharp-ni-measurement-integration
 content_type: article
-domain: engineering
+domain: software
 published: true
 categories:
-  - 测量与仪器
-tags:
-  - C#
-  - NI
-  - 数据采集
-  - 互操作
-  - 测量
+  - software
+tags: []
 ---
 
 National Instruments 的测量硬件在工业测试和实验室场景里覆盖很广，但官方驱动以 C/C++ 和 LabVIEW 为主，C# 上位机接入时需要处理互操作、线程模型和采样同步等细节。本文记录一次用 C# 集成 NI 测量硬件的过程，整理为可复用的封装思路。仓库地址：[FukunHennan/CSharp-NI](https://github.com/FukunHennan/CSharp-NI)。

@@ -6,16 +6,11 @@ updated: 2026-04-28 16:00:00
 lang: zh-CN
 translation_key: esp32-development-collection
 content_type: article
-domain: robotics
+domain: embedded
 published: true
 categories:
-  - 嵌入式
-tags:
-  - ESP32
-  - ESP-IDF
-  - 嵌入式
-  - 工程化
-  - 学习
+  - embedded
+tags: []
 ---
 
 学习嵌入式芯片时，最常见的问题是"示例越写越多但谁都不像工程"。本文记录把 ESP32-C6 的零散学习示例重构成一套分类清晰、可复用、可批量构建的 ESP-IDF 项目集合的过程。仓库地址：[FukunHennan/ESP32](https://github.com/FukunHennan/ESP32)。

@@ -1,5 +1,5 @@
 ---
-import { postPath, termSlug, archiveFilterPath, type Post, type Language } from '../lib/content';
+import { postPath, termSlug, archiveFilterPath, domainLabel, type Post, type Language } from '../lib/content';
 interface Props { posts: Post[]; lang: Language }
 const { posts, lang } = Astro.props;
 ---
@@ -18,7 +18,7 @@ const { posts, lang } = Astro.props;
       <h2><a href={postPath(post)}>{post.data.title}</a></h2>
       {post.data.description && <p>{post.data.description}</p>}
       <div class="astro-article-terms">
-        {post.data.categories.map((name) => <a href={archiveFilterPath(lang, 'categories', name)} data-archive-kind="category" data-archive-value={termSlug(name)}>{name}</a>)}
+        {post.data.categories.map((name) => <a href={archiveFilterPath(lang, 'categories', name)} data-archive-kind="category" data-archive-value={termSlug(name)}>{domainLabel(name, lang)}</a>)}
         {post.data.tags.map((name) => <a href={archiveFilterPath(lang, 'tags', name)} data-archive-kind="tag" data-archive-value={termSlug(name)}>#{name}</a>)}
       </div>
     </div>

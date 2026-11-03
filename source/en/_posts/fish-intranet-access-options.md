@@ -6,16 +6,11 @@ updated: 2026-10-23 13:48:00
 lang: en
 translation_key: fish-intranet-access-options
 content_type: article
-domain: robotics
+domain: server
 published: true
 categories:
-  - Robotics
-tags:
-  - Fish
-  - Remote access
-  - Cloudflare Tunnel
-  - FRP
-  - Deployment
+  - server
+tags: []
 ---
 
 Fish is a robot fish control project. Go serves its browser pages on a host machine, ESP32 devices communicate with the controller, and the Python vision HTTP API listens on a local address. The [Fish project overview](../fish-robot-platform/) describes those components. For remote status and control, the first question is: **how can I publish the Go Web entry while keeping devices and the vision API inside the private network?**

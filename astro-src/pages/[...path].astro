@@ -2,7 +2,7 @@
 import { render, getCollection, type CollectionEntry } from 'astro:content';
 import Shell from '../layouts/Shell.astro';
 import ScenicBanner from '../components/ScenicBanner.astro';
-import { languages, postsFor, projectsFor, postPath, archiveFilterPath, type TaxonomyKind, type Post, type Language } from '../lib/content';
+import { languages, postsFor, projectsFor, postPath, archiveFilterPath, domainLabel, type TaxonomyKind, type Post, type Language } from '../lib/content';
 export async function getStaticPaths() {
   const posts = (await Promise.all(languages.map(postsFor))).flat();
   const projectPaths = new Set<string>();
@@ -48,7 +48,7 @@ const tocHeadings = headings.filter((heading) => heading.depth <= 3);
         <dl>
           <div><dt>{lang === 'zh-CN' ? '发布' : 'Published'}</dt><dd><time datetime={post.data.date.toISOString()}>{day(post.data.date)}</time></dd></div>
           {post.data.updated && <div><dt>{lang === 'zh-CN' ? '更新' : 'Updated'}</dt><dd><time datetime={post.data.updated.toISOString()}>{day(post.data.updated)}</time></dd></div>}
-          {!projectDetail && post.data.categories.length > 0 && <div><dt>{lang === 'zh-CN' ? '分类' : 'Categories'}</dt><dd class="astro-terms">{post.data.categories.map((name) => <a href={termLink('categories', name)}>{name}</a>)}</dd></div>}
+          {!projectDetail && post.data.categories.length > 0 && <div><dt>{lang === 'zh-CN' ? '分类' : 'Categories'}</dt><dd class="astro-terms">{post.data.categories.map((name) => <a href={termLink('categories', name)}>{domainLabel(name, lang)}</a>)}</dd></div>}
           {!projectDetail && post.data.tags.length > 0 && <div><dt>{lang === 'zh-CN' ? '标签' : 'Tags'}</dt><dd class="astro-terms">{post.data.tags.map((name) => <a href={termLink('tags', name)}>{name}</a>)}</dd></div>}
         </dl>
       </div>

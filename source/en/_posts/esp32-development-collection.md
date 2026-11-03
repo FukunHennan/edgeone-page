@@ -6,16 +6,11 @@ updated: 2026-04-28 16:00:00
 lang: en
 translation_key: esp32-development-collection
 content_type: article
-domain: robotics
+domain: embedded
 published: true
 categories:
-  - Embedded
-tags:
-  - ESP32
-  - ESP-IDF
-  - Embedded
-  - Engineering
-  - Learning
+  - embedded
+tags: []
 ---
 
 When learning a new chip, the common failure mode is "more examples, none of them look like engineering". This post records how I consolidated scattered ESP32-C6 samples into a structured, reusable ESP-IDF project collection. Repo: [FukunHennan/ESP32](https://github.com/FukunHennan/ESP32).

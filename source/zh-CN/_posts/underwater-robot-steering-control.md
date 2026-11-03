@@ -6,16 +6,11 @@ updated: 2026-10-20 12:00:00
 lang: zh-CN
 translation_key: underwater-robot-steering-control
 content_type: article
-domain: robotics
+domain: embedded
 published: true
 categories:
-  - 嵌入式系统
-tags:
-  - STM32
-  - Modbus
-  - 卡尔曼滤波
-  - 水下机器人
-  - 上位机
+  - embedded
+tags: []
 ---
 
 水下机器人最难的不是单个传感器，也不是单段代码，而是把姿态、舵机、Modbus、卡尔曼滤波和上位机界面接成一套能下水的系统。每一部分单独跑都通，一到联调，问题全出在接口上。

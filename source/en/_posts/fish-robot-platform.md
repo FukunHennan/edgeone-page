@@ -6,16 +6,12 @@ updated: 2026-10-26 00:00:00
 lang: en
 translation_key: fish-robot-platform
 content_type: article
-domain: robotics
+domain: embedded
 published: true
 categories:
-  - Robotics
-tags:
-  - Fish
-  - Go
-  - WebRTC
-  - Cloudflare Tunnel
-  - ESP32
+  - embedded
+  - server
+tags: []
 ---
 
 Fish brings robot-fish control, match operations, and live video into one platform. Following the order of development, this article explains the platform's purpose, technology choices, device communication, public web access, video transport, and match recording. It focuses on design and implementation decisions rather than screenshots of the finished interface.

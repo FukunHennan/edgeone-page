@@ -6,16 +6,11 @@ updated: 2026-08-26 10:30:00
 lang: en
 translation_key: dvsense-rgb-hikrobot-workstation
 content_type: article
-domain: vision
+domain: research
 published: true
 categories:
-  - Computer Vision
-tags:
-  - DVS
-  - RGB
-  - MATLAB
-  - Hikrobot
-  - Multimodal Vision
+  - research
+tags: []
 ---
 
 Wiring an event camera and an industrial RGB camera into one workstation is not trivial: two SDKs, two data formats, two trigger models, two language ecosystems. This post records the design trade-offs of the DVSense + Hikrobot multimodal vision workstation, with focus on the MATLAB/C++ MEX boundary, camera resource ownership, and the Fusion data flow. Repo: [FukunHennan/DVSenseRealtime_RGB_Hikrobot](https://github.com/FukunHennan/DVSenseRealtime_RGB_Hikrobot).

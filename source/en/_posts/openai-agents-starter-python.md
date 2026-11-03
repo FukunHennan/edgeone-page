@@ -6,16 +6,11 @@ updated: 2026-09-14 10:00:00
 lang: en
 translation_key: openai-agents-starter-python
 content_type: article
-domain: development
+domain: software
 published: true
 categories:
-  - Engineering
-tags:
-  - OpenAI Agents
-  - EdgeOne Makers
-  - Streaming Chat
-  - SSE
-  - Python
+  - software
+tags: []
 ---
 
 Shipping a conversational AI to production is not about "can I call the API"; it is about streaming, tool calls, conversation memory, and cancellation working together in one engineering structure. This post records a streaming chat agent built with the OpenAI Agents SDK on EdgeOne Makers. Repo: [FukunHennan/openai-agents-starter-python](https://github.com/FukunHennan/openai-agents-starter-python).
