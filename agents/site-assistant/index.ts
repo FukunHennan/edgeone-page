@@ -1,7 +1,7 @@
 /**
  * EdgeOne Makers Agent Runtime — POST /site-assistant
- * Secure by default: set PUBLIC_SITE_AGENT_ENABLED=true and model secrets in
- * Makers Settings -> Environment Variables before enabling public queries.
+ * Secure by default: set PUBLIC_SITE_AGENT_ENABLED=true and a server-side
+ * DeepSeek or Makers gateway key before enabling public queries.
  */
 import OpenAI from 'openai';
 import { Agent, OpenAIChatCompletionsModel, run, type Session } from '@openai/agents';
@@ -25,7 +25,9 @@ const frame = (event: string, data: unknown) => `event: ${event}\ndata: ${JSON.s
 export async function onRequest(context: AgentContext) {
   if (context.request.method && context.request.method !== 'POST') return json({ error: 'Method not allowed' }, 405);
   const env = context.env || {};
-  if (env.PUBLIC_SITE_AGENT_ENABLED !== 'true' || !env.AI_GATEWAY_API_KEY) {
+  const useDeepSeek = Boolean(env.DEEPSEEK_API_KEY);
+  const apiKey = useDeepSeek ? env.DEEPSEEK_API_KEY : env.AI_GATEWAY_API_KEY;
+  if (env.PUBLIC_SITE_AGENT_ENABLED !== 'true' || !apiKey) {
     return json({ error: 'Agent is not configured' }, 503);
   }
   const body = (context.request.body && typeof context.request.body === 'object' && !Array.isArray(context.request.body))
@@ -39,12 +41,15 @@ export async function onRequest(context: AgentContext) {
   if (!conversationId) return json({ error: 'Missing conversation' }, 400);
 
   const client = new OpenAI({
-    apiKey: env.AI_GATEWAY_API_KEY,
-    baseURL: env.AI_GATEWAY_BASE_URL || 'https://ai-gateway.edgeone.link/v1',
+    apiKey,
+    baseURL: useDeepSeek ? 'https://api.deepseek.com' : (env.AI_GATEWAY_BASE_URL || 'https://ai-gateway.edgeone.link/v1'),
     maxRetries: 1,
     timeout: 70000,
   });
-  const model = new OpenAIChatCompletionsModel(client, env.AI_GATEWAY_MODEL || '@makers/deepseek-v4-flash');
+  const model = new OpenAIChatCompletionsModel(
+    client,
+    useDeepSeek ? (env.DEEPSEEK_MODEL || 'deepseek-flash') : (env.AI_GATEWAY_MODEL || '@makers/deepseek-v4-flash'),
+  );
   const agent = new Agent({
     name: lang === 'zh-CN' ? '稻田鼠网站助手' : 'Daotianshu Site Assistant',
     model,

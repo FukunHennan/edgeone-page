@@ -14,14 +14,16 @@
 ## 站长启用操作
 
 1. 在 EdgeOne Makers 的**预览/测试环境**导入此分支，确认 Agent Runtime 已在当前项目和账号中启用。
-2. 环境变量（由平台后端读取，**不要**写入 GitHub 源码或 `PUBLIC_*` 前端变量）：
+2. 环境变量由平台后端读取。密钥**不要**写入 GitHub 源码或 `PUBLIC_*` 前端变量。`DEEPSEEK_API_KEY` 与 `AI_GATEWAY_API_KEY` 两种方式任选其一；两者同时存在时优先使用 DeepSeek 官方 API。
 
    | 变量 | 示例 | 必要性 |
    | --- | --- | --- |
    | `PUBLIC_SITE_AGENT_ENABLED` | `true` | 必填；默认不对公众调用模型 |
-   | `AI_GATEWAY_API_KEY` | Makers Models 密钥 | 必填，仅后端保存 |
-   | `AI_GATEWAY_BASE_URL` | `https://ai-gateway.edgeone.link/v1` | 可选，使用 Makers Models 时为此地址 |
-   | `AI_GATEWAY_MODEL` | `@makers/deepseek-v4-flash` | 可选，有免费试用额度与限制 |
+   | `DEEPSEEK_API_KEY` | DeepSeek 官方 API Key | 使用官方 API 时必填，仅后端保存 |
+   | `DEEPSEEK_MODEL` | `deepseek-flash` | 官方 API 模型；可选，默认 `deepseek-flash` |
+   | `AI_GATEWAY_API_KEY` | Makers Models 密钥 | 使用 Makers 网关时必填，仅后端保存 |
+   | `AI_GATEWAY_BASE_URL` | `https://ai-gateway.edgeone.link/v1` | Makers 网关地址；可选 |
+   | `AI_GATEWAY_MODEL` | `@makers/deepseek-v4-flash` | Makers 网关模型；可选 |
    | `AGENT_CONTENT_ORIGIN` | 你的 EdgeOne **预览域名** | 测试部署时推荐填写，生产默认 `https://edgeone.chenfukun.space` |
 
 3. 本地需要 Node 22.21.1–22.x、npm 10.x 和 EdgeOne CLI 1.6.26 或更高：
@@ -37,6 +39,7 @@
    纯 `astro dev` **不会**启动 Makers 的 `agents/` 或 `cloud-functions/`，应使用 Makers CLI 联合调试。
 
 4. 先检查静态索引 `/zh-CN/agent-index.json` 能否打开，再测试 `/zh-CN/agent/` 对话；浏览器网络面板确认 `POST /site-assistant` 正常返回 `text/event-stream`。
+   可先问“Fish 机器鱼平台用了哪些技术？”，检查回答能引用已发布的项目或文章，再到英文页面测试相同主题。未配置密钥或启用开关时接口返回 503。
 5. 测试通过后再合并到 `master`；结合 EdgeOne 站点频率限制/WAF、配额告警和访问策略保护模型费用。
 
 ## 请求协议
@@ -55,6 +58,7 @@ Makers-Conversation-Id: c_<32位十六进制UUID>
 - Agent 仅公开的已发布文章、项目资料；工具没有写入 API 或 shell 访问权。
 - 上游索引源只能通过服务器环境变量配置；模型返回的文本以 DOM 文本节点显示，不使用不可信 HTML。
 - 不将模型 API Key 发送给浏览器；默认模型调用开关关闭。
+- 官方 DeepSeek API 使用固定的 `https://api.deepseek.com` 服务端地址；选择 Makers 网关时继续使用原有模型和地址配置。
 - 公开访问仍会消耗模型额度，生产部署**务必设置用量限制、速率限制和必要的访问控制**。
 - 会话 ID 并非账号鉴权；强随机 ID 降低猜测风险，但不适合存放个人秘密和敏感数据。后续若接入用户登录或站长工具，需要独立的鉴权与授权。
 - `AGENT_CONTENT_ORIGIN` 用于索引来源。预览环境未配置时会读取当前正式域名；如果正式域名尚无索引，检索会失败，这是预期的部署前置条件。
@@ -69,3 +73,4 @@ V2 可以添加词条索引优化 / 向量检索、多轮上下文剪裁与 MCP 
 - https://pages.edgeone.ai/zh/document/agents-quick-start
 - https://pages.edgeone.ai/zh/document/agents-conversation-storage
 - https://pages.edgeone.ai/zh/document/node-functions
+- https://api-docs.deepseek.com/api/create-chat-completion/
