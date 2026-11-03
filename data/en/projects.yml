@@ -1,7 +1,7 @@
 - key: fish-robot-platform
   status: active
-  category: embedded
-  label: ACTIVE · ROBOTICS
+  category: server
+  label: ACTIVE · EMBEDDED + SERVER
   title: Fish Robot Platform
   cover: /projects/fish/cover.svg
   description: Browser control of ESP32 robot fish, camera video, and competition workflows, with control leases, device authentication, and OTA maintenance.
