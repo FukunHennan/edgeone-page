@@ -7,11 +7,11 @@
 - `AGENTS.md`: restrictions that Codex must follow.
 
 ## Owner setup
-1. In repository Settings > Secrets and variables > Actions, create `OPENAI_API_KEY` (separately billed OpenAI API key).
+1. In repository Settings > Secrets and variables > Actions, create `DEEPSEEK_API_KEY` using a DeepSeek Platform API key. The workflow uses `deepseek-flash` through DeepSeek's Responses API; this is separate from the Codex desktop account.
 2. In Settings > Actions > General, allow GitHub Actions to create and approve PRs as appropriate.
 3. Protect `master` with required checks and approval for non-trivial changes. Do NOT give the action deployment secrets.
 4. Manually run the workflow from Actions and review its first PR.
-5. Check GitHub Actions minutes and OpenAI API usage and configure budget alerts.
+5. Check GitHub Actions minutes and DeepSeek API usage and configure budget alerts.
 
 ## Safety behavior
 - The trusted file guard is captured BEFORE the agent runs and rejects config/workflow changes, deletions, binary files, oversized edits, and disallowed paths.

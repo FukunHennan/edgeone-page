@@ -41,11 +41,22 @@ jobs:
       - name: Install dependencies
         if: steps.pending.outputs.skip != 'true'
         run: npm ci
+      - name: Verify DeepSeek API key
+        if: steps.pending.outputs.skip != 'true'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+        run: |
+          if [ -z "$DEEPSEEK_API_KEY" ]; then
+            echo "::error::Add DEEPSEEK_API_KEY to repository Actions secrets before running Codex."
+            exit 1
+          fi
       - name: Run Codex (one bounded task)
         if: steps.pending.outputs.skip != 'true'
         uses: openai/codex-action@v1
         with:
-          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          openai-api-key: ${{ secrets.DEEPSEEK_API_KEY }}
+          responses-api-endpoint: https://api.deepseek.com/responses
+          model: deepseek-flash
           permission-profile: ":workspace"
           safety-strategy: drop-sudo
           prompt: |
