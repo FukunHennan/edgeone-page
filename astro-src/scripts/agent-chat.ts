@@ -29,23 +29,191 @@ function toFrames(chunk: string): Frame | null {
   } catch { return null; }
 }
 
+// Lightweight, dependency-free Markdown renderer for the assistant output.
+// It builds DOM nodes directly and never sets innerHTML, so model output can
+// never inject markup. Only a conservative subset is supported (headings,
+// bold, italic, inline code, fenced code blocks, ordered/unordered lists,
+// tables, blockquotes, hr, links). Anything else is escaped as text.
+
+// Inline grammar: **bold**, *italic*, `code`, [text](url). Runs left to right,
+// preferring bold over italic so nested/overlapping markers resolve sensibly.
+function renderInline(parent: Node, text: string) {
+  const tokenRe = /(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)|(\[[^\]]*\]\([^)\s]+\))/g;
+  let last = 0;
+  for (const m of text.matchAll(tokenRe)) {
+    const at = m.index ?? 0;
+    if (at > last) parent.appendChild(document.createTextNode(text.slice(last, at)));
+    const tok = m[0];
+    if (tok.startsWith('**') && tok.endsWith('**') && tok.length > 4) {
+      const b = document.createElement('strong');
+      b.textContent = tok.slice(2, -2);
+      parent.appendChild(b);
+    } else if (tok.startsWith('`') && tok.endsWith('`') && tok.length > 2) {
+      const c = document.createElement('code');
+      c.textContent = tok.slice(1, -1);
+      parent.appendChild(c);
+    } else if (tok.startsWith('*') && tok.endsWith('*') && tok.length > 2) {
+      const i = document.createElement('em');
+      i.textContent = tok.slice(1, -1);
+      parent.appendChild(i);
+    } else {
+      const lm = tok.match(/^\[([^\]]*)\]\(([^)\s]+)\)$/);
+      if (lm) {
+        const href = lm[2];
+        if (/^(https?:\/\/|\/|#)/i.test(href)) {
+          const a = document.createElement('a');
+          a.textContent = lm[1];
+          a.href = href;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          parent.appendChild(a);
+        } else {
+          // Non-web scheme (javascript:, data:, etc.) → render as inert text.
+          parent.appendChild(document.createTextNode(lm[1]));
+        }
+      } else {
+        parent.appendChild(document.createTextNode(tok));
+      }
+    }
+    last = at + tok.length;
+  }
+  if (last < text.length) parent.appendChild(document.createTextNode(text.slice(last)));
+}
+
 function renderText(container: HTMLElement, text: string) {
   container.replaceChildren();
-  // Only turn safe absolute site URLs into links. No HTML from the model is inserted.
-  const re = /https:\/\/edgeone\.chenfukun\.space\/(?:zh-CN|en)\/[\w%./?&=#-]*/g;
-  let last = 0;
-  for (const match of text.matchAll(re)) {
-    const at = match.index ?? 0;
-    container.append(document.createTextNode(text.slice(last, at)));
-    const anchor = document.createElement('a');
-    anchor.href = match[0];
-    anchor.textContent = match[0];
-    anchor.target = '_blank';
-    anchor.rel = 'noopener noreferrer';
-    container.append(anchor);
-    last = at + match[0].length;
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  let i = 0;
+  let listEl: HTMLUListElement | HTMLOListElement | null = null;
+  let listOrdered = false;
+  let inCode = false;
+  let codeBuf: string[] = [];
+
+  const closeList = () => { listEl = null; };
+  const openList = (ordered: boolean) => {
+    closeList();
+    listEl = document.createElement(ordered ? 'ol' : 'ul');
+    listOrdered = ordered;
+    container.appendChild(listEl);
+  };
+
+  while (i < lines.length) {
+    const raw = lines[i];
+    const line = raw.trimEnd();
+    const trimmed = line.trim();
+
+    // Fenced code blocks
+    if (trimmed.startsWith('```')) {
+      if (inCode) {
+        const pre = document.createElement('pre');
+        const code = document.createElement('code');
+        code.textContent = codeBuf.join('\n');
+        pre.appendChild(code);
+        container.appendChild(pre);
+        codeBuf = [];
+        inCode = false;
+        closeList();
+      } else {
+        inCode = true;
+        codeBuf = [];
+        closeList();
+      }
+      i++;
+      continue;
+    }
+    if (inCode) { codeBuf.push(raw); i++; continue; }
+
+    if (!trimmed) { closeList(); i++; continue; }
+
+    // Horizontal rule
+    if (/^(-{3,}|\*{3,}|_{3,})$/.test(trimmed)) { container.appendChild(document.createElement('hr')); closeList(); i++; continue; }
+
+    // Headings
+    const h = trimmed.match(/^(#{1,4})\s+(.*)$/);
+    if (h) {
+      closeList();
+      const level = Math.min(h[1].length, 4);
+      const el = document.createElement('h' + level);
+      renderInline(el, h[2]);
+      container.appendChild(el);
+      i++;
+      continue;
+    }
+
+    // Blockquote
+    if (trimmed.startsWith('>')) {
+      closeList();
+      const bq = document.createElement('blockquote');
+      renderInline(bq, trimmed.replace(/^>\s?/, ''));
+      container.appendChild(bq);
+      i++;
+      continue;
+    }
+
+    // Ordered list item
+    const ol = trimmed.match(/^(\d+)[.)]\s+(.*)$/);
+    if (ol) {
+      if (!listEl || !listOrdered) openList(true);
+      const li = document.createElement('li');
+      renderInline(li, ol[2]);
+      listEl!.appendChild(li);
+      i++;
+      continue;
+    }
+
+    // Unordered list item
+    const ul = trimmed.match(/^[-*+]\s+(.*)$/);
+    if (ul) {
+      if (!listEl || listOrdered) openList(false);
+      const li = document.createElement('li');
+      renderInline(li, ul[1]);
+      listEl!.appendChild(li);
+      i++;
+      continue;
+    }
+
+    // Table: a line whose cells are delimited by pipes, followed by a separator row.
+    if (trimmed.includes('|')) {
+      const next = i + 1 < lines.length ? lines[i + 1].trim() : '';
+      const isTable = trimmed.startsWith('|') && next.includes('|') && /^\|?[\s:|-]+\|?$/.test(next);
+      if (isTable) {
+        closeList();
+        const parseRow = (r: string) => r.replace(/^\|/, '').replace(/\|$/, '').split('|').map((c) => c.trim());
+        const head = parseRow(trimmed);
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const hrRow = document.createElement('tr');
+        head.forEach((c) => { const th = document.createElement('th'); renderInline(th, c); hrRow.appendChild(th); });
+        thead.appendChild(hrRow);
+        table.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        i += 2; // skip separator row
+        while (i < lines.length && lines[i].trim().includes('|')) {
+          const tr = document.createElement('tr');
+          parseRow(lines[i].trim()).forEach((c) => { const td = document.createElement('td'); renderInline(td, c); tr.appendChild(td); });
+          tbody.appendChild(tr);
+          i++;
+        }
+        table.appendChild(tbody);
+        container.appendChild(table);
+        continue;
+      }
+    }
+
+    // Paragraph
+    closeList();
+    const p = document.createElement('p');
+    renderInline(p, trimmed);
+    container.appendChild(p);
+    i++;
   }
-  container.append(document.createTextNode(text.slice(last)));
+  if (inCode && codeBuf.length) {
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    code.textContent = codeBuf.join('\n');
+    pre.appendChild(code);
+    container.appendChild(pre);
+  }
 }
 
 export function initAgentChat(signal: AbortSignal) {
