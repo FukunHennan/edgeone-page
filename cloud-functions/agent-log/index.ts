@@ -38,7 +38,10 @@ export async function onRequestGet(context: CloudContext) {
     return json({ error: 'Unauthorized' }, 401);
   }
   try {
-    const items = await context.agent?.store.getMessages({ conversationId: LOG_CONVERSATION_ID, order: 'desc', limit: 200 }) || [];
+    // The platform getMessages limit range is [1,100]; values above throw
+    // MemoryValidationError. 100 is the page size; paginate with cursor if more
+    // history is ever needed.
+    const items = await context.agent?.store.getMessages({ conversationId: LOG_CONVERSATION_ID, order: 'desc', limit: 100 }) || [];
     const entries = items
       .filter((item) => item.metadata?.source === LOG_SOURCE && typeof item.content === 'string')
       .map((item) => ({
@@ -51,7 +54,9 @@ export async function onRequestGet(context: CloudContext) {
     // `raw` is the unfiltered message count of the log conversation; it helps
     // tell "nothing was written" apart from "written but filtered out".
     return json({ count: entries.length, raw: items.length, entries });
-  } catch {
-    return json({ count: 0, raw: 0, entries: [] });
+  } catch (err) {
+    // This endpoint is owner-only (token-protected), so surfacing the read
+    // error type here is safe and makes storage failures debuggable.
+    return json({ error: 'Log read failed', detail: String((err as Error)?.name || err).slice(0, 120) }, 500);
   }
 }

@@ -127,18 +127,7 @@ export async function onRequest(context: AgentContext) {
                 content: output.slice(0, 1200),
                 metadata: { source: LOG_SOURCE, lang, at: loggedAt },
               });
-            } catch (logErr) {
-              // TEMP DIAGNOSTIC: surface the store error into the visitor's own
-              // conversation so it can be read back via /agent-history. Remove after use.
-              try {
-                await context.store.appendMessage({
-                  conversationId,
-                  role: 'assistant',
-                  content: '[log-write-failed] ' + String((logErr as Error)?.message || logErr).slice(0, 300),
-                  metadata: { source: 'log-debug' },
-                });
-              } catch { /* ignore */ }
-            }
+            } catch { /* logging must never break the visitor experience */ }
           }
         }
         send('done', { stopped: Boolean(context.request.signal?.aborted) });
