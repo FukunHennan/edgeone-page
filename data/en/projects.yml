@@ -6,7 +6,6 @@
   cover: /projects/fish/cover.svg
   description: Browser control of ESP32 robot fish, camera video, and competition workflows, with control leases, device authentication, and OTA maintenance.
   tags: []
-  github: https://github.com/FukunHennan/fish
   post: ../posts/fish-robot-platform/
 - key: dvsense-rgb
   status: active
@@ -44,15 +43,6 @@
   tags: []
   github: https://github.com/FukunHennan/ESP32
   post: ../posts/esp32-development-collection/
-- key: dvs-research
-  status: research
-  category: [research]
-  label: RESEARCH · VISION
-  title: DVS Event Camera Research
-  description: Engineering foundations for event-camera SDK wrapping, event streams, recording, playback and RGB sync.
-  tags: []
-  github: https://github.com/FukunHennan/DVS-Eventcrame
-  post: ../posts/dvs-eventcamera-research/
 - key: kicad-library
   status: lab
   category: [software]

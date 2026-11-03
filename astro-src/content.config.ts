@@ -36,7 +36,7 @@ const projectSchema = z.object({
   description: z.string(),
   cover: z.string().optional(),
   tags: z.array(z.string()).default([]),
-  github: z.url(),
+  github: z.url().optional(),
   post: z.string(),
 });
 const posts = (lang: 'zh-CN' | 'en') => defineCollection({
