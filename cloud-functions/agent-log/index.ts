@@ -17,7 +17,7 @@ type CloudContext = {
   agent?: {
     store: {
       getMessages: (arg: { conversationId: string; order: 'desc'; limit: number }) => Promise<Array<{ role?: string; content?: unknown; metadata?: Record<string, unknown> }>>;
-      clearMessages: (conversationId: string) => Promise<unknown>;
+      clearMessages: (arg: { conversationId: string }) => Promise<unknown>;
     };
   };
 };
@@ -107,7 +107,7 @@ export async function onRequestDelete(context: CloudContext) {
     return json({ error: 'Unauthorized' }, 401);
   }
   try {
-    await context.agent?.store.clearMessages(LOG_CONVERSATION_ID);
+    await context.agent?.store.clearMessages({ conversationId: LOG_CONVERSATION_ID });
     return json({ ok: true, cleared: true });
   } catch (err) {
     return json({ error: 'Clear failed', detail: String((err as Error)?.name || err).slice(0, 120) }, 500);
