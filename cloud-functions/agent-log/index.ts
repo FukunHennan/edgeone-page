@@ -21,7 +21,9 @@ type CloudContext = {
   };
 };
 
-const LOG_CONVERSATION_ID = 'site-owner-maintenance-log';
+// Must stay in sync with agents/site-assistant/index.ts. The platform only
+// accepts conversation ids shaped as `c_` + 32 hex characters.
+const LOG_CONVERSATION_ID = 'c_5a1e7b0c4d2f8a3e6b9c0d1f2e3a4b5c';
 const LOG_SOURCE = 'site-agent-log-v1';
 
 const json = (data: unknown, status = 200) => new Response(JSON.stringify(data), {
@@ -46,8 +48,10 @@ export async function onRequestGet(context: CloudContext) {
         text: item.content,
       }))
       .reverse();
-    return json({ count: entries.length, entries });
+    // `raw` is the unfiltered message count of the log conversation; it helps
+    // tell "nothing was written" apart from "written but filtered out".
+    return json({ count: entries.length, raw: items.length, entries });
   } catch {
-    return json({ count: 0, entries: [] });
+    return json({ count: 0, raw: 0, entries: [] });
   }
 }

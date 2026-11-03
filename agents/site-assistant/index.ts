@@ -24,7 +24,9 @@ const frame = (event: string, data: unknown) => `event: ${event}\ndata: ${JSON.s
 
 // Site-owner maintenance log. Kept in a dedicated conversation so visitor
 // sessions stay private; readable only through /agent-log with a token.
-const LOG_CONVERSATION_ID = 'site-owner-maintenance-log';
+// The platform rejects conversation ids that are not `c_` + 32 hex chars (400),
+// so this id has to follow that format even though it is not a visitor session.
+const LOG_CONVERSATION_ID = 'c_5a1e7b0c4d2f8a3e6b9c0d1f2e3a4b5c';
 const LOG_SOURCE = 'site-agent-log-v1';
 
 export async function onRequest(context: AgentContext) {
