@@ -17,6 +17,7 @@ type CloudContext = {
   agent?: {
     store: {
       getMessages: (arg: { conversationId: string; order: 'desc'; limit: number }) => Promise<Array<{ role?: string; content?: unknown; metadata?: Record<string, unknown> }>>;
+      clearMessages: (conversationId: string) => Promise<unknown>;
     };
   };
 };
@@ -91,5 +92,24 @@ export async function onRequestGet(context: CloudContext) {
     // This endpoint is owner-only (token-protected), so surfacing the read
     // error type here is safe and makes storage failures debuggable.
     return json({ error: 'Log read failed', detail: String((err as Error)?.name || err).slice(0, 120) }, 500);
+  }
+}
+
+/**
+ * Owner-only: clear the whole maintenance log (questions, answers and feedback).
+ * Token-protected the same way as the read path. Destructive and not reversible,
+ * so it requires an explicit DELETE request — never triggered by normal browsing.
+ */
+export async function onRequestDelete(context: CloudContext) {
+  const expected = context.env?.AGENT_LOG_TOKEN || '';
+  const provided = context.request.headers.get('x-log-token') || '';
+  if (!expected || provided !== expected) {
+    return json({ error: 'Unauthorized' }, 401);
+  }
+  try {
+    await context.agent?.store.clearMessages(LOG_CONVERSATION_ID);
+    return json({ ok: true, cleared: true });
+  } catch (err) {
+    return json({ error: 'Clear failed', detail: String((err as Error)?.name || err).slice(0, 120) }, 500);
   }
 }

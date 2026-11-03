@@ -60,7 +60,9 @@ export function renderDashboard(root: HTMLElement): void {
   const threadsEl = root.querySelector<HTMLElement>('[data-threads]');
   const feedbackWrap = root.querySelector<HTMLElement>('[data-feedback-wrap]');
   const feedbackEl = root.querySelector<HTMLElement>('[data-feedback]');
-  if (!form || !input || !loadBtn || !clearBtn || !statusEl || !overview || !threadsEl || !feedbackWrap || !feedbackEl) return;
+  const clearLogWrap = root.querySelector<HTMLElement>('[data-clear-log-wrap]');
+  const clearLogBtn = root.querySelector<HTMLButtonElement>('[data-clear-log-btn]');
+  if (!form || !input || !loadBtn || !clearBtn || !statusEl || !overview || !threadsEl || !feedbackWrap || !feedbackEl || !clearLogWrap || !clearLogBtn) return;
 
   const lang = root.dataset.lang || 'zh-CN';
   const t = {
@@ -75,6 +77,9 @@ export function renderDashboard(root: HTMLElement): void {
     feedbackVisitor: lang === 'zh-CN' ? '访客反馈' : 'Visitor feedback',
     feedbackAI: lang === 'zh-CN' ? 'AI 改进建议' : 'AI improvement note',
     contactLabel: lang === 'zh-CN' ? '联系方式' : 'Contact',
+    clearLog: lang === 'zh-CN' ? '清空日志' : 'Clear log',
+    clearLogConfirm: lang === 'zh-CN' ? '确定要清空全部日志吗？此操作不可撤销。' : 'Clear the entire log? This cannot be undone.',
+    clearLogDone: lang === 'zh-CN' ? '日志已清空' : 'Log cleared',
   };
 
   const setStatus = (msg: string, isError = false) => {
@@ -102,6 +107,7 @@ export function renderDashboard(root: HTMLElement): void {
     overview.querySelector<HTMLElement>('[data-stat-turns]')!.textContent = String(questions);
     overview.querySelector<HTMLElement>('[data-stat-questions]')!.textContent = String(questions);
     overview.querySelector<HTMLElement>('[data-stat-answers]')!.textContent = String(answers);
+    clearLogWrap.hidden = false;
 
     threadsEl.innerHTML = '';
     if (threads.length === 0) {
@@ -234,7 +240,30 @@ export function renderDashboard(root: HTMLElement): void {
     threadsEl.innerHTML = '';
     feedbackEl.innerHTML = '';
     feedbackWrap.hidden = true;
+    clearLogWrap.hidden = true;
     setStatus('');
+  });
+
+  clearLogBtn.addEventListener('click', () => {
+    if (!window.confirm(t.clearLogConfirm)) return;
+    void (async () => {
+      const token = input.value.trim();
+      clearLogBtn.disabled = true;
+      try {
+        const res = await fetch('/agent-log', { method: 'DELETE', headers: { 'x-log-token': token } });
+        const data = (await res.json()) as { ok?: boolean; error?: string };
+        if (!res.ok || data.error) {
+          setStatus(data.error === 'Unauthorized' ? t.unauthorized : (data.error || t.error), true);
+          return;
+        }
+        setStatus(t.clearLogDone);
+        await load();
+      } catch {
+        setStatus(t.error, true);
+      } finally {
+        clearLogBtn.disabled = false;
+      }
+    })();
   });
 
   // Auto-load if a token was already provided this session.
