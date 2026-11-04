@@ -265,9 +265,11 @@ export async function onRequest(context: AgentContext) {
           }
         }
         send('done', { stopped: Boolean(context.request.signal?.aborted) });
-      } catch {
+      } catch (err) {
         // Never expose model key, provider error payload, stack, or internal endpoint.
-        send('error', { message: 'Agent request failed' });
+        // The error name is safe and helps diagnose provider/tool failures.
+        const errName = (err as Error)?.name || 'Error';
+        send('error', { message: 'Agent request failed', name: errName });
         send('done', { stopped: false });
       } finally {
         try { controller.close(); } catch { /* disconnected */ }
