@@ -161,6 +161,12 @@ export async function onRequest(context: AgentContext) {
       // listing) short mid-list. Give it a generous ceiling so enumerations
       // finish instead of being truncated by the provider.
       maxTokens: 2000,
+      // deepseek-flash defaults to thinking mode (effort=high). With tools,
+      // DeepSeek then requires every later turn to replay `reasoning_content`,
+      // which this SDK does not do — producing intermittent 400s on tool calls.
+      // Disable thinking: it is unnecessary for a read-only Q&A assistant and
+      // also removes the requirement to pass back reasoning content.
+      providerData: { thinking: { type: 'disabled' } },
     },
     instructions: [
       'You are the read-only site assistant for "稻田鼠 / Daotianshu" (edgeone.chenfukun.space), a bilingual personal site with posts, engineering notes, projects and a resume.',
@@ -267,10 +273,9 @@ export async function onRequest(context: AgentContext) {
         send('done', { stopped: Boolean(context.request.signal?.aborted) });
       } catch (err) {
         // Never expose model key, provider error payload, stack, or internal endpoint.
-        // The error name + a short message help diagnose provider/tool failures.
+        // The error name alone is safe and helps diagnose provider/tool failures.
         const errName = (err as Error)?.name || 'Error';
-        const errMsg = String((err as Error)?.message || '').slice(0, 120);
-        send('error', { message: 'Agent request failed', name: errName, detail: errMsg });
+        send('error', { message: 'Agent request failed', name: errName });
         send('done', { stopped: false });
       } finally {
         try { controller.close(); } catch { /* disconnected */ }
