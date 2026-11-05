@@ -137,6 +137,8 @@ if (globals.Swup && !location.pathname.includes('/resume/')) {
   const reduced = matchMedia('(prefers-reduced-motion:reduce)').matches;
   const plugins = ['SwupProgressPlugin','SwupScrollPlugin','SwupPreloadPlugin'].filter((name) => globals[name]).map((name) => new globals[name](name === 'SwupScrollPlugin' ? { offset: 96 } : {}));
   if (!reduced && globals.SwupSlideTheme) plugins.push(new globals.SwupSlideTheme({ mainElement: '.main-content-body' }));
-  const swup = new globals.Swup({ containers: ['#swup'], plugins, linkSelector: 'a[href]:not([href*="/resume/"]):not([lang])' }) as SwupInstance;
+  // Pages with page-specific CSS chunks must load fully: Swup only swaps #swup
+  // and never updates <head> stylesheets, leaving them unstyled.
+  const swup = new globals.Swup({ containers: ['#swup'], plugins, linkSelector: 'a[href]:not([href*="/resume/"]):not([href*="/agent/"]):not([href*="/dashboard/"]):not([lang])' }) as SwupInstance;
   swup.hooks.before('content:replace', () => { pageScope.abort(); document.documentElement.classList.remove('astro-menu-open'); }); swup.hooks.on('page:view', initPage);
 }
