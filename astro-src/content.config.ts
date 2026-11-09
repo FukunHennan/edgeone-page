@@ -13,7 +13,7 @@ const postSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
   cover: z.string().optional(),
-  lang: z.enum(['zh-CN', 'en']),
+  lang: z.enum(['zh-CN']),
   translation_key: z.string(),
   content_type: z.enum(['article', 'showcase', 'interactive']),
   domain: domainSchema,
@@ -39,12 +39,12 @@ const projectSchema = z.object({
   github: z.url().optional(),
   post: z.string(),
 });
-const posts = (lang: 'zh-CN' | 'en') => defineCollection({
+const posts = (lang: 'zh-CN') => defineCollection({
   loader: glob({ pattern: '**/*.md', base: `./source/${lang}/_posts`,
     generateId: ({ entry }) => entry.replace(/\.md$/i, '') }),
   schema: postSchema.extend({ lang: z.literal(lang) }),
 });
-const projects = (lang: 'zh-CN' | 'en') => defineCollection({
+const projects = (lang: 'zh-CN') => defineCollection({
   loader: file(`./data/${lang}/projects.yml`, {
     parser: (text) => {
       const rows = z.array(projectSchema).parse(yaml.load(text));
@@ -58,7 +58,6 @@ const projects = (lang: 'zh-CN' | 'en') => defineCollection({
 });
 export const collections = {
   pagesZh: defineCollection({ loader: glob({ pattern: '**/index.md', base: './source/zh-CN', generateId: ({ entry }) => entry.replace(/\/index\.md$/, '') }), schema: z.object({ title: z.string(), registry: z.string().optional() }) }),
-  pagesEn: defineCollection({ loader: glob({ pattern: '**/index.md', base: './source/en', generateId: ({ entry }) => entry.replace(/\/index\.md$/, '') }), schema: z.object({ title: z.string(), registry: z.string().optional() }) }),
-  postsZh: posts('zh-CN'), postsEn: posts('en'),
-  projectsZh: projects('zh-CN'), projectsEn: projects('en'),
+  postsZh: posts('zh-CN'),
+  projectsZh: projects('zh-CN'),
 };

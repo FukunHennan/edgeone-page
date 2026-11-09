@@ -220,7 +220,7 @@ export function initAgentChat(signal: AbortSignal) {
   const host = document.querySelector<HTMLElement>('[data-agent-chat]');
   if (!host || host.dataset.initialized === 'true') return;
   host.dataset.initialized = 'true';
-  const lang = host.dataset.lang === 'en' ? 'en' : 'zh-CN';
+  const lang = 'zh-CN';
   const zh = lang === 'zh-CN';
   const list = host.querySelector<HTMLElement>('[data-messages]')!;
   const form = host.querySelector<HTMLFormElement>('[data-agent-form]')!;

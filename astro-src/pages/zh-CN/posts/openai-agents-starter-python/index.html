@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN" class="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent · 稻田鼠</title><meta name="description" content="记录一次使用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的工程实践，重点说明 SSE 流式输出、自定义工具注册、会话持久化与状态分层设计。">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://edgeone.chenfukun.space/zh-CN/posts/openai-agents-starter-python/"><link rel="alternate" hreflang="zh-CN" href="https://edgeone.chenfukun.space/zh-CN/posts/openai-agents-starter-python/"><link rel="alternate" hreflang="x-default" href="https://edgeone.chenfukun.space/zh-CN/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="稻田鼠">
+<meta property="og:title" content="用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent · 稻田鼠"><meta property="og:description" content="记录一次使用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的工程实践，重点说明 SSE 流式输出、自定义工具注册、会话持久化与状态分层设计。">
+<meta property="og:url" content="https://edgeone.chenfukun.space/zh-CN/posts/openai-agents-starter-python/"><meta property="og:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<meta property="og:image:width" content="1920"><meta property="og:image:height" content="1080"><meta property="og:image:alt" content="用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-09-14T10:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-14T10:00:00.000Z">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent · 稻田鼠"><meta name="twitter:description" content="记录一次使用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的工程实践，重点说明 SSE 流式输出、自定义工具注册、会话持久化与状态分层设计。"><meta name="twitter:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="/zh-CN/feed.xml">
+<link rel="manifest" href="/zh-CN/manifest.webmanifest"><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg">
+<script type="application/ld+json" data-edgeone-schema>{"@context":"https://schema.org","@type":"BlogPosting","headline":"用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent","name":"用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent","description":"记录一次使用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的工程实践，重点说明 SSE 流式输出、自定义工具注册、会话持久化与状态分层设计。","url":"https://edgeone.chenfukun.space/zh-CN/posts/openai-agents-starter-python/","inLanguage":"zh-CN","author":{"@type":"Person","name":"陈富坤"},"datePublished":"2026-09-14T10:00:00.000Z","dateModified":"2026-09-14T10:00:00.000Z"}</script>
+<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) { window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true }); }</script>
+<style>/* 基础样式：来自用户 LAB 文章模板 */
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#16263a;--muted:#59687d;--line:#d9e3ed;--accent:#087f7b;--ok:#087f7b;--warn:#bd6e17;--soft:#e8f5f2;--grid:#eaf0f4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,-apple-system,'Microsoft YaHei','PingFang SC',sans-serif}
+.container{max-width:970px;margin:0 auto;padding:0 24px}.top{border-bottom:1px solid #dde6ef;background:#fff}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:62px}.brand{font-size:14px;font-weight:750;letter-spacing:.06em;color:var(--accent)}.small{font-size:13px;color:var(--muted)}.hero{padding:72px 0 45px;background:radial-gradient(circle at 92% 25%,#dcefeb,transparent 42%),linear-gradient(180deg,#fff,#f6f8fb)}.eyebrow{font-size:13px;color:var(--accent);font-weight:750;letter-spacing:.14em}.hero h1{font-size:clamp(30px,4vw,52px);line-height:1.28;letter-spacing:-.05em;margin:14px 0 20px;font-weight:800}.lead{font-size:18px;color:#506176;max-width:760px}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.chip{border:1px solid #c7dfdd;background:#f1faf8;color:#0a746e;padding:3px 11px;border-radius:99px;font-size:12px}
+.article{padding:2px 0 70px}.section{background:var(--paper);padding:34px 40px;margin:24px 0;border:1px solid #e1e8ef;border-radius:18px;box-shadow:0 5px 22px #15233106}h2{margin:0 0 18px;line-height:1.4;font-size:25px;letter-spacing:-.04em}h3{font-size:18px;margin:25px 0 12px}p{margin:12px 0}b,strong{font-weight:700}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}em{font-style:normal;color:var(--accent);font-weight:700}
+.photo{max-width:640px;margin:25px auto 8px;display:block;border:1px solid var(--line);border-radius:10px;width:100%}.caption{text-align:center;color:var(--muted);font-size:13px;margin:10px 0 0}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #e8eef2}th{background:#f1f6f8;color:#435a67;font-weight:700}tr:last-child td{border-bottom:none}.logic tr[data-r]{cursor:pointer;transition:background .15s}.logic tr[data-r]:hover{background:#f0f8f7}.logic tr.active{background:#dff3ee}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.note{border-left:3px solid var(--accent);padding:12px 17px;background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0;margin:18px 0}.warning{border-left-color:#d49b49;background:#fff8eb}.diagram{border:1px solid var(--line);border-radius:14px;background:#fcfefe;padding:15px;margin:20px 0}.diagram svg{width:100%;height:auto;display:block;max-height:340px}.interactive{border-radius:16px;border:1px solid #cbe4e0;background:linear-gradient(155deg,#f3fbfa,#fff);padding:24px;margin-top:20px}.switches{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.switches label{display:flex;gap:8px;align-items:center;font-weight:700}.selector{display:flex;border:1px solid #c6d9d9;border-radius:9px;padding:3px;background:#fff}.selector button{border:0;background:transparent;padding:7px 14px;cursor:pointer;border-radius:6px;font-weight:700;color:#677782}.selector button[aria-pressed="true"]{background:#087f7b;color:#fff}.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.readout{background:#fff;padding:16px;border:1px solid #d8e5e5;border-radius:10px}.readout strong{display:block;font-size:28px;line-height:1.2;color:var(--accent)}.readout strong.low{color:#c07522}.state{font-weight:700;margin:12px 0 4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step{border:1px solid #d9e3ed;padding:14px;border-radius:10px;background:#fcfdff}.step span{color:var(--accent);font-size:11px;font-weight:700}.step strong{display:block;margin:7px 0 4px}.step p{font-size:13px;color:var(--muted);margin:0;line-height:1.65}.step button{margin-top:12px;border:1px solid #a9d4cd;background:#effaf8;color:#087f7b;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700}.figure-text{font-family:system-ui,-apple-system,'Microsoft YaHei',sans-serif;fill:#3b556a;font-size:15px}.source{font-size:13px;color:var(--muted);padding-left:19px}.source li{padding:3px 0}.footer{padding:24px 0 50px;border-top:1px solid #e0e6ec;color:var(--muted);font-size:13px}.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:700;color:#087f7b;background:#d9eee9}.footlink{overflow-wrap:anywhere}
+@media(max-width:650px){.section{padding:22px 17px;margin:15px 0;border-radius:12px}.hero{padding:46px 0 28px}.lead{font-size:16px}.steps{grid-template-columns:repeat(2,1fr)}h2{font-size:21px}.diagram{padding:4px}.container{padding:0 14px}}
+
+/* 追加到 LAB 文章模板之后的站点附加样式（由 build-static-posts 合并进 static-post.css） */
+:root{color-scheme:light only}
+.nav-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:650;text-decoration:none}
+.nav-links a:hover{color:var(--accent);text-decoration:underline}
+.brand{text-decoration:none}
+.footer .pill{border:1px solid var(--line);padding:2px 9px;border-radius:99px;font-size:11px;color:var(--muted);margin:0 4px}
+.footer a{color:var(--accent)}
+.footer a:hover{text-decoration:underline}
+.lab-post-body{overflow-wrap:anywhere;line-height:1.85}
+.lab-post-body h1{font-size:clamp(24px,3vw,30px);line-height:1.35;letter-spacing:-.03em;margin:0 0 .8em;font-weight:800}
+.lab-post-body h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin:1.6em 0 .55em;scroll-margin-top:96px;color:var(--ink)}
+.lab-post-body h2:first-child{margin-top:0}
+.lab-post-body h3{font-size:clamp(17px,1.6vw,19px);font-weight:700;line-height:1.45;margin:1.5em 0 .45em;scroll-margin-top:96px}
+.lab-post-body h4{font-size:16px;font-weight:700;margin:1.4em 0 .4em}
+.lab-post-body p{margin:12px 0}
+.lab-post-body ul,.lab-post-body ol{padding-left:1.5em;margin:12px 0}
+.lab-post-body li{margin:6px 0}
+.lab-post-body li::marker{color:var(--accent)}
+.lab-post-body pre{overflow:auto;padding:20px;border-radius:12px;font-size:13.5px;line-height:1.7;margin:16px 0;background:#16263a}
+.lab-post-body pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.lab-post-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.lab-post-body img{max-width:100%;height:auto;display:block;margin:16px auto;border:1px solid var(--line);border-radius:10px}
+.lab-post-body table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:16px 0}
+.lab-post-body td,.lab-post-body th{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.lab-post-body th{background:#f1f6f8;font-weight:700;color:#435a67}
+.lab-post-body td:first-child,.lab-post-body th:first-child{min-width:6em;word-break:keep-all}
+.lab-post-body blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0}
+.lab-post-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.lab-post-body a{color:var(--accent);text-decoration:none}
+.lab-post-body a:hover{text-decoration:underline}
+.lab-post-body strong{font-weight:700}
+.lab-post-body .astro-code{margin:16px 0;border-radius:12px;overflow:auto}
+.lab-post-body .astro-code pre{margin:0}
+@media(max-width:650px){.nav-links{gap:10px}.nav-links a{font-size:12px}}
+</style></head><body>
+<header class="top"><div class="container nav">
+  <a class="brand" href="/zh-CN/">稻田鼠 · LAB NOTES</a>
+  <nav class="nav-links" aria-label="页面导航">
+    <a href="/zh-CN/archives/">文章列表</a>
+    <a class="scenic-project-back" href="/zh-CN/projects/">← 返回项目</a>
+    <a href="https://github.com/FukunHennan" rel="noopener me">GitHub</a>
+  </nav>
+</div></header>
+<div class="hero lab-post-hero"><div class="container">
+  <p class="eyebrow">软件 · 2026-09-14</p>
+  <h1>用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent</h1>
+  <p class="lead">记录一次使用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的工程实践，重点说明 SSE 流式输出、自定义工具注册、会话持久化与状态分层设计。</p>
+  <div class="chips"><span class="chip">软件</span></div>
+</div></div>
+<main class="container article lab-post">
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><p>把一个对话式 AI 上线到生产环境，挑战不在于“能否调通 API”，而在于流式输出、工具调用、会话记忆和异常取消能否在一个工程结构里协同。本文记录用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的实践。仓库地址：<a href="https://github.com/FukunHennan/openai-agents-starter-python">FukunHennan/openai-agents-starter-python</a>。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="项目定位">项目定位</h2>
+<p>这个 Starter 是一个最小可生产形态的 Python 模板，把 OpenAI Agents SDK 接入 EdgeOne Makers，演示完整的对话闭环：SSE 流式输出、自定义工具注册、会话持久化。它附带四个示例工具（<code>get_weather</code>、<code>get_clothing_advice</code>、<code>translate_text</code>、<code>text_statistics</code>），意图是让你 fork 后替换成真实业务工具。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="sse-流式输出不只是-token-by-token">SSE 流式输出：不只是 token-by-token</h2>
+<p>SSE 流式输出看起来只是把一次性响应拆成 token 流，实际工程上要处理三种事件：</p>
+<ul>
+<li><code>text_delta</code>：模型输出的文本增量，逐 token 推送到前端；</li>
+<li><code>tool_called</code>：模型调用工具时的事件，前端显示工具调用过程；</li>
+<li><code>tool_result</code>：工具执行结果返回给前端，便于展示中间状态。</li>
+</ul>
+<p>只输出 <code>text_delta</code> 会让用户感觉“AI 在自言自语”，加上 <code>tool_called</code> 和 <code>tool_result</code> 后用户能感知到“AI 在调用工具解决问题”，体验差异显著。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="自定义工具从-toy-到-production">自定义工具：从 toy 到 production</h2>
+<p>Starter 自带的四个工具是 toy：</p>
+<ul>
+<li><code>get_weather(city)</code>：返回固定天气数据；</li>
+<li><code>get_clothing_advice(temperature)</code>：根据温度返回穿搭建议；</li>
+<li><code>translate_text(text, target_lang)</code>：简单翻译；</li>
+<li><code>text_statistics(text)</code>：统计字符数、单词数。</li>
+</ul>
+<p>把它们替换为真实工具时，工程要点是：工具签名要明确类型注解，便于 SDK 自动生成 JSON Schema；工具内部要做异常兜底，不要让一次失败影响整个对话；工具副作用要可观察，例如写入数据库时同时输出日志。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="会话记忆与-contextstore">会话记忆与 context.store</h2>
+<p>会话持久化通过 <code>context.store.openai_session(cid)</code> 接入，它会直接插入到 <code>Runner.run_streamed()</code> 的 <code>session</code> 参数。这意味着对话上下文由 OpenAI 维护，不需要自己实现历史窗口。</p>
+<p><code>cid</code> 是对话 ID，通过 HTTP 请求传入。同一个 cid 的请求共享一个 session，跨请求保持上下文。这种设计让水平扩展变得简单：只要 <code>context.store</code> 是共享存储（Redis、数据库），不同实例都能服务同一个对话。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="状态分层agents-与-cloud-functions">状态分层：agents 与 cloud-functions</h2>
+<p>Starter 的目录结构把代码分成两个文件夹，这反映了状态分层的设计：</p>
+<ul>
+<li><code>agents/</code>：长时间运行的有状态工作，主要是 <code>chat/index.py</code> 的流式对话和 <code>chat/stop.py</code> 的取消；</li>
+<li><code>cloud-functions/</code>：短时无状态工作，例如 <code>history/index.py</code> 加载历史消息。</li>
+</ul>
+<p>这种分层的好处是：状态生命周期与代码位置一致，便于扩展时判断新功能应该放哪一层。如果所有代码都堆在一个目录，状态边界会模糊，迁移到分布式环境时会踩坑。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="真正的取消abort_active_run">真正的取消：abort_active_run</h2>
+<p>很多“取消”按钮实际只是前端不再渲染，后端仍在跑。这个 Starter 的 <code>context.utils.abort_active_run()</code> 是真正中断 LLM 调用，避免浪费 token 和算力。</p>
+<p>工程上，取消要做到：前端触发 <code>POST /chat/stop</code>；后端找到对应 cid 的活跃 Runner；调用 SDK 提供的 abort 接口；前端收到 SSE 关闭事件后清理状态。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="环境变量与模型选择">环境变量与模型选择</h2>
+<p>Starter 使用 OpenAI 兼容协议，通过三个环境变量配置：</p>
+<ul>
+<li><code>AI_GATEWAY_API_KEY</code>：模型网关 API Key，可用 Makers Models 的 Key 或任意 OpenAI 兼容服务商的 Key；</li>
+<li><code>AI_GATEWAY_BASE_URL</code>：网关 base URL，Makers Models 用 <code>https://ai-gateway.edgeone.link/v1</code>；</li>
+<li><code>AI_GATEWAY_MODEL</code>：模型 ID，默认 <code>@makers/deepseek-v4-flash</code>（免费内置模型）。</li>
+</ul>
+<p>内置的 <code>@makers/deepseek-v4-flash</code> 有用量上限，适合原型阶段。生产环境建议 BYOK（Bring Your Own Key），绑定付费服务商以保证稳定性和合规性。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="本地开发与调试">本地开发与调试</h2>
+<p>本地开发前置依赖：Node.js ≥ 18、Python ≥ 3.10、EdgeOne CLI（<code>npm i -g edgeone</code>）。流程：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">npm</span><span style="color:#9ECBFF"> install</span></span>
+<span class="line"><span style="color:#B392F0">pip</span><span style="color:#9ECBFF"> install</span><span style="color:#79B8FF"> -r</span><span style="color:#9ECBFF"> requirements.txt</span></span>
+<span class="line"><span style="color:#B392F0">cp</span><span style="color:#9ECBFF"> .env.example</span><span style="color:#9ECBFF"> .env</span><span style="color:#6A737D">       # 填入 AI_GATEWAY_API_KEY / AI_GATEWAY_BASE_URL</span></span>
+<span class="line"><span style="color:#B392F0">edgeone</span><span style="color:#9ECBFF"> makers</span><span style="color:#9ECBFF"> dev</span></span></code></pre>
+<p>本地 agent metrics 和 traces 暴露在 <code>http://localhost:8080/agent-metrics</code>，可以实时查看 token 消耗、工具调用次数、响应延迟。这个面板在调优 prompt 和工具时非常实用。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="前端结构">前端结构</h2>
+<p>前端是 React + Vite + TypeScript，核心组件包括 <code>App.tsx</code>（主应用与 SSE 生命周期）、<code>api.ts</code>（<code>/chat</code>、<code>/chat/stop</code>、<code>/history</code> 调用封装）、<code>components/</code>（ChatWindow、ChatInput、CodeViewer、ToolIndicators 等）。</p>
+<p>SSE 生命周期管理是前端最容易出 bug 的地方：连接建立、流式接收、异常重连、取消关闭，每一步都要状态正确。Starter 把这些封装在 <code>App.tsx</code> 里，可作为类似项目的参考实现。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="小结">小结</h2>
+<p>OpenAI Agents SDK 把对话 AI 工程化的门槛显著降低，但要上生产仍需处理流式输出、工具调用、会话持久化和真正取消。这个 Starter 把这些环节整合成一个最小可生产形态，可以作为对话式 AI 项目的工程起点。替换 toy 工具为真实业务工具后，即可用于实际产品。</p></div></section>
+</main>
+<footer class="container footer">稻田鼠 · LAB NOTES <span class="pill">可离线使用</span> &nbsp;|&nbsp; <a href="https://github.com/FukunHennan/edgeone-page">GitHub</a></footer>
+</body></html>

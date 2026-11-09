@@ -15,7 +15,7 @@ if (config.redirects.some(({ source }) => /\/(?:tags|categories)\/\*/.test(sourc
   throw new Error('A broad redirect hides an Astro taxonomy or dated archive page.');
 }
 let articleCount = 0;
-for (const lang of ['zh-CN', 'en']) {
+for (const lang of ['zh-CN']) {
   const available = collectLanguagePosts(lang).filter((post) => isPublished(post.data) && validDate(post.data.date) <= new Date());
   for (const post of available) {
     const target = path.join(root, 'astro-dist', post.url, 'index.html');
@@ -105,11 +105,9 @@ for (const lang of ['zh-CN', 'en']) {
   if (home.includes('assets.mixkit.co') || home.includes('images.unsplash.com')) {
     throw new Error(`Homepage still depends on external media hosts: ${lang}`);
   }
-  const counterpart = lang === 'zh-CN' ? 'en' : 'zh-CN';
-  if (!home.includes(`class="hub-language-link" href="/${counterpart}/"`) ||
-      !home.includes(`class="hub-language-link hub-language-link-mobile" href="/${counterpart}/"`) ||
-      home.includes('class="hub-language-select')) {
-    throw new Error(`Homepage language links do not switch directly to the translation: ${lang}`);
+  // 单语站点（zh-CN）：首页与导航不应再出现语言切换入口。
+  if (home.includes('class="hub-language-link"')) {
+    throw new Error(`Language switch should have been removed: ${lang}`);
   }
   if (!home.includes('class="hub-github-link"') || !home.includes('aria-label="GitHub" title="GitHub"')) {
     throw new Error(`Compact GitHub navigation link is missing: ${lang}`);
@@ -120,11 +118,11 @@ for (const lang of ['zh-CN', 'en']) {
   if (home.includes('hub-quick-grid') || home.includes('hub-dashboard-grid')) {
     throw new Error(`Legacy dashboard leaked into the calm homepage: ${lang}`);
   }
-  // Article translation links are emitted from Shell, not guessed by replacing slug prefixes.
+  // 单语站点：文章导航不应再指向其他语言版本。
   if (available.length) {
     const article = fs.readFileSync(path.join(output, available[0].url, 'index.html'), 'utf8');
-    if (!article.includes('data-alternate-href="/' + (lang === 'zh-CN' ? 'en' : 'zh-CN') + '/')) {
-      throw new Error(`Missing article translation destination in navigation: ${lang}`);
+    if (article.includes('data-alternate-href')) {
+      throw new Error(`Article still links to a translation: ${lang}`);
     }
   }
   const archiveHtml = fs.readFileSync(path.join(output, lang, 'archives', 'index.html'), 'utf8');
@@ -164,9 +162,10 @@ for (const lang of ['zh-CN', 'en']) {
     if (!aboutHtml.includes(marker)) throw new Error(`Scenic about page is incomplete: ${lang}: ${marker}`);
   }
   if (available.length) {
+    // 文章页是独立的 LAB 风格 HTML（astro-static/{lang}/posts/…），校验其版式标记。
     const articleHtml = fs.readFileSync(path.join(output, available[0].url, 'index.html'), 'utf8');
-    if (!articleHtml.includes('scenic-article-banner') || !articleHtml.includes('astro-article-rail')) {
-      throw new Error(`Scenic article reading layout is incomplete: ${lang}`);
+    if (!articleHtml.includes('lab-post-hero') || !articleHtml.includes('lab-post-section')) {
+      throw new Error(`LAB article layout is incomplete: ${lang}`);
     }
   }
   const projectHtml = fs.readFileSync(path.join(root, 'astro-dist', lang, 'projects', 'index.html'), 'utf8');

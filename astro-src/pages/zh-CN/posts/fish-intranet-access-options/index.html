@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="zh-CN" class="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器 · 稻田鼠</title><meta name="description" content="结合机器鱼项目的 Go 控制器、ESP32 和本地视觉服务，比较 Cloudflare Tunnel、FRP 与自建公网服务器三种访问方案，并说明当前选择与后续验证重点。">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://edgeone.chenfukun.space/zh-CN/posts/fish-intranet-access-options/"><link rel="alternate" hreflang="zh-CN" href="https://edgeone.chenfukun.space/zh-CN/posts/fish-intranet-access-options/"><link rel="alternate" hreflang="x-default" href="https://edgeone.chenfukun.space/zh-CN/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="稻田鼠">
+<meta property="og:title" content="Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器 · 稻田鼠"><meta property="og:description" content="结合机器鱼项目的 Go 控制器、ESP32 和本地视觉服务，比较 Cloudflare Tunnel、FRP 与自建公网服务器三种访问方案，并说明当前选择与后续验证重点。">
+<meta property="og:url" content="https://edgeone.chenfukun.space/zh-CN/posts/fish-intranet-access-options/"><meta property="og:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<meta property="og:image:width" content="1920"><meta property="og:image:height" content="1080"><meta property="og:image:alt" content="Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-10-10T10:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-23T13:48:00.000Z">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器 · 稻田鼠"><meta name="twitter:description" content="结合机器鱼项目的 Go 控制器、ESP32 和本地视觉服务，比较 Cloudflare Tunnel、FRP 与自建公网服务器三种访问方案，并说明当前选择与后续验证重点。"><meta name="twitter:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="/zh-CN/feed.xml">
+<link rel="manifest" href="/zh-CN/manifest.webmanifest"><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg">
+<script type="application/ld+json" data-edgeone-schema>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器","name":"Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器","description":"结合机器鱼项目的 Go 控制器、ESP32 和本地视觉服务，比较 Cloudflare Tunnel、FRP 与自建公网服务器三种访问方案，并说明当前选择与后续验证重点。","url":"https://edgeone.chenfukun.space/zh-CN/posts/fish-intranet-access-options/","inLanguage":"zh-CN","author":{"@type":"Person","name":"陈富坤"},"datePublished":"2026-10-10T10:00:00.000Z","dateModified":"2026-10-23T13:48:00.000Z"}</script>
+<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) { window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true }); }</script>
+<style>/* 基础样式：来自用户 LAB 文章模板 */
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#16263a;--muted:#59687d;--line:#d9e3ed;--accent:#087f7b;--ok:#087f7b;--warn:#bd6e17;--soft:#e8f5f2;--grid:#eaf0f4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,-apple-system,'Microsoft YaHei','PingFang SC',sans-serif}
+.container{max-width:970px;margin:0 auto;padding:0 24px}.top{border-bottom:1px solid #dde6ef;background:#fff}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:62px}.brand{font-size:14px;font-weight:750;letter-spacing:.06em;color:var(--accent)}.small{font-size:13px;color:var(--muted)}.hero{padding:72px 0 45px;background:radial-gradient(circle at 92% 25%,#dcefeb,transparent 42%),linear-gradient(180deg,#fff,#f6f8fb)}.eyebrow{font-size:13px;color:var(--accent);font-weight:750;letter-spacing:.14em}.hero h1{font-size:clamp(30px,4vw,52px);line-height:1.28;letter-spacing:-.05em;margin:14px 0 20px;font-weight:800}.lead{font-size:18px;color:#506176;max-width:760px}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.chip{border:1px solid #c7dfdd;background:#f1faf8;color:#0a746e;padding:3px 11px;border-radius:99px;font-size:12px}
+.article{padding:2px 0 70px}.section{background:var(--paper);padding:34px 40px;margin:24px 0;border:1px solid #e1e8ef;border-radius:18px;box-shadow:0 5px 22px #15233106}h2{margin:0 0 18px;line-height:1.4;font-size:25px;letter-spacing:-.04em}h3{font-size:18px;margin:25px 0 12px}p{margin:12px 0}b,strong{font-weight:700}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}em{font-style:normal;color:var(--accent);font-weight:700}
+.photo{max-width:640px;margin:25px auto 8px;display:block;border:1px solid var(--line);border-radius:10px;width:100%}.caption{text-align:center;color:var(--muted);font-size:13px;margin:10px 0 0}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #e8eef2}th{background:#f1f6f8;color:#435a67;font-weight:700}tr:last-child td{border-bottom:none}.logic tr[data-r]{cursor:pointer;transition:background .15s}.logic tr[data-r]:hover{background:#f0f8f7}.logic tr.active{background:#dff3ee}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.note{border-left:3px solid var(--accent);padding:12px 17px;background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0;margin:18px 0}.warning{border-left-color:#d49b49;background:#fff8eb}.diagram{border:1px solid var(--line);border-radius:14px;background:#fcfefe;padding:15px;margin:20px 0}.diagram svg{width:100%;height:auto;display:block;max-height:340px}.interactive{border-radius:16px;border:1px solid #cbe4e0;background:linear-gradient(155deg,#f3fbfa,#fff);padding:24px;margin-top:20px}.switches{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.switches label{display:flex;gap:8px;align-items:center;font-weight:700}.selector{display:flex;border:1px solid #c6d9d9;border-radius:9px;padding:3px;background:#fff}.selector button{border:0;background:transparent;padding:7px 14px;cursor:pointer;border-radius:6px;font-weight:700;color:#677782}.selector button[aria-pressed="true"]{background:#087f7b;color:#fff}.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.readout{background:#fff;padding:16px;border:1px solid #d8e5e5;border-radius:10px}.readout strong{display:block;font-size:28px;line-height:1.2;color:var(--accent)}.readout strong.low{color:#c07522}.state{font-weight:700;margin:12px 0 4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step{border:1px solid #d9e3ed;padding:14px;border-radius:10px;background:#fcfdff}.step span{color:var(--accent);font-size:11px;font-weight:700}.step strong{display:block;margin:7px 0 4px}.step p{font-size:13px;color:var(--muted);margin:0;line-height:1.65}.step button{margin-top:12px;border:1px solid #a9d4cd;background:#effaf8;color:#087f7b;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700}.figure-text{font-family:system-ui,-apple-system,'Microsoft YaHei',sans-serif;fill:#3b556a;font-size:15px}.source{font-size:13px;color:var(--muted);padding-left:19px}.source li{padding:3px 0}.footer{padding:24px 0 50px;border-top:1px solid #e0e6ec;color:var(--muted);font-size:13px}.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:700;color:#087f7b;background:#d9eee9}.footlink{overflow-wrap:anywhere}
+@media(max-width:650px){.section{padding:22px 17px;margin:15px 0;border-radius:12px}.hero{padding:46px 0 28px}.lead{font-size:16px}.steps{grid-template-columns:repeat(2,1fr)}h2{font-size:21px}.diagram{padding:4px}.container{padding:0 14px}}
+
+/* 追加到 LAB 文章模板之后的站点附加样式（由 build-static-posts 合并进 static-post.css） */
+:root{color-scheme:light only}
+.nav-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:650;text-decoration:none}
+.nav-links a:hover{color:var(--accent);text-decoration:underline}
+.brand{text-decoration:none}
+.footer .pill{border:1px solid var(--line);padding:2px 9px;border-radius:99px;font-size:11px;color:var(--muted);margin:0 4px}
+.footer a{color:var(--accent)}
+.footer a:hover{text-decoration:underline}
+.lab-post-body{overflow-wrap:anywhere;line-height:1.85}
+.lab-post-body h1{font-size:clamp(24px,3vw,30px);line-height:1.35;letter-spacing:-.03em;margin:0 0 .8em;font-weight:800}
+.lab-post-body h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin:1.6em 0 .55em;scroll-margin-top:96px;color:var(--ink)}
+.lab-post-body h2:first-child{margin-top:0}
+.lab-post-body h3{font-size:clamp(17px,1.6vw,19px);font-weight:700;line-height:1.45;margin:1.5em 0 .45em;scroll-margin-top:96px}
+.lab-post-body h4{font-size:16px;font-weight:700;margin:1.4em 0 .4em}
+.lab-post-body p{margin:12px 0}
+.lab-post-body ul,.lab-post-body ol{padding-left:1.5em;margin:12px 0}
+.lab-post-body li{margin:6px 0}
+.lab-post-body li::marker{color:var(--accent)}
+.lab-post-body pre{overflow:auto;padding:20px;border-radius:12px;font-size:13.5px;line-height:1.7;margin:16px 0;background:#16263a}
+.lab-post-body pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.lab-post-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.lab-post-body img{max-width:100%;height:auto;display:block;margin:16px auto;border:1px solid var(--line);border-radius:10px}
+.lab-post-body table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:16px 0}
+.lab-post-body td,.lab-post-body th{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.lab-post-body th{background:#f1f6f8;font-weight:700;color:#435a67}
+.lab-post-body td:first-child,.lab-post-body th:first-child{min-width:6em;word-break:keep-all}
+.lab-post-body blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0}
+.lab-post-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.lab-post-body a{color:var(--accent);text-decoration:none}
+.lab-post-body a:hover{text-decoration:underline}
+.lab-post-body strong{font-weight:700}
+.lab-post-body .astro-code{margin:16px 0;border-radius:12px;overflow:auto}
+.lab-post-body .astro-code pre{margin:0}
+@media(max-width:650px){.nav-links{gap:10px}.nav-links a{font-size:12px}}
+</style></head><body>
+<header class="top"><div class="container nav">
+  <a class="brand" href="/zh-CN/">稻田鼠 · LAB NOTES</a>
+  <nav class="nav-links" aria-label="页面导航">
+    <a href="/zh-CN/archives/">文章列表</a>
+    <a href="https://github.com/FukunHennan" rel="noopener me">GitHub</a>
+  </nav>
+</div></header>
+<div class="hero lab-post-hero"><div class="container">
+  <p class="eyebrow">服务器 · 2026-10-10</p>
+  <h1>Fish 项目如何从公网访问：Cloudflare Tunnel、FRP 与自建服务器</h1>
+  <p class="lead">结合机器鱼项目的 Go 控制器、ESP32 和本地视觉服务，比较 Cloudflare Tunnel、FRP 与自建公网服务器三种访问方案，并说明当前选择与后续验证重点。</p>
+  <div class="chips"><span class="chip">服务器</span></div>
+</div></div>
+<main class="container article lab-post">
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><p>Fish 是一个机器鱼控制项目：Go 控制器在主机上提供浏览器页面，ESP32 机器鱼与控制器通信，Python 视觉服务的 HTTP API 监听本机地址。项目架构见<a href="../fish-robot-platform/">Fish 项目总览</a>。从外网查看状态或操作界面时，首先需要解决的是：<strong>如何访问 Go 提供的 Web 入口，同时保留设备与视觉 API 的内网边界？</strong></p>
+<p>我考虑了三种方案：Cloudflare Tunnel、FRP，以及购买公网服务器自行部署。这里记录的是选型思路；目前 Fish 使用的是 Cloudflare Tunnel，另外两种是备选方案，并非都已投入运行。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="先确定公网入口">先确定公网入口</h2>
+<table>
+<thead>
+<tr>
+<th>连接</th>
+<th>路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>远程操作</td>
+<td>浏览器 → HTTPS / WebSocket 公网入口 → Fish 主机的 Go 控制器</td>
+</tr>
+<tr>
+<td>设备通信</td>
+<td>Go 控制器 ↔ 内网 ESP32 机器鱼</td>
+</tr>
+<tr>
+<td>视觉接口</td>
+<td>Go 控制器 ↔ 本机 Python HTTP API</td>
+</tr>
+</tbody>
+</table>
+<p>上表描述的是页面、API 和控制链路。Go 的正式入口为 <code>8081</code>，视觉 HTTP API 继续监听 <code>127.0.0.1:8091</code>，ESP32 不直接暴露给互联网。无论采用哪种方案，浏览器访问入口、Go 的鉴权和设备指令权限都要分开考虑：有了 HTTPS 并不等于可以跳过应用自身的权限校验。</p>
+<p>相机视频还有独立的 WebRTC 媒体链路，信令经 Go 对接。当前页面代码依次尝试直连、TURN 中继和同源 WebSocket JPEG 快照流；最后一级会经过同源 Web 入口。Web 页面可访问不代表视频已经通过验证，媒体链路、中继与降级播放都需要在实际网络下分别检查。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="方案一cloudflare-tunnel">方案一：Cloudflare Tunnel</h2>
+<p>在 Fish 主机运行 <code>cloudflared</code>，由它主动连接 Cloudflare，再把指定域名的请求转发到本机 Web 服务。这样不依赖家用宽带的公网 IP，也无需为该 Web 入口配置路由器入站端口。Fish 当前的 Windows 运行方式由 <code>scripts/start.bat</code> 选择公网模式，具体地址与运行状态以启动窗口的 <code>Public URL</code> 为准。</p>
+<p>它适合当前以网页、API 和 WebSocket 为主的远程访问。配置链路相对短，可以把访问控制放在公网入口，再由 Go 继续处理用户和设备权限。代价是入口依赖 Cloudflare 网络与域名配置；若未来需要让任意原生 TCP/UDP 客户端直连，不能直接把现有 Web 发布方式当成通用端口映射，需要重新核对协议支持和客户端接入方式。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="方案二frp">方案二：FRP</h2>
+<p>FRP 由部署在内网的 <code>frpc</code> 和部署在公网节点的 <code>frps</code> 组成。<code>frpc</code> 主动连接 <code>frps</code>，公网请求再经这条连接返回 Fish 主机。它能按需转发 HTTP、HTTPS 或 TCP 等流量，路由和协议控制更灵活。</p>
+<p>不过 FRP <strong>仍然需要一个可被外网访问的 <code>frps</code> 节点</strong>，通常是云服务器。除了服务器费用，还要维护 FRP 版本、证书、入口鉴权、防火墙和进程监控。若只是给 Fish 的 Web 界面提供访问，FRP 的控制力未必能抵消维护成本；若后续需要更明确的 TCP 端口映射，才值得做实际测试。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="方案三购买公网服务器">方案三：购买公网服务器</h2>
+<p>“买服务器”本身不是一种单独的穿透协议，关键在于<strong>服务运行在哪里</strong>。一种做法是把公网服务器作为反向代理或中转节点，让 Fish 主机主动连接它；这在结构上接近自建 FRP。另一种做法是把 Go 控制器和 Web 界面迁到服务器，让 ESP32 主动连过去。</p>
+<p>第二种做法改动更大。Fish 的视频服务目前通过 <code>127.0.0.1:8091</code> 向本机 Go 提供 HTTP API；Go 迁走后，这个本地调用就不再成立，需要重新设计相机与录像接口的传输、认证和断线处理。服务器也意味着持续的主机费用、系统更新、证书续期、备份和公网安全维护。它更适合将来需要长期在线、多人访问且愿意承担运维工作的阶段。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="三种方案怎么选">三种方案怎么选</h2>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Cloudflare Tunnel</th>
+<th>FRP</th>
+<th>公网服务器部署</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fish 主机是否需要公网 IP</td>
+<td>不需要</td>
+<td>不需要，但 <code>frps</code> 需要公网节点</td>
+<td>服务器需要公网可访问</td>
+</tr>
+<tr>
+<td>适合的入口</td>
+<td>现阶段的 Web/API/WebSocket</td>
+<td>需要自控转发规则或原生协议时</td>
+<td>长期在线的完整服务</td>
+</tr>
+<tr>
+<td>对现有本地架构的改动</td>
+<td>较小</td>
+<td>较小到中等</td>
+<td>若迁移 Go，则较大</td>
+</tr>
+<tr>
+<td>主要维护工作</td>
+<td>隧道、域名、访问策略</td>
+<td>公网节点、FRP、证书与安全</td>
+<td>主机、网络、应用与数据</td>
+</tr>
+</tbody>
+</table>
+<p><strong>当前选择是继续使用 Cloudflare Tunnel 发布 Web 入口。</strong> 它可以保留 Go 与 Python HTTP API 在同一主机的部署方式；WebRTC 媒体另行验证。选型取决于项目当前的流量协议、部署位置、可接受的运维量和故障恢复要求。</p>
+<p>若后续改为 FRP 或自建服务器，需要验证远程 WebSocket 断线重连、浏览器控制链路中断后的指令过期与停止行为、运动及 OTA 权限、视觉 HTTP API 与设备端口隔离，以及实际网络中的 WebRTC 视频连接。公网连接只服务于远程访问，本机控制器和固件仍需处理各自的超时与停止条件。</p>
+<p>参考：<a href="https://developers.cloudflare.com/cloudflare-one/networks/connectors/cloudflare-tunnel/">Cloudflare Tunnel 官方文档</a> · <a href="https://gofrp.org/en/docs/overview/">FRP 官方文档</a>。</p></div></section>
+</main>
+<footer class="container footer">稻田鼠 · LAB NOTES <span class="pill">可离线使用</span> &nbsp;|&nbsp; <a href="https://github.com/FukunHennan/edgeone-page">GitHub</a></footer>
+</body></html>

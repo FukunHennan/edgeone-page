@@ -67,7 +67,7 @@ function prepareTheme() {
   for (const name of ['Swup', 'SwupSlideTheme', 'SwupProgressPlugin', 'SwupScrollPlugin', 'SwupPreloadPlugin']) {
     fs.copyFileSync(path.join(SOURCE, `js/libs/${name}.min.js`), path.join(output, `js/${name}.min.js`));
   }
-  for (const lang of ['zh-CN', 'en']) {
+  for (const lang of ['zh-CN']) {
     const dir = path.join(ROOT, 'astro-static', lang, 'js');
     fs.mkdirSync(dir, { recursive: true });
     // 简历页的打印/PDF 导出引用 ../js/libs/ 下这两个库；其余 libs 文件没有任何页面引用。

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN" class="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C# 与 NI 测量硬件的第一步集成 · 稻田鼠</title><meta name="description" content="记录一次使用 C# 调用 National Instruments 测量硬件驱动的过程，包括驱动互操作、数据采集线程模型、采样同步与现场可复用封装的实践。">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://edgeone.chenfukun.space/zh-CN/posts/csharp-ni-measurement-integration/"><link rel="alternate" hreflang="zh-CN" href="https://edgeone.chenfukun.space/zh-CN/posts/csharp-ni-measurement-integration/"><link rel="alternate" hreflang="x-default" href="https://edgeone.chenfukun.space/zh-CN/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="稻田鼠">
+<meta property="og:title" content="C# 与 NI 测量硬件的第一步集成 · 稻田鼠"><meta property="og:description" content="记录一次使用 C# 调用 National Instruments 测量硬件驱动的过程，包括驱动互操作、数据采集线程模型、采样同步与现场可复用封装的实践。">
+<meta property="og:url" content="https://edgeone.chenfukun.space/zh-CN/posts/csharp-ni-measurement-integration/"><meta property="og:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<meta property="og:image:width" content="1920"><meta property="og:image:height" content="1080"><meta property="og:image:alt" content="C# 与 NI 测量硬件的第一步集成">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-28T14:30:00.000Z">
+<meta property="article:modified_time" content="2025-04-28T14:30:00.000Z">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="C# 与 NI 测量硬件的第一步集成 · 稻田鼠"><meta name="twitter:description" content="记录一次使用 C# 调用 National Instruments 测量硬件驱动的过程，包括驱动互操作、数据采集线程模型、采样同步与现场可复用封装的实践。"><meta name="twitter:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="/zh-CN/feed.xml">
+<link rel="manifest" href="/zh-CN/manifest.webmanifest"><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg">
+<script type="application/ld+json" data-edgeone-schema>{"@context":"https://schema.org","@type":"BlogPosting","headline":"C# 与 NI 测量硬件的第一步集成","name":"C# 与 NI 测量硬件的第一步集成","description":"记录一次使用 C# 调用 National Instruments 测量硬件驱动的过程，包括驱动互操作、数据采集线程模型、采样同步与现场可复用封装的实践。","url":"https://edgeone.chenfukun.space/zh-CN/posts/csharp-ni-measurement-integration/","inLanguage":"zh-CN","author":{"@type":"Person","name":"陈富坤"},"datePublished":"2025-04-28T14:30:00.000Z","dateModified":"2025-04-28T14:30:00.000Z"}</script>
+<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) { window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true }); }</script>
+<style>/* 基础样式：来自用户 LAB 文章模板 */
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#16263a;--muted:#59687d;--line:#d9e3ed;--accent:#087f7b;--ok:#087f7b;--warn:#bd6e17;--soft:#e8f5f2;--grid:#eaf0f4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,-apple-system,'Microsoft YaHei','PingFang SC',sans-serif}
+.container{max-width:970px;margin:0 auto;padding:0 24px}.top{border-bottom:1px solid #dde6ef;background:#fff}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:62px}.brand{font-size:14px;font-weight:750;letter-spacing:.06em;color:var(--accent)}.small{font-size:13px;color:var(--muted)}.hero{padding:72px 0 45px;background:radial-gradient(circle at 92% 25%,#dcefeb,transparent 42%),linear-gradient(180deg,#fff,#f6f8fb)}.eyebrow{font-size:13px;color:var(--accent);font-weight:750;letter-spacing:.14em}.hero h1{font-size:clamp(30px,4vw,52px);line-height:1.28;letter-spacing:-.05em;margin:14px 0 20px;font-weight:800}.lead{font-size:18px;color:#506176;max-width:760px}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.chip{border:1px solid #c7dfdd;background:#f1faf8;color:#0a746e;padding:3px 11px;border-radius:99px;font-size:12px}
+.article{padding:2px 0 70px}.section{background:var(--paper);padding:34px 40px;margin:24px 0;border:1px solid #e1e8ef;border-radius:18px;box-shadow:0 5px 22px #15233106}h2{margin:0 0 18px;line-height:1.4;font-size:25px;letter-spacing:-.04em}h3{font-size:18px;margin:25px 0 12px}p{margin:12px 0}b,strong{font-weight:700}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}em{font-style:normal;color:var(--accent);font-weight:700}
+.photo{max-width:640px;margin:25px auto 8px;display:block;border:1px solid var(--line);border-radius:10px;width:100%}.caption{text-align:center;color:var(--muted);font-size:13px;margin:10px 0 0}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #e8eef2}th{background:#f1f6f8;color:#435a67;font-weight:700}tr:last-child td{border-bottom:none}.logic tr[data-r]{cursor:pointer;transition:background .15s}.logic tr[data-r]:hover{background:#f0f8f7}.logic tr.active{background:#dff3ee}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.note{border-left:3px solid var(--accent);padding:12px 17px;background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0;margin:18px 0}.warning{border-left-color:#d49b49;background:#fff8eb}.diagram{border:1px solid var(--line);border-radius:14px;background:#fcfefe;padding:15px;margin:20px 0}.diagram svg{width:100%;height:auto;display:block;max-height:340px}.interactive{border-radius:16px;border:1px solid #cbe4e0;background:linear-gradient(155deg,#f3fbfa,#fff);padding:24px;margin-top:20px}.switches{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.switches label{display:flex;gap:8px;align-items:center;font-weight:700}.selector{display:flex;border:1px solid #c6d9d9;border-radius:9px;padding:3px;background:#fff}.selector button{border:0;background:transparent;padding:7px 14px;cursor:pointer;border-radius:6px;font-weight:700;color:#677782}.selector button[aria-pressed="true"]{background:#087f7b;color:#fff}.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.readout{background:#fff;padding:16px;border:1px solid #d8e5e5;border-radius:10px}.readout strong{display:block;font-size:28px;line-height:1.2;color:var(--accent)}.readout strong.low{color:#c07522}.state{font-weight:700;margin:12px 0 4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step{border:1px solid #d9e3ed;padding:14px;border-radius:10px;background:#fcfdff}.step span{color:var(--accent);font-size:11px;font-weight:700}.step strong{display:block;margin:7px 0 4px}.step p{font-size:13px;color:var(--muted);margin:0;line-height:1.65}.step button{margin-top:12px;border:1px solid #a9d4cd;background:#effaf8;color:#087f7b;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700}.figure-text{font-family:system-ui,-apple-system,'Microsoft YaHei',sans-serif;fill:#3b556a;font-size:15px}.source{font-size:13px;color:var(--muted);padding-left:19px}.source li{padding:3px 0}.footer{padding:24px 0 50px;border-top:1px solid #e0e6ec;color:var(--muted);font-size:13px}.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:700;color:#087f7b;background:#d9eee9}.footlink{overflow-wrap:anywhere}
+@media(max-width:650px){.section{padding:22px 17px;margin:15px 0;border-radius:12px}.hero{padding:46px 0 28px}.lead{font-size:16px}.steps{grid-template-columns:repeat(2,1fr)}h2{font-size:21px}.diagram{padding:4px}.container{padding:0 14px}}
+
+/* 追加到 LAB 文章模板之后的站点附加样式（由 build-static-posts 合并进 static-post.css） */
+:root{color-scheme:light only}
+.nav-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:650;text-decoration:none}
+.nav-links a:hover{color:var(--accent);text-decoration:underline}
+.brand{text-decoration:none}
+.footer .pill{border:1px solid var(--line);padding:2px 9px;border-radius:99px;font-size:11px;color:var(--muted);margin:0 4px}
+.footer a{color:var(--accent)}
+.footer a:hover{text-decoration:underline}
+.lab-post-body{overflow-wrap:anywhere;line-height:1.85}
+.lab-post-body h1{font-size:clamp(24px,3vw,30px);line-height:1.35;letter-spacing:-.03em;margin:0 0 .8em;font-weight:800}
+.lab-post-body h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin:1.6em 0 .55em;scroll-margin-top:96px;color:var(--ink)}
+.lab-post-body h2:first-child{margin-top:0}
+.lab-post-body h3{font-size:clamp(17px,1.6vw,19px);font-weight:700;line-height:1.45;margin:1.5em 0 .45em;scroll-margin-top:96px}
+.lab-post-body h4{font-size:16px;font-weight:700;margin:1.4em 0 .4em}
+.lab-post-body p{margin:12px 0}
+.lab-post-body ul,.lab-post-body ol{padding-left:1.5em;margin:12px 0}
+.lab-post-body li{margin:6px 0}
+.lab-post-body li::marker{color:var(--accent)}
+.lab-post-body pre{overflow:auto;padding:20px;border-radius:12px;font-size:13.5px;line-height:1.7;margin:16px 0;background:#16263a}
+.lab-post-body pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.lab-post-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.lab-post-body img{max-width:100%;height:auto;display:block;margin:16px auto;border:1px solid var(--line);border-radius:10px}
+.lab-post-body table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:16px 0}
+.lab-post-body td,.lab-post-body th{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.lab-post-body th{background:#f1f6f8;font-weight:700;color:#435a67}
+.lab-post-body td:first-child,.lab-post-body th:first-child{min-width:6em;word-break:keep-all}
+.lab-post-body blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0}
+.lab-post-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.lab-post-body a{color:var(--accent);text-decoration:none}
+.lab-post-body a:hover{text-decoration:underline}
+.lab-post-body strong{font-weight:700}
+.lab-post-body .astro-code{margin:16px 0;border-radius:12px;overflow:auto}
+.lab-post-body .astro-code pre{margin:0}
+@media(max-width:650px){.nav-links{gap:10px}.nav-links a{font-size:12px}}
+</style></head><body>
+<header class="top"><div class="container nav">
+  <a class="brand" href="/zh-CN/">稻田鼠 · LAB NOTES</a>
+  <nav class="nav-links" aria-label="页面导航">
+    <a href="/zh-CN/archives/">文章列表</a>
+    <a class="scenic-project-back" href="/zh-CN/projects/">← 返回项目</a>
+    <a href="https://github.com/FukunHennan" rel="noopener me">GitHub</a>
+  </nav>
+</div></header>
+<div class="hero lab-post-hero"><div class="container">
+  <p class="eyebrow">软件 · 2025-04-28</p>
+  <h1>C# 与 NI 测量硬件的第一步集成</h1>
+  <p class="lead">记录一次使用 C# 调用 National Instruments 测量硬件驱动的过程，包括驱动互操作、数据采集线程模型、采样同步与现场可复用封装的实践。</p>
+  <div class="chips"><span class="chip">软件</span></div>
+</div></div>
+<main class="container article lab-post">
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><p>National Instruments 的测量硬件在工业测试和实验室场景里覆盖很广，但官方驱动以 C/C++ 和 LabVIEW 为主，C# 上位机接入时需要处理互操作、线程模型和采样同步等细节。本文记录一次用 C# 集成 NI 测量硬件的过程，整理为可复用的封装思路。仓库地址：<a href="https://github.com/FukunHennan/CSharp-NI">FukunHennan/CSharp-NI</a>。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="选型与驱动准备">选型与驱动准备</h2>
+<p>NI 提供 NI-DAQmx 作为统一驱动层，并通过 Measurement Studio 暴露 .NET API。如果没有 Measurement Studio 授权，也可以直接引用 <code>NationalInstruments.DAQmx.dll</code>，通过 P/Invoke 风格调用。我选择后者，避免在分发时绑定授权问题，但代价是要自己处理事件回调到 UI 线程的封送。</p>
+<p>硬件为 NI USB-621x 系列，需要先安装 NI-DAQmx Runtime，安装完成后通过 NI MAX 确认设备名（例如 <code>Dev1</code>），上位机使用这个设备名创建通道。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="通道与任务模型">通道与任务模型</h2>
+<p>NI-DAQmx 的核心抽象是 <code>Task</code>，它把“要采集什么”封装成一个可重用的对象。创建通道时需要明确：</p>
+<ul>
+<li>物理通道（如 <code>Dev1/ai0</code>）；</li>
+<li>信号范围（最小值/最大值，影响 ADC 增益和精度）；</li>
+<li>接线方式（Referenced Single-Ended、Differential 等）；</li>
+<li>单位换算（如使用应变时需要桥路配置和缩放）。</li>
+</ul>
+<p>我把任务建模为配置驱动：所有采集参数放在一个 <code>TaskConfig</code> 类里，运行时根据配置构建 <code>AnalogMultiChannelReader</code> 并启动定时读取。这样可以保证不同项目复用同一套采集层，只需要改配置。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="采样时钟与同步">采样时钟与同步</h2>
+<p>NI 硬件支持硬件时钟，这是它区别于普通 USB 数据采集卡的关键。在 C# 中通过 <code>SampleClock</code> 配置触发源、采样率和每次采样点数：</p>
+<ul>
+<li>采样率：根据奈奎斯特定理和传感器带宽选择，但要注意硬件规格上限；</li>
+<li>每次采样点数：影响单次 <code>Read</code> 调用的延迟和内存占用；</li>
+<li>触发源：可以从 AI 通道、PFI 引脚或外部信号触发，适合需要严格相位同步的场景。</li>
+</ul>
+<p>实际项目里我使用 100kHz 采样率、每帧 1000 个点，单帧延迟 10ms，配合后台线程连续 <code>ReadMultiSample</code>，避免 UI 线程被阻塞。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="线程模型与数据回流">线程模型与数据回流</h2>
+<p>NI-DAQmx 的 <code>Read</code> 调用是阻塞的，如果在 UI 线程上直接调用会卡住界面。我使用一个专门的采集线程，循环调用 <code>BeginReadMultiSample</code> + <code>EndReadMultiSample</code>，并将结果通过 <code>ConcurrentQueue</code> 投递到数据处理层。界面层订阅数据层事件，通过 <code>SynchronizationContext</code> 切回 UI 线程更新波形。</p>
+<p>异常处理上，NI 驱动会抛出 <code>DaqException</code>，错误码可读性较好。我根据错误码区分“瞬时超时”和“硬件状态异常”，前者直接重试，后者触发任务重建并通知 UI 提示检查接线。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="现场可复用封装">现场可复用封装</h2>
+<p>经过几次现场使用，我把封装收敛为几个职责清晰的组件：</p>
+<ul>
+<li><code>NiTaskFactory</code>：根据配置创建和销毁 <code>Task</code>，负责资源释放；</li>
+<li><code>AcquisitionLoop</code>：管理后台采集线程、停止信号、异常重试；</li>
+<li><code>SampleBuffer</code>：环形缓冲区，提供滑动窗口查询接口；</li>
+<li><code>DataSink</code>：把采集数据投递到日志、波形显示或导出模块。</li>
+</ul>
+<p>这套封装的好处是新增采集场景时只需要写配置，不重复处理线程和异常。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="现场小贴士">现场小贴士</h2>
+<ul>
+<li>物理通道名以 NI MAX 为准，不要硬编码到代码；</li>
+<li>采样率超过规格上限会抛 <code> DAQmxStatusCode</code>，注意捕获并提示；</li>
+<li>USB 设备的接地不要与强电共用，否则会出现周期性尖峰；</li>
+<li>长时间采集时定期调用 <code>TaskControl</code> 检查任务状态，避免静默停止；</li>
+<li>分发部署时记得附带 NI-DAQmx Runtime，否则会报“驱动未安装”。</li>
+</ul></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="小结">小结</h2>
+<p>NI 硬件和 C# 的集成并不复杂，关键在于任务建模、线程边界和异常处理。把这套流程做扎实，后续无论是电压电流采集、压力测量还是应变测量，都能复用同一层采集代码。这个仓库里保留了一个最小可运行样例，可以作为接入 NI 硬件的起点。</p></div></section>
+</main>
+<footer class="container footer">稻田鼠 · LAB NOTES <span class="pill">可离线使用</span> &nbsp;|&nbsp; <a href="https://github.com/FukunHennan/edgeone-page">GitHub</a></footer>
+</body></html>

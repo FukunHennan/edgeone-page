@@ -2,65 +2,23 @@
 import { render, getCollection, type CollectionEntry } from 'astro:content';
 import Shell from '../layouts/Shell.astro';
 import ScenicBanner from '../components/ScenicBanner.astro';
-import { languages, postsFor, projectsFor, postPath, archiveFilterPath, domainLabel, type TaxonomyKind, type Post, type Language } from '../lib/content';
+import { languages, type Language } from '../lib/content';
+// 博客文章（/{lang}/posts/…）已改为 astro-src/pages/{lang}/posts/ 下的独立 HTML 文件，
+// 不再由本路由渲染；这里只负责 source/{lang}/ 下的静态页面。
 export async function getStaticPaths() {
-  const posts = (await Promise.all(languages.map(postsFor))).flat();
-  const projectPaths = new Set<string>();
-  for (const lang of languages) for (const project of await projectsFor(lang)) {
-    projectPaths.add(`/${lang}/${project.data.post.replace(/^\.\.\//, '')}`);
-  }
-  const urls = new Set<string>();
-  const articles = posts.map((post) => {
-    const url = postPath(post); if (urls.has(url)) throw new Error(`Duplicate article URL: ${url}`); urls.add(url);
-    const translation = posts.find((item) => item.data.lang !== post.data.lang && item.data.translation_key === post.data.translation_key);
-    if (!translation) throw new Error(`Missing translation: ${post.id}`);
-    return { params: { path: url.replace(/^\/|\/$/g, '') }, props: { post, lang: post.data.lang, alternate: postPath(translation), projectDetail: projectPaths.has(url) } };
-  });
   const pages = [];
-  for (const lang of languages) for (const post of await getCollection(lang === 'zh-CN' ? 'pagesZh' : 'pagesEn')) {
+  for (const lang of languages) for (const post of await getCollection('pagesZh')) {
     if (post.id === 'projects') continue;
-    pages.push({ params: { path: `${lang}/${post.id}` }, props: { post, lang, alternate: `/${lang === 'zh-CN' ? 'en' : 'zh-CN'}/${post.id}/` } });
+    pages.push({ params: { path: `${lang}/${post.id}` }, props: { post, lang } });
   }
-  return [...articles, ...pages];
+  return pages;
 }
-interface Props { post: Post | CollectionEntry<'pagesZh'> | CollectionEntry<'pagesEn'>; lang: Language; alternate: string; projectDetail?: boolean }
-const { post, lang, alternate, projectDetail = false } = Astro.props;
-const { Content, headings } = await render(post);
-const day = (value?: Date) => value?.toISOString().slice(0, 10);
-const termLink = (section: TaxonomyKind, name: string) => archiveFilterPath(lang, section, name);
-const tocHeadings = headings.filter((heading) => heading.depth <= 3);
+interface Props { post: CollectionEntry<'pagesZh'>; lang: Language }
+const { post, lang } = Astro.props;
+const { Content } = await render(post);
 ---
-<Shell lang={lang} title={post.data.title} description={'description' in post.data ? post.data.description : ''} alternate={alternate} published={'date' in post.data ? post.data.date : undefined} updated={'updated' in post.data ? post.data.updated : undefined} activeSection={projectDetail ? 'projects' : undefined} noindex={!projectDetail && ('date' in post.data || post.id === 'notes' || post.id.startsWith('notes/'))}>
-  {'date' in post.data ? <><div class="scenic-article-banner"><ScenicBanner compact scene="forest" /></div><article class="astro-article">
-    <header class="astro-article-head">
-      {projectDetail && <a class="scenic-project-back" href={`/${lang}/projects/`}>{lang === 'zh-CN' ? '← 返回项目' : '← Back to projects'}</a>}
-      <p class="astro-article-date"><time datetime={post.data.date.toISOString()}>{day(post.data.date)}</time></p>
-      <h1>{post.data.title}</h1>
-      {post.data.description && <p class="astro-lede">{post.data.description}</p>}
-    </header>
-    <aside class="astro-article-rail">
-      {tocHeadings.length > 0 && <nav class="astro-toc astro-toc-desktop" aria-label={lang === 'zh-CN' ? '文章目录' : 'Contents'}>
-        <p class="astro-rail-title">{lang === 'zh-CN' ? '文章目录' : 'Contents'}</p>
-        <ul>{tocHeadings.map((heading) => <li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
-      </nav>}
-      <div class="astro-article-meta">
-        <p class="astro-rail-title">{lang === 'zh-CN' ? '文章信息' : 'Details'}</p>
-        <dl>
-          <div><dt>{lang === 'zh-CN' ? '发布' : 'Published'}</dt><dd><time datetime={post.data.date.toISOString()}>{day(post.data.date)}</time></dd></div>
-          {post.data.updated && <div><dt>{lang === 'zh-CN' ? '更新' : 'Updated'}</dt><dd><time datetime={post.data.updated.toISOString()}>{day(post.data.updated)}</time></dd></div>}
-          {!projectDetail && post.data.categories.length > 0 && <div><dt>{lang === 'zh-CN' ? '分类' : 'Categories'}</dt><dd class="astro-terms">{post.data.categories.map((name) => <a href={termLink('categories', name)}>{domainLabel(name, lang)}</a>)}</dd></div>}
-          {!projectDetail && post.data.tags.length > 0 && <div><dt>{lang === 'zh-CN' ? '标签' : 'Tags'}</dt><dd class="astro-terms">{post.data.tags.map((name) => <a href={termLink('tags', name)}>{name}</a>)}</dd></div>}
-        </dl>
-      </div>
-    </aside>
-    {tocHeadings.length > 0 && <details class="astro-toc-mobile">
-      <summary>{lang === 'zh-CN' ? '文章目录' : 'Contents'}</summary>
-      <nav class="astro-toc" aria-label={lang === 'zh-CN' ? '文章目录' : 'Contents'}>
-        <ul>{tocHeadings.map((heading) => <li class={`depth-${heading.depth}`}><a href={`#${heading.slug}`}>{heading.text}</a></li>)}</ul>
-      </nav>
-    </details>}
-    <div class="astro-article-body"><div class="astro-prose"><Content /></div></div>
-  </article></> : post.id === 'about' ?
+<Shell lang={lang} title={post.data.title} noindex={post.id === 'notes' || post.id.startsWith('notes/')}>
+  {post.id === 'about' ?
     <div class="scenic-interior-wrap">
       <ScenicBanner scene="coast" label="ABOUT · THE MAKER" title={lang === 'zh-CN' ? '关于我' : 'About me'} subtitle={lang === 'zh-CN' ? '一个喜欢折腾的开发者，记录学习与创造。' : 'Learning, making, and enjoying the journey.'} />
       <section class="scenic-about-card">

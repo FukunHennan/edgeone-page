@@ -1,16 +1,11 @@
 <%
-const currentLanguage = Array.isArray(config.language) ? config.language[0] : config.language;
-const isZh = currentLanguage === 'zh-CN';
 const navItems = [
-  { id: 'home', zh: '首页', en: 'Home', path: '/', icon: 'fa-regular fa-house' },
-  { id: 'projects', zh: '项目', en: 'Projects', path: '/projects/', icon: 'fa-regular fa-folder-open' },
-  { id: 'experience', zh: '经历', en: 'Experience', path: '/experience/', icon: 'fa-regular fa-id-card' },
-  { id: 'resume', zh: '简历', en: 'Resume', path: '/resume/', icon: 'fa-regular fa-file-lines' },
-  { id: 'about', zh: '关于', en: 'About', path: '/about/', icon: 'fa-regular fa-user' }
+  { id: 'home', zh: '首页', path: '/', icon: 'fa-regular fa-house' },
+  { id: 'projects', zh: '项目', path: '/projects/', icon: 'fa-regular fa-folder-open' },
+  { id: 'experience', zh: '经历', path: '/experience/', icon: 'fa-regular fa-id-card' },
+  { id: 'resume', zh: '简历', path: '/resume/', icon: 'fa-regular fa-file-lines' },
+  { id: 'about', zh: '关于', path: '/about/', icon: 'fa-regular fa-user' }
 ];
-const targetLanguage = isZh ? 'en' : 'zh-CN';
-const languageHref = alternatePath || `/${targetLanguage}/`;
-const languageLabel = isZh ? 'Switch to English' : '切换到简体中文';
 function itemActive(item) {
   if (item.id === 'home') return is_home();
   return is_current(item.path);
@@ -34,7 +29,7 @@ function itemActive(item) {
           <% navItems.forEach(function(item) { %>
             <li class="navbar-item hub-nav-item">
               <a class="<%= itemActive(item) ? 'active' : '' %>" href="<%- url_for(item.path) %>">
-                <span><%= isZh ? item.zh : item.en %></span>
+                <span><%= item.zh %></span>
               </a>
             </li>
           <% }); %>
@@ -42,15 +37,13 @@ function itemActive(item) {
       </div>
 
       <div class="hub-nav-actions">
-        <a class="hub-language-link" href="<%= languageHref %>" lang="<%= targetLanguage %>" data-alternate-href="<%= languageHref %>" aria-label="<%= languageLabel %>" title="<%= languageLabel %>"><%= isZh ? 'EN' : '中' %></a>
         <a class="hub-github-link" href="https://github.com/FukunHennan/edgeone-page" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
           <i class="fa-brands fa-github" aria-hidden="true"></i>
         </a>
       </div>
 
       <div class="mobile hub-mobile-actions">
-        <a class="hub-language-link hub-language-link-mobile" href="<%= languageHref %>" lang="<%= targetLanguage %>" data-alternate-href="<%= languageHref %>" aria-label="<%= languageLabel %>" title="<%= languageLabel %>"><%= isZh ? 'EN' : '中' %></a>
-        <button class="icon-item navbar-bar" type="button" aria-controls="mobile-site-navigation" aria-expanded="false" aria-label="<%= isZh ? '菜单' : 'Menu' %>"><span class="navbar-bar-middle"></span></button>
+        <button class="icon-item navbar-bar" type="button" aria-controls="mobile-site-navigation" aria-expanded="false" aria-label="菜单"><span class="navbar-bar-middle"></span></button>
       </div>
     </div>
   </div>
@@ -64,7 +57,7 @@ function itemActive(item) {
       <% navItems.forEach(function(item) { %>
         <li class="drawer-navbar-item w-full">
           <a class="<%= itemActive(item) ? 'active' : '' %>" href="<%- url_for(item.path) %>">
-            <span><%= isZh ? item.zh : item.en %></span>
+            <span><%= item.zh %></span>
             <i class="<%= item.icon %> fa-fw"></i>
           </a>
         </li>

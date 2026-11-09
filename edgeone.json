@@ -26,23 +26,8 @@
       "statusCode": 301
     },
     {
-      "source": "/en-US",
-      "destination": "/en/",
-      "statusCode": 301
-    },
-    {
-      "source": "/en-US/*",
-      "destination": "/en/:splat",
-      "statusCode": 301
-    },
-    {
       "source": "/zh-CN/page/*",
       "destination": "/zh-CN/archives/",
-      "statusCode": 301
-    },
-    {
-      "source": "/en/page/*",
-      "destination": "/en/archives/",
       "statusCode": 301
     },
     {
@@ -51,28 +36,13 @@
       "statusCode": 301
     },
     {
-      "source": "/en/archives/page/*",
-      "destination": "/en/archives/",
-      "statusCode": 301
-    },
-    {
       "source": "/zh-CN/archives/2025/page/*",
       "destination": "/zh-CN/archives/2025/",
       "statusCode": 301
     },
     {
-      "source": "/en/archives/2025/page/*",
-      "destination": "/en/archives/2025/",
-      "statusCode": 301
-    },
-    {
       "source": "/zh-CN/archives/2026/page/*",
       "destination": "/zh-CN/archives/2026/",
-      "statusCode": 301
-    },
-    {
-      "source": "/en/archives/2026/page/*",
-      "destination": "/en/archives/2026/",
       "statusCode": 301
     }
   ],
@@ -188,19 +158,6 @@
     },
     {
       "source": "/zh-CN/manifest.webmanifest",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "no-cache"
-        }
-      ]
-    },
-    {
-      "source": "/en/manifest.webmanifest",
       "headers": [
         {
           "key": "Content-Type",

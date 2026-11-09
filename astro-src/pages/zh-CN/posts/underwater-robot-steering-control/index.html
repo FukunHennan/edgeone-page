@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN" class="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STM32F407 水下机器人航向控制系统：从硬件到上位机 · 稻田鼠</title><meta name="description" content="记录基于 STM32F407 的水下机器人航向舵机控制系统的设计取舍：为什么把 159 个参数统一到 Modbus RTU 并把寄存器表当契约、原始九轴数据为什么会把舵机抖坏、以及上位机为什么坚持浏览器直连。">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://edgeone.chenfukun.space/zh-CN/posts/underwater-robot-steering-control/"><link rel="alternate" hreflang="zh-CN" href="https://edgeone.chenfukun.space/zh-CN/posts/underwater-robot-steering-control/"><link rel="alternate" hreflang="x-default" href="https://edgeone.chenfukun.space/zh-CN/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="稻田鼠">
+<meta property="og:title" content="STM32F407 水下机器人航向控制系统：从硬件到上位机 · 稻田鼠"><meta property="og:description" content="记录基于 STM32F407 的水下机器人航向舵机控制系统的设计取舍：为什么把 159 个参数统一到 Modbus RTU 并把寄存器表当契约、原始九轴数据为什么会把舵机抖坏、以及上位机为什么坚持浏览器直连。">
+<meta property="og:url" content="https://edgeone.chenfukun.space/zh-CN/posts/underwater-robot-steering-control/"><meta property="og:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<meta property="og:image:width" content="1920"><meta property="og:image:height" content="1080"><meta property="og:image:alt" content="STM32F407 水下机器人航向控制系统：从硬件到上位机">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-05-09T09:00:00.000Z">
+<meta property="article:modified_time" content="2026-10-20T12:00:00.000Z">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="STM32F407 水下机器人航向控制系统：从硬件到上位机 · 稻田鼠"><meta name="twitter:description" content="记录基于 STM32F407 的水下机器人航向舵机控制系统的设计取舍：为什么把 159 个参数统一到 Modbus RTU 并把寄存器表当契约、原始九轴数据为什么会把舵机抖坏、以及上位机为什么坚持浏览器直连。"><meta name="twitter:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="/zh-CN/feed.xml">
+<link rel="manifest" href="/zh-CN/manifest.webmanifest"><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg">
+<script type="application/ld+json" data-edgeone-schema>{"@context":"https://schema.org","@type":"BlogPosting","headline":"STM32F407 水下机器人航向控制系统：从硬件到上位机","name":"STM32F407 水下机器人航向控制系统：从硬件到上位机","description":"记录基于 STM32F407 的水下机器人航向舵机控制系统的设计取舍：为什么把 159 个参数统一到 Modbus RTU 并把寄存器表当契约、原始九轴数据为什么会把舵机抖坏、以及上位机为什么坚持浏览器直连。","url":"https://edgeone.chenfukun.space/zh-CN/posts/underwater-robot-steering-control/","inLanguage":"zh-CN","author":{"@type":"Person","name":"陈富坤"},"datePublished":"2026-05-09T09:00:00.000Z","dateModified":"2026-10-20T12:00:00.000Z"}</script>
+<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) { window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true }); }</script>
+<style>/* 基础样式：来自用户 LAB 文章模板 */
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#16263a;--muted:#59687d;--line:#d9e3ed;--accent:#087f7b;--ok:#087f7b;--warn:#bd6e17;--soft:#e8f5f2;--grid:#eaf0f4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,-apple-system,'Microsoft YaHei','PingFang SC',sans-serif}
+.container{max-width:970px;margin:0 auto;padding:0 24px}.top{border-bottom:1px solid #dde6ef;background:#fff}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:62px}.brand{font-size:14px;font-weight:750;letter-spacing:.06em;color:var(--accent)}.small{font-size:13px;color:var(--muted)}.hero{padding:72px 0 45px;background:radial-gradient(circle at 92% 25%,#dcefeb,transparent 42%),linear-gradient(180deg,#fff,#f6f8fb)}.eyebrow{font-size:13px;color:var(--accent);font-weight:750;letter-spacing:.14em}.hero h1{font-size:clamp(30px,4vw,52px);line-height:1.28;letter-spacing:-.05em;margin:14px 0 20px;font-weight:800}.lead{font-size:18px;color:#506176;max-width:760px}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.chip{border:1px solid #c7dfdd;background:#f1faf8;color:#0a746e;padding:3px 11px;border-radius:99px;font-size:12px}
+.article{padding:2px 0 70px}.section{background:var(--paper);padding:34px 40px;margin:24px 0;border:1px solid #e1e8ef;border-radius:18px;box-shadow:0 5px 22px #15233106}h2{margin:0 0 18px;line-height:1.4;font-size:25px;letter-spacing:-.04em}h3{font-size:18px;margin:25px 0 12px}p{margin:12px 0}b,strong{font-weight:700}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}em{font-style:normal;color:var(--accent);font-weight:700}
+.photo{max-width:640px;margin:25px auto 8px;display:block;border:1px solid var(--line);border-radius:10px;width:100%}.caption{text-align:center;color:var(--muted);font-size:13px;margin:10px 0 0}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #e8eef2}th{background:#f1f6f8;color:#435a67;font-weight:700}tr:last-child td{border-bottom:none}.logic tr[data-r]{cursor:pointer;transition:background .15s}.logic tr[data-r]:hover{background:#f0f8f7}.logic tr.active{background:#dff3ee}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.note{border-left:3px solid var(--accent);padding:12px 17px;background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0;margin:18px 0}.warning{border-left-color:#d49b49;background:#fff8eb}.diagram{border:1px solid var(--line);border-radius:14px;background:#fcfefe;padding:15px;margin:20px 0}.diagram svg{width:100%;height:auto;display:block;max-height:340px}.interactive{border-radius:16px;border:1px solid #cbe4e0;background:linear-gradient(155deg,#f3fbfa,#fff);padding:24px;margin-top:20px}.switches{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.switches label{display:flex;gap:8px;align-items:center;font-weight:700}.selector{display:flex;border:1px solid #c6d9d9;border-radius:9px;padding:3px;background:#fff}.selector button{border:0;background:transparent;padding:7px 14px;cursor:pointer;border-radius:6px;font-weight:700;color:#677782}.selector button[aria-pressed="true"]{background:#087f7b;color:#fff}.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.readout{background:#fff;padding:16px;border:1px solid #d8e5e5;border-radius:10px}.readout strong{display:block;font-size:28px;line-height:1.2;color:var(--accent)}.readout strong.low{color:#c07522}.state{font-weight:700;margin:12px 0 4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step{border:1px solid #d9e3ed;padding:14px;border-radius:10px;background:#fcfdff}.step span{color:var(--accent);font-size:11px;font-weight:700}.step strong{display:block;margin:7px 0 4px}.step p{font-size:13px;color:var(--muted);margin:0;line-height:1.65}.step button{margin-top:12px;border:1px solid #a9d4cd;background:#effaf8;color:#087f7b;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700}.figure-text{font-family:system-ui,-apple-system,'Microsoft YaHei',sans-serif;fill:#3b556a;font-size:15px}.source{font-size:13px;color:var(--muted);padding-left:19px}.source li{padding:3px 0}.footer{padding:24px 0 50px;border-top:1px solid #e0e6ec;color:var(--muted);font-size:13px}.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:700;color:#087f7b;background:#d9eee9}.footlink{overflow-wrap:anywhere}
+@media(max-width:650px){.section{padding:22px 17px;margin:15px 0;border-radius:12px}.hero{padding:46px 0 28px}.lead{font-size:16px}.steps{grid-template-columns:repeat(2,1fr)}h2{font-size:21px}.diagram{padding:4px}.container{padding:0 14px}}
+
+/* 追加到 LAB 文章模板之后的站点附加样式（由 build-static-posts 合并进 static-post.css） */
+:root{color-scheme:light only}
+.nav-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:650;text-decoration:none}
+.nav-links a:hover{color:var(--accent);text-decoration:underline}
+.brand{text-decoration:none}
+.footer .pill{border:1px solid var(--line);padding:2px 9px;border-radius:99px;font-size:11px;color:var(--muted);margin:0 4px}
+.footer a{color:var(--accent)}
+.footer a:hover{text-decoration:underline}
+.lab-post-body{overflow-wrap:anywhere;line-height:1.85}
+.lab-post-body h1{font-size:clamp(24px,3vw,30px);line-height:1.35;letter-spacing:-.03em;margin:0 0 .8em;font-weight:800}
+.lab-post-body h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin:1.6em 0 .55em;scroll-margin-top:96px;color:var(--ink)}
+.lab-post-body h2:first-child{margin-top:0}
+.lab-post-body h3{font-size:clamp(17px,1.6vw,19px);font-weight:700;line-height:1.45;margin:1.5em 0 .45em;scroll-margin-top:96px}
+.lab-post-body h4{font-size:16px;font-weight:700;margin:1.4em 0 .4em}
+.lab-post-body p{margin:12px 0}
+.lab-post-body ul,.lab-post-body ol{padding-left:1.5em;margin:12px 0}
+.lab-post-body li{margin:6px 0}
+.lab-post-body li::marker{color:var(--accent)}
+.lab-post-body pre{overflow:auto;padding:20px;border-radius:12px;font-size:13.5px;line-height:1.7;margin:16px 0;background:#16263a}
+.lab-post-body pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.lab-post-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.lab-post-body img{max-width:100%;height:auto;display:block;margin:16px auto;border:1px solid var(--line);border-radius:10px}
+.lab-post-body table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:16px 0}
+.lab-post-body td,.lab-post-body th{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.lab-post-body th{background:#f1f6f8;font-weight:700;color:#435a67}
+.lab-post-body td:first-child,.lab-post-body th:first-child{min-width:6em;word-break:keep-all}
+.lab-post-body blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0}
+.lab-post-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.lab-post-body a{color:var(--accent);text-decoration:none}
+.lab-post-body a:hover{text-decoration:underline}
+.lab-post-body strong{font-weight:700}
+.lab-post-body .astro-code{margin:16px 0;border-radius:12px;overflow:auto}
+.lab-post-body .astro-code pre{margin:0}
+@media(max-width:650px){.nav-links{gap:10px}.nav-links a{font-size:12px}}
+</style></head><body>
+<header class="top"><div class="container nav">
+  <a class="brand" href="/zh-CN/">稻田鼠 · LAB NOTES</a>
+  <nav class="nav-links" aria-label="页面导航">
+    <a href="/zh-CN/archives/">文章列表</a>
+    <a class="scenic-project-back" href="/zh-CN/projects/">← 返回项目</a>
+    <a href="https://github.com/FukunHennan" rel="noopener me">GitHub</a>
+  </nav>
+</div></header>
+<div class="hero lab-post-hero"><div class="container">
+  <p class="eyebrow">嵌入式 · 2026-05-09</p>
+  <h1>STM32F407 水下机器人航向控制系统：从硬件到上位机</h1>
+  <p class="lead">记录基于 STM32F407 的水下机器人航向舵机控制系统的设计取舍：为什么把 159 个参数统一到 Modbus RTU 并把寄存器表当契约、原始九轴数据为什么会把舵机抖坏、以及上位机为什么坚持浏览器直连。</p>
+  <div class="chips"><span class="chip">嵌入式</span></div>
+</div></div>
+<main class="container article lab-post">
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><p>水下机器人最难的不是单个传感器，也不是单段代码，而是把姿态、舵机、Modbus、卡尔曼滤波和上位机界面接成一套能下水的系统。每一部分单独跑都通，一到联调，问题全出在接口上。</p>
+<p>本文按这个思路展开：先说三个花了最多时间的判断，再讲系统结构。仓库：<a href="https://github.com/FukunHennan/underwater-robot-steering-control-system">FukunHennan/underwater-robot-steering-control-system</a>。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="三个判断">三个判断</h2>
+<p>先给结论，后面逐条展开：</p>
+<ol>
+<li><strong>协议层不要自己发明。</strong> 159 个参数如果各写一套协议，两边实现迟早对不上。统一到 Modbus RTU，并把寄存器表当契约：任何变更都先改表、再改代码、最后改界面。</li>
+<li><strong>原始数据不能直接喂舵机。</strong> 九轴原始值噪声大，直接参与补偿会让舵机持续高频抖动。卡尔曼滤波是必需品，而且 Q/R 必须在运行时可调——水流一变，固定参数就不够用。</li>
+<li><strong>上位机不要装软件。</strong> Web Serial API 让浏览器直连串口，现场调试不用带驱动、不用装后台进程。</li>
+</ol></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="硬件与接口">硬件与接口</h2>
+<p>主控 STM32F407VET6（168 MHz Cortex-M4），三路串口各司其职：</p>
+<table>
+<thead>
+<tr>
+<th>接口</th>
+<th>用途</th>
+<th>波特率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>USART1</td>
+<td>调试串口</td>
+<td>115200</td>
+</tr>
+<tr>
+<td>USART2</td>
+<td>Modbus RTU，下位机为从站 0x01</td>
+<td>9600</td>
+</tr>
+<tr>
+<td>USART3</td>
+<td>ATK-MS901M 九轴传感器</td>
+<td>—</td>
+</tr>
+</tbody>
+</table>
+<p>引脚分配、电源域与隔离方式记录在仓库 <code>pinout.md</code>，硬件迭代时直接复用。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="modbus-rtu把寄存器表当契约">Modbus RTU：把寄存器表当契约</h2>
+<p>水下机器人的参数数量很容易失控：姿态、PWM、ADC、气压、磁力计、GPIO、红外、卡尔曼参数、舵机补偿，加起来 159 个。</p>
+<p>我最初担心的不是参数多，而是<strong>协议表会失控</strong>——每个参数单独定义一套协议，表会越写越长，下位机和上位机各实现一遍，联调时对不上号变成常态。所以协议层不自己发明，直接用 Modbus RTU，下位机做从站。</p>
+<p>159 个寄存器（0x0000–0x00E8）按功能分 13 组：</p>
+<table>
+<thead>
+<tr>
+<th>功能</th>
+<th>地址区间</th>
+<th>功能</th>
+<th>地址区间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>系统</td>
+<td>0x0000–0x0005</td>
+<td>ADC 校准</td>
+<td>0x0056–0x006B</td>
+</tr>
+<tr>
+<td>姿态</td>
+<td>0x0010–0x001B</td>
+<td>GPIO</td>
+<td>0x006C–0x0077</td>
+</tr>
+<tr>
+<td>PWM</td>
+<td>0x0020–0x0029</td>
+<td>红外</td>
+<td>0x0078–0x007F</td>
+</tr>
+<tr>
+<td>ADC</td>
+<td>0x0030–0x0039</td>
+<td>卡尔曼</td>
+<td>0x0086–0x009E</td>
+</tr>
+<tr>
+<td>PWM 频率</td>
+<td>0x0040–0x0047</td>
+<td>舵机补偿</td>
+<td>0x00A0–0x00DF</td>
+</tr>
+<tr>
+<td>气压计</td>
+<td>0x0048–0x004D</td>
+<td>补偿使能</td>
+<td>0x00E0–0x00E7</td>
+</tr>
+<tr>
+<td>磁力计</td>
+<td>0x004E–0x0055</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>分组本身不是重点，重点是<strong>这张表成了整个系统的契约</strong>：下位机和上位机都按它解析数据。任何参数变更必须先改映射表，再改代码，最后改界面。</p>
+<p>顺序反过来就会出问题，而且这种错位极难定位——寄存器读出来是个错值，但两边代码各自都“写得对”，你会在界面和固件之间来回找，最后发现契约早就变了。把表当契约，等于把这个排查成本提前消掉了。</p>
+<p>完整映射表（每个地址的功能、数据类型、单位、读写方向）见仓库 <code>modbus-register-map.md</code>。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="原始数据不能直接用抖动是怎么来的">原始数据不能直接用：抖动是怎么来的</h2>
+<p>ATK-MS901M 通过 USART3 输出九轴数据（陀螺仪、加速度、磁力计、气压计）。这批原始值噪声不小，直接拿去算舵机补偿，结果是舵机在静止状态下持续高频抖动——不是偶尔跳一下，是持续抖，因为补偿把噪声当成了姿态变化在追。</p>
+<p>所以下位机跑六通道卡尔曼滤波。但真正花时间的不是滤波器本身，是<strong>参数怎么调</strong>：</p>
+<ul>
+<li>水流条件不同，噪声特性就不同，一套固定参数没法兼顾静水和有流环境；</li>
+<li>早期调一次参数要重启下位机，一个来回太久；</li>
+<li>因此卡尔曼参数放 RAM，通过 Modbus 实时写入，上位机上拖一下就能立刻看波形变化；</li>
+<li>调到满意再发“保存到 Flash”，重启后保留上次校准值。</li>
+</ul>
+<p><strong>实时可调 + 可持久化</strong>这套链路，比滤波器本身更决定系统能不能用：滤波器是标准件，调参路径才是工程量。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="舵机补偿公式只占一行">舵机补偿：公式只占一行</h2>
+<p>8 路舵机各通道独立补偿：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="plaintext"><code><span class="line"><span>output = BASE + kRoll × roll + kPitch × pitch + kYaw × yaw</span></span></code></pre>
+<p>公式不难，难的是系数怎么定，以及调试时怎么不被干扰：</p>
+<ol>
+<li><strong>BASE 按质心选。</strong> 初始 BASE 要结合机器人的质心位置给，否则静止时就带恒定偏置。</li>
+<li><strong>k 值分两步标定。</strong> 静水中标定，动水中验证——只在静水调好的参数，有流时响应对不上。</li>
+<li><strong>必须能单通道关掉。</strong> 补偿使能标志在 0x00E0–0x00E7，每通道独立开关。8 路同时开着时，你分不清是哪一路的 k 值不对；一路一路排除，问题才定位得下来。</li>
+</ol>
+<p>BASE 与 k 值存 Flash，可按通道通过 Modbus 调整。标定步骤见仓库 <code>servo-compensation.md</code>。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="上位机为什么坚持浏览器直连">上位机：为什么坚持浏览器直连</h2>
+<p>上位机是 React 18 + Vite + TypeScript + TailwindCSS，五个页面覆盖系统、传感器、舵机、外设、高级功能。</p>
+<p>选 Web Serial API 而不是「装驱动 + 后台进程 + 桌面程序」，理由很实际：<strong>现场调试不该先花时间装环境</strong>。浏览器直连串口，打开页面就能用，换台电脑也一样。教学场景下这一点更明显——机房的机器你没法保证装了同一套驱动。</p>
+<p>几个细节是被真实问题逼出来的：</p>
+<ul>
+<li><strong>自动重连</strong>：串口短时断线很常见，不做重连界面就直接报错。现在是最多 10 次指数退避。</li>
+<li><strong>Mock 模式</strong>：URL 加 <code>?mock</code> 就能在没有硬件时预览，用于演示和无设备时的界面调试。</li>
+<li><strong>3D 姿态 + 实时波形</strong>：Three.js 显示姿态，图表显示陀螺仪、加速度、磁力计时序，调参时能直接看到滤波效果。</li>
+<li><strong>ADC 校准面板</strong>：每通道增益与偏移可调，结果写回 Flash。</li>
+</ul></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="文档不能等做完再写">文档不能等做完再写</h2>
+<p>项目按工程节点分目录：<code>01-硬件设计/</code>、<code>02-下位机固件/</code>、<code>03-上位机软件/</code>、<code>Wiki/</code>。固件按 BSP 驱动组织（ATK_MS901M、Modbus、Kalman、PWM、ADC、Calib、GPIO），上位机按页面、组件、状态管理分层。</p>
+<p>Wiki 是开发过程中同步维护的，不是事后补的：<code>system-architecture.md</code> 放整体架构与流程，<code>entities/</code> 放模块级文档。</p>
+<p>寄存器表、引脚分配、补偿标定方法这类内容，写代码的当下顺手记最便宜，事后回忆成本很高。这套“开发即文档”是后面维护和带人都能省时间的地方。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="还没做的部分">还没做的部分</h2>
+<p>已实现：姿态采集、舵机补偿、ADC 校准、红外收发。</p>
+<p>待实现：PID 姿态闭环、深度传感器与深度控制、ESP32 Wi-Fi 替代有线、水下摄像头、自主导航。这些会逐步补进 Wiki 和寄存器表，让协议层和文档跟着架构一起演进，而不是等架构定型再倒推文档。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="结束语">结束语</h2>
+<p>这套系统里最值得复用的不是某个模块，是三条约定：<strong>寄存器表当契约</strong>、<strong>滤波参数运行时可调</strong>、<strong>上位机不装软件</strong>。换到别的嵌入式项目，这三条同样成立。</p>
+<p>代码与 Wiki 都在仓库里，可以当类似项目的起点。</p></div></section>
+</main>
+<footer class="container footer">稻田鼠 · LAB NOTES <span class="pill">可离线使用</span> &nbsp;|&nbsp; <a href="https://github.com/FukunHennan/edgeone-page">GitHub</a></footer>
+</body></html>

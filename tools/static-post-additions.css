@@ -1,0 +1,35 @@
+/* 追加到 LAB 文章模板之后的站点附加样式（由 build-static-posts 合并进 static-post.css） */
+:root{color-scheme:light only}
+.nav-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-links a{color:var(--muted);font-size:13px;font-weight:650;text-decoration:none}
+.nav-links a:hover{color:var(--accent);text-decoration:underline}
+.brand{text-decoration:none}
+.footer .pill{border:1px solid var(--line);padding:2px 9px;border-radius:99px;font-size:11px;color:var(--muted);margin:0 4px}
+.footer a{color:var(--accent)}
+.footer a:hover{text-decoration:underline}
+.lab-post-body{overflow-wrap:anywhere;line-height:1.85}
+.lab-post-body h1{font-size:clamp(24px,3vw,30px);line-height:1.35;letter-spacing:-.03em;margin:0 0 .8em;font-weight:800}
+.lab-post-body h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin:1.6em 0 .55em;scroll-margin-top:96px;color:var(--ink)}
+.lab-post-body h2:first-child{margin-top:0}
+.lab-post-body h3{font-size:clamp(17px,1.6vw,19px);font-weight:700;line-height:1.45;margin:1.5em 0 .45em;scroll-margin-top:96px}
+.lab-post-body h4{font-size:16px;font-weight:700;margin:1.4em 0 .4em}
+.lab-post-body p{margin:12px 0}
+.lab-post-body ul,.lab-post-body ol{padding-left:1.5em;margin:12px 0}
+.lab-post-body li{margin:6px 0}
+.lab-post-body li::marker{color:var(--accent)}
+.lab-post-body pre{overflow:auto;padding:20px;border-radius:12px;font-size:13.5px;line-height:1.7;margin:16px 0;background:#16263a}
+.lab-post-body pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.lab-post-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.lab-post-body img{max-width:100%;height:auto;display:block;margin:16px auto;border:1px solid var(--line);border-radius:10px}
+.lab-post-body table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:16px 0}
+.lab-post-body td,.lab-post-body th{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.lab-post-body th{background:#f1f6f8;font-weight:700;color:#435a67}
+.lab-post-body td:first-child,.lab-post-body th:first-child{min-width:6em;word-break:keep-all}
+.lab-post-body blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0}
+.lab-post-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.lab-post-body a{color:var(--accent);text-decoration:none}
+.lab-post-body a:hover{text-decoration:underline}
+.lab-post-body strong{font-weight:700}
+.lab-post-body .astro-code{margin:16px 0;border-radius:12px;overflow:auto}
+.lab-post-body .astro-code pre{margin:0}
+@media(max-width:650px){.nav-links{gap:10px}.nav-links a{font-size:12px}}

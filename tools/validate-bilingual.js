@@ -88,6 +88,7 @@ function validateBilingualContent() {
       }
     }
 
+    if (pair["zh-CN"]?.published) publishedPairs += 1;
     if (pair["zh-CN"] && pair.en) {
       if (pair["zh-CN"].data.translation_key !== pair.en.data.translation_key) {
         errors.push(`${relativePath}: translation_key values do not match`);
@@ -106,7 +107,6 @@ function validateBilingualContent() {
       if (pair["zh-CN"].published !== pair.en.published) {
         errors.push(`${relativePath}: both language versions must share the same publication state`);
       }
-      if (pair["zh-CN"].published && pair.en.published) publishedPairs += 1;
     }
   }
 

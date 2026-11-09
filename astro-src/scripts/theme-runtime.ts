@@ -119,16 +119,6 @@ function initPage() {
       menuButton?.focus();
     }
   }, { signal });
-  document.querySelectorAll<HTMLAnchorElement>('.hub-language-link').forEach((link) => {
-    link.addEventListener('click', (event) => {
-      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-      event.preventDefault();
-      const target = new URL(link.href);
-      target.search = location.search;
-      target.hash = location.hash;
-      location.assign(target.href);
-    }, { signal });
-  });
 
 }
 initPage();
@@ -139,6 +129,7 @@ if (globals.Swup && !location.pathname.includes('/resume/')) {
   if (!reduced && globals.SwupSlideTheme) plugins.push(new globals.SwupSlideTheme({ mainElement: '.main-content-body' }));
   // Pages with page-specific CSS chunks must load fully: Swup only swaps #swup
   // and never updates <head> stylesheets, leaving them unstyled.
-  const swup = new globals.Swup({ containers: ['#swup'], plugins, linkSelector: 'a[href]:not([href*="/resume/"]):not([href*="/agent/"]):not([href*="/dashboard/"]):not([lang])' }) as SwupInstance;
+  // /posts/ 文章是自带 <style> 的独立 HTML，同样必须整页加载。
+  const swup = new globals.Swup({ containers: ['#swup'], plugins, linkSelector: 'a[href]:not([href*="/resume/"]):not([href*="/agent/"]):not([href*="/dashboard/"]):not([href*="/posts/"]):not([lang])' }) as SwupInstance;
   swup.hooks.before('content:replace', () => { pageScope.abort(); document.documentElement.classList.remove('astro-menu-open'); }); swup.hooks.on('page:view', initPage);
 }

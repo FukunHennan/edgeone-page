@@ -9,7 +9,7 @@ const { walkFiles } = require("./output-hash");
 
 const root = path.resolve(__dirname, "..", "astro-dist");
 const origin = "https://edgeone.chenfukun.space";
-const languages = ["zh-CN", "en"];
+const languages = ["zh-CN"];
 const projectUrlsFor = (lang) => new Set(yaml.load(fs.readFileSync(
   path.join(__dirname, "..", "data", lang, "projects.yml"), "utf8",
 )).map((project) => new URL(project.post, `${origin}/${lang}/projects/`).pathname));

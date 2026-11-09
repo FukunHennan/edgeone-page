@@ -5,12 +5,10 @@ import '../styles/calm-home.css';
 import { themePartial } from '../lib/theme';
 import type { Language } from '../lib/content';
 import AgentLaunch from '../components/AgentLaunch.astro';
-interface Props { lang: Language; title: string; description?: string; alternate?: string; published?: Date; updated?: Date; activeSection?: 'projects'; noindex?: boolean }
-const { lang, title, description = '', alternate, published, updated, activeSection, noindex = false } = Astro.props;
+interface Props { lang: Language; title: string; description?: string; published?: Date; updated?: Date; activeSection?: 'projects'; noindex?: boolean }
+const { lang, title, description = '', published, updated, activeSection, noindex = false } = Astro.props;
 const home = Astro.url.pathname === `/${lang}/`;
 const scenicInterior = !home;
-const other = lang === 'zh-CN' ? 'en' : 'zh-CN';
-const otherPath = alternate || Astro.url.pathname.replace(`/${lang}/`, `/${other}/`);
 const canonical = new URL(Astro.url.pathname, Astro.site);
 // --- OG / Twitter 分享卡片（P0 修复）---
 const ogImage = new URL('/scenes/gallery-mountain.webp', Astro.site).href;
@@ -38,7 +36,7 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
     <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title} · 稻田鼠</title><meta name="description" content={description} />
     <meta name="robots" content={noindex ? 'noindex,follow' : 'index,follow'} />
-    <link rel="canonical" href={canonical} /><link rel="alternate" hreflang={lang} href={canonical} /><link rel="alternate" hreflang={other} href={new URL(otherPath, Astro.site)} /><link rel="alternate" hreflang="x-default" href={new URL(`/zh-CN/`, Astro.site)} />
+    <link rel="canonical" href={canonical} /><link rel="alternate" hreflang={lang} href={canonical} /><link rel="alternate" hreflang="x-default" href={new URL(`/zh-CN/`, Astro.site)} />
     <meta property="og:type" content={isArticle ? 'article' : 'website'} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={shareTitle} />
@@ -75,7 +73,7 @@ const fonts = lang === 'zh-CN' ? '"PingFang SC","Microsoft YaHei","Noto Sans CJK
   <body>
     <a class="astro-skip" href="#main">{lang === 'zh-CN' ? '跳至内容' : 'Skip to content'}</a>
     <div id="swup" class:list={['page-container', { 'home-mimo-page': home, 'scenic-inner': scenicInterior }]}>
-      <Fragment set:html={themePartial('navbar', lang, Astro.url.pathname, [], otherPath, activeSection)} />
+      <Fragment set:html={themePartial('navbar', lang, Astro.url.pathname, [], activeSection)} />
       {!Astro.url.pathname.startsWith(`/${lang}/agent/`) && <AgentLaunch lang={lang} />}
       <slot name="hero" />
       <div class="main-content-container flex flex-col justify-between min-h-dvh"><main id="main" class="main-content-body transition-fade-up"><div class="main-content"><slot />

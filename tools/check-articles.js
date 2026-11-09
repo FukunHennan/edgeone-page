@@ -5,7 +5,7 @@ const { collectLanguagePosts } = require("./content-records");
 const errors = [];
 const counts = new Map();
 
-for (const language of ["zh-CN", "en"]) {
+for (const language of ["zh-CN"]) {
   for (const record of collectLanguagePosts(language)) {
     const type = String(record.data.content_type || "").trim();
     const domain = String(record.data.domain || "").trim();

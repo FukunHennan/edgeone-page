@@ -5,7 +5,7 @@ const path = require("path");
 const yaml = require("js-yaml");
 
 const PROJECT_ROOT = path.resolve(__dirname, "..");
-const LANGUAGE_CODES = ["zh-CN", "en"];
+const LANGUAGE_CODES = ["zh-CN"];
 
 function walkMarkdown(directory) {
   if (!fs.existsSync(directory)) return [];
