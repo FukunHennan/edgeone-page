@@ -21,7 +21,7 @@
   right:12px!important;
   padding:0 clamp(15px,3vw,52px)!important;
   height:70px!important;
-  background:rgba(22,38,43,.57)!important;
+  background:rgba(22,38,43,.78)!important;
   border:0!important;
   border-radius:14px 14px 0 0;
   -webkit-backdrop-filter:blur(18px);
@@ -40,7 +40,7 @@
 .scenic-inner .personal-hub-navbar .hub-brand-copy small,
 .scenic-inner .personal-hub-navbar .hub-nav-item a,
 .scenic-inner .personal-hub-navbar .hub-nav-icon,
-.scenic-inner .personal-hub-navbar :is(.hub-github-link,.hub-language-link){color:#fff!important}
+.scenic-inner .personal-hub-navbar .hub-github-link{color:#fff!important;text-shadow:0 1px 2px rgba(0,0,0,.5)}
 .scenic-inner .personal-hub-navbar .hub-nav-item a.active,
 .scenic-inner .personal-hub-navbar .hub-nav-item a:hover{color:#dfedcd!important}
 .scenic-inner .personal-hub-navbar :is(.navbar-bar,.hub-mobile-actions .search){color:#fff!important}
@@ -167,6 +167,7 @@
 .scenic-inner .workspace-layout{grid-template-columns:190px minmax(0,1fr);margin:0;padding:22px 24px 28px;gap:24px;background:var(--scenic-white);border:1px solid var(--scenic-outline);border-top:0;border-radius:0 0 15px 15px}
 .scenic-inner .workspace-sidebar{padding:0 16px 0 0;border-right:1px solid var(--scenic-outline);border-radius:0;background:transparent;align-self:stretch}
 .scenic-inner .workspace-sidebar>b,.scenic-inner .workspace-content-head small{color:var(--scenic-muted)!important}
+.scenic-inner .workspace-sidebar .sidebar-group-label{padding-top:14px;color:var(--scenic-muted);opacity:.75}
 .scenic-inner .workspace-sidebar button{min-height:43px;color:var(--scenic-muted);font-size:13px}
 .scenic-inner .workspace-sidebar button.active,.scenic-inner .workspace-sidebar button:hover{
   background:#e8f0e8;color:#375a48;
@@ -358,6 +359,7 @@
   .scenic-archive-body{padding:16px 18px 24px}
   .scenic-inner .workspace-sidebar{display:flex;flex-direction:row;align-items:center;gap:5px;overflow-x:auto;max-width:100%;padding:0 0 10px;border-right:0;border-bottom:1px solid var(--scenic-outline);border-radius:0;flex-wrap:nowrap}
   .scenic-inner .workspace-sidebar>b,.scenic-inner .workspace-side-card{display:none}
+  .scenic-inner .workspace-sidebar .sidebar-group-label{flex:none;white-space:nowrap;padding:0 4px;align-self:center;font-size:9px}
   .scenic-inner .workspace-sidebar button{white-space:nowrap;min-height:42px;flex:none}
   .scenic-filter-group{align-items:start;flex-direction:column;gap:7px}
   .scenic-filter-chips{flex-wrap:wrap;max-width:100%}
