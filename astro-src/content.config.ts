@@ -29,9 +29,8 @@ const postSchema = z.object({
 const projectSchema = z.object({
   order: z.number().default(0),
   key: z.string(),
-  status: z.string(),
+  status: z.enum(['active', 'lab']),
   category: z.array(domainSchema),
-  label: z.string(),
   title: z.string(),
   description: z.string(),
   cover: z.string().optional(),

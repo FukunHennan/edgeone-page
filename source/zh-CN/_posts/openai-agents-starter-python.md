@@ -13,7 +13,7 @@ categories:
 tags: []
 ---
 
-把一个对话式 AI 上线到生产环境，挑战不在于"能否调通 API"，而在于流式输出、工具调用、会话记忆和异常取消能否在一个工程结构里协同。本文记录用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的实践。仓库地址：[FukunHennan/openai-agents-starter-python](https://github.com/FukunHennan/openai-agents-starter-python)。
+把一个对话式 AI 上线到生产环境，挑战不在于"能否调通 API"，而在于流式输出、工具调用、会话记忆和异常取消能否在一个工程结构里协同。本文记录用 OpenAI Agents SDK 在 EdgeOne Makers 上搭建流式对话 Agent 的实践。原仓库已下线（FukunHennan/openai-agents-starter-python）。
 
 ## 项目定位
 

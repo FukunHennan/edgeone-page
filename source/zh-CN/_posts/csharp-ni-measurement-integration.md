@@ -13,7 +13,7 @@ categories:
 tags: []
 ---
 
-National Instruments 的测量硬件在工业测试和实验室场景里覆盖很广，但官方驱动以 C/C++ 和 LabVIEW 为主，C# 上位机接入时需要处理互操作、线程模型和采样同步等细节。本文记录一次用 C# 集成 NI 测量硬件的过程，整理为可复用的封装思路。仓库地址：[FukunHennan/CSharp-NI](https://github.com/FukunHennan/CSharp-NI)。
+National Instruments 的测量硬件在工业测试和实验室场景里覆盖很广，但官方驱动以 C/C++ 和 LabVIEW 为主，C# 上位机接入时需要处理互操作、线程模型和采样同步等细节。本文记录一次用 C# 集成 NI 测量硬件的过程，整理为可复用的封装思路。原仓库已下线（FukunHennan/CSharp-NI）。
 
 ## 选型与驱动准备
 
