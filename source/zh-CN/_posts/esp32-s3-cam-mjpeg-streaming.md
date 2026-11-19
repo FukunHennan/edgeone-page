@@ -1,13 +1,13 @@
 ---
 title: ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面
 description: 在 ESP32-S3-CAM（Ai-Thinker，OV2640）上用 ESPHome 的 MJPEG Web Server 实现低延时视频直推，配合树莓派上的 Python 标准库转发服务解决单客户端限制，接入自绘智能家居面板与 Home Assistant。含完整固件配置、卡顿根因（modem sleep 与单缓冲反压）、转发加固三件套、断流自愈与实测延时数据。
-date: 2026-11-19 19:00:00
-updated: 2026-11-19 23:30:00
+date: 2026-11-19 08:00:00
+updated: 2026-11-19 14:00:00
 lang: zh-CN
 translation_key: esp32-s3-cam-mjpeg-streaming
 content_type: article
 published: true
-tags: []
+tags: [esp32, home-assistant, esphome, raspberry-pi, mjpeg]
 ---
 
 把一块几十块钱的 ESP32-S3-CAM 接进 Home Assistant 之后，大多数人得到的第一个体验是：画面能动，但每次刷新要等一两秒，像在看监控抓拍而不是实时视频。本文记录我把这条链路从"抓拍模式"改造成"MJPEG 直推 + 服务端分发"的完整过程：为什么 ESP32-S3 只能走 MJPEG、固件怎么配、单客户端限制怎么绕、流卡顿的两个隐蔽根因怎么查、浏览器端有哪些反直觉的坑，以及每一步的实测数据。整套方案已部署上线，夜景 12.8fps、亮景 13.4fps，服务端帧龄 ≤0.08 秒。

@@ -1,0 +1,438 @@
+<!doctype html>
+<html lang="zh-CN" class="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面 · 稻田鼠</title><meta name="description" content="在 ESP32-S3-CAM（Ai-Thinker，OV2640）上用 ESPHome 的 MJPEG Web Server 实现低延时视频直推，配合树莓派上的 Python 标准库转发服务解决单客户端限制，接入自绘智能家居面板与 Home Assistant。含完整固件配置、卡顿根因（modem sleep 与单缓冲反压）、转发加固三件套、断流自愈与实测延时数据。">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://edgeone.chenfukun.space/zh-CN/posts/esp32-s3-cam-mjpeg-streaming/"><link rel="alternate" hreflang="zh-CN" href="https://edgeone.chenfukun.space/zh-CN/posts/esp32-s3-cam-mjpeg-streaming/"><link rel="alternate" hreflang="x-default" href="https://edgeone.chenfukun.space/zh-CN/">
+<meta property="og:type" content="article"><meta property="og:site_name" content="稻田鼠">
+<meta property="og:title" content="ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面 · 稻田鼠"><meta property="og:description" content="在 ESP32-S3-CAM（Ai-Thinker，OV2640）上用 ESPHome 的 MJPEG Web Server 实现低延时视频直推，配合树莓派上的 Python 标准库转发服务解决单客户端限制，接入自绘智能家居面板与 Home Assistant。含完整固件配置、卡顿根因（modem sleep 与单缓冲反压）、转发加固三件套、断流自愈与实测延时数据。">
+<meta property="og:url" content="https://edgeone.chenfukun.space/zh-CN/posts/esp32-s3-cam-mjpeg-streaming/"><meta property="og:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<meta property="og:image:width" content="1920"><meta property="og:image:height" content="1080"><meta property="og:image:alt" content="ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-11-19T08:00:00.000Z">
+<meta property="article:modified_time" content="2026-11-19T14:00:00.000Z">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面 · 稻田鼠"><meta name="twitter:description" content="在 ESP32-S3-CAM（Ai-Thinker，OV2640）上用 ESPHome 的 MJPEG Web Server 实现低延时视频直推，配合树莓派上的 Python 标准库转发服务解决单客户端限制，接入自绘智能家居面板与 Home Assistant。含完整固件配置、卡顿根因（modem sleep 与单缓冲反压）、转发加固三件套、断流自愈与实测延时数据。"><meta name="twitter:image" content="https://edgeone.chenfukun.space/scenes/gallery-mountain.webp">
+<link rel="alternate" type="application/rss+xml" title="RSS" href="/zh-CN/feed.xml">
+<link rel="manifest" href="/zh-CN/manifest.webmanifest"><link rel="icon" href="/icons/稻田鼠.jpg" type="image/jpeg">
+<script type="application/ld+json" data-edgeone-schema>{"@context":"https://schema.org","@type":"BlogPosting","headline":"ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面","name":"ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面","description":"在 ESP32-S3-CAM（Ai-Thinker，OV2640）上用 ESPHome 的 MJPEG Web Server 实现低延时视频直推，配合树莓派上的 Python 标准库转发服务解决单客户端限制，接入自绘智能家居面板与 Home Assistant。含完整固件配置、卡顿根因（modem sleep 与单缓冲反压）、转发加固三件套、断流自愈与实测延时数据。","url":"https://edgeone.chenfukun.space/zh-CN/posts/esp32-s3-cam-mjpeg-streaming/","inLanguage":"zh-CN","author":{"@type":"Person","name":"陈富坤"},"datePublished":"2026-11-19T08:00:00.000Z","dateModified":"2026-11-19T14:00:00.000Z"}</script>
+<script>if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) { window.addEventListener('load', () => navigator.serviceWorker.register('/service-worker.js', { scope: '/', updateViaCache: 'none' }).catch(console.error), { once: true }); }</script>
+<style>/* 基础样式：来自用户 LAB 文章模板 */
+:root{--bg:#f6f8fb;--paper:#fff;--ink:#16263a;--muted:#59687d;--line:#d9e3ed;--accent:#087f7b;--ok:#087f7b;--warn:#bd6e17;--soft:#e8f5f2;--grid:#eaf0f4}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;padding-top:80px;background:var(--bg);color:var(--ink);font:16px/1.85 system-ui,-apple-system,'Microsoft YaHei','PingFang SC',sans-serif}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}.top{position:fixed;top:10px;left:12px;right:12px;z-index:60;background:rgba(22,38,43,.96);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);border-radius:14px 14px 0 0;border-bottom:0}.nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:70px}.brand{font-size:14px;font-weight:750;letter-spacing:.06em;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}.small{font-size:13px;color:var(--muted)}.hero{padding:48px 0 45px;background:radial-gradient(circle at 92% 25%,#dcefeb,transparent 42%),linear-gradient(180deg,#fff,#f6f8fb)}.eyebrow{font-size:13px;color:var(--accent);font-weight:750;letter-spacing:.14em}.hero h1{font-size:clamp(30px,4vw,52px);line-height:1.28;letter-spacing:-.05em;margin:14px 0 20px;font-weight:800}.lead{font-size:18px;color:#506176;max-width:760px}.chips{display:flex;gap:9px;flex-wrap:wrap;margin-top:24px}.chip{border:1px solid #c7dfdd;background:#f1faf8;color:#0a746e;padding:3px 11px;border-radius:99px;font-size:12px}
+.article{padding:2px 0 70px}.section{background:var(--paper);padding:34px 40px;margin:24px 0;border:1px solid #e1e8ef;border-radius:18px;box-shadow:0 5px 22px #15233106}h2{margin:0 0 18px;line-height:1.4;font-size:25px;letter-spacing:-.04em}h3{font-size:18px;margin:25px 0 12px}p{margin:12px 0}b,strong{font-weight:700}a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}em{font-style:normal;color:var(--accent);font-weight:700}
+.photo{max-width:640px;margin:25px auto 8px;display:block;border:1px solid var(--line);border-radius:10px;width:100%}.caption{text-align:center;color:var(--muted);font-size:13px;margin:10px 0 0}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:12px;margin:18px 0}table{border-collapse:collapse;width:100%;font-size:14px;min-width:540px}th,td{padding:12px 14px;text-align:left;border-bottom:1px solid #e8eef2}th{background:#f1f6f8;color:#435a67;font-weight:700}tr:last-child td{border-bottom:none}.logic tr[data-r]{cursor:pointer;transition:background .15s}.logic tr[data-r]:hover{background:#f0f8f7}.logic tr.active{background:#dff3ee}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.note{border-left:3px solid var(--accent);padding:12px 17px;background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0;margin:18px 0}.warning{border-left-color:#d49b49;background:#fff8eb}.diagram{border:1px solid var(--line);border-radius:14px;background:#fcfefe;padding:15px;margin:20px 0}.diagram svg{width:100%;height:auto;display:block;max-height:340px}.interactive{border-radius:16px;border:1px solid #cbe4e0;background:linear-gradient(155deg,#f3fbfa,#fff);padding:24px;margin-top:20px}.switches{display:flex;gap:22px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.switches label{display:flex;gap:8px;align-items:center;font-weight:700}.selector{display:flex;border:1px solid #c6d9d9;border-radius:9px;padding:3px;background:#fff}.selector button{border:0;background:transparent;padding:7px 14px;cursor:pointer;border-radius:6px;font-weight:700;color:#677782}.selector button[aria-pressed="true"]{background:#087f7b;color:#fff}.readouts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.readout{background:#fff;padding:16px;border:1px solid #d8e5e5;border-radius:10px}.readout strong{display:block;font-size:28px;line-height:1.2;color:var(--accent)}.readout strong.low{color:#c07522}.state{font-weight:700;margin:12px 0 4px}.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:20px 0}.step{border:1px solid #d9e3ed;padding:14px;border-radius:10px;background:#fcfdff}.step span{color:var(--accent);font-size:11px;font-weight:700}.step strong{display:block;margin:7px 0 4px}.step p{font-size:13px;color:var(--muted);margin:0;line-height:1.65}.step button{margin-top:12px;border:1px solid #a9d4cd;background:#effaf8;color:#087f7b;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700}.figure-text{font-family:system-ui,-apple-system,'Microsoft YaHei',sans-serif;fill:#3b556a;font-size:15px}.source{font-size:13px;color:var(--muted);padding-left:19px}.source li{padding:3px 0}.footer{padding:24px 0 50px;border-top:1px solid #e0e6ec;color:var(--muted);font-size:13px}.pill{display:inline-block;padding:1px 8px;border-radius:10px;font-size:12px;font-weight:700;color:#087f7b;background:#d9eee9}.footlink{overflow-wrap:anywhere}
+@media(max-width:650px){.section{padding:22px 17px;margin:15px 0;border-radius:12px}.hero{padding:46px 0 28px}.lead{font-size:16px}.steps{grid-template-columns:repeat(2,1fr)}h2{font-size:21px}.diagram{padding:4px}.container{padding:0 14px}}
+
+/* 追加到 LAB 文章模板之后的站点附加样式（由 build-static-posts 合并进 static-post.css） */
+:root{color-scheme:light only}
+.nav-links{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.nav-links a{color:#e8eef4;font-size:13px;font-weight:650;text-decoration:none;text-shadow:0 1px 2px rgba(0,0,0,.45)}
+.nav-links a:hover{color:#dfedcd;text-decoration:underline}
+.brand{text-decoration:none}
+.footer .pill{border:1px solid var(--line);padding:2px 9px;border-radius:99px;font-size:11px;color:var(--muted);margin:0 4px}
+.footer a{color:var(--accent)}
+.footer a:hover{text-decoration:underline}
+.lab-post-body{overflow-wrap:anywhere;line-height:1.85}
+.lab-post-body h1{font-size:clamp(24px,3vw,30px);line-height:1.35;letter-spacing:-.03em;margin:0 0 .8em;font-weight:800}
+.lab-post-body h2{font-size:clamp(20px,2.2vw,24px);font-weight:750;line-height:1.35;letter-spacing:-.015em;margin:1.6em 0 .55em;scroll-margin-top:96px;color:var(--ink)}
+.lab-post-body h2:first-child{margin-top:0}
+.lab-post-body h3{font-size:clamp(17px,1.6vw,19px);font-weight:700;line-height:1.45;margin:1.5em 0 .45em;scroll-margin-top:96px}
+.lab-post-body h4{font-size:16px;font-weight:700;margin:1.4em 0 .4em}
+.lab-post-body p{margin:12px 0}
+.lab-post-body ul,.lab-post-body ol{padding-left:1.5em;margin:12px 0}
+.lab-post-body li{margin:6px 0}
+.lab-post-body li::marker{color:var(--accent)}
+.lab-post-body pre{overflow:auto;padding:20px;border-radius:12px;font-size:13.5px;line-height:1.7;margin:16px 0;background:#16263a}
+.lab-post-body pre code{background:none;padding:0;font-size:inherit;color:inherit}
+.lab-post-body :not(pre)>code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#f3f6f9;padding:2px 6px;border-radius:5px;font-size:.92em}
+.lab-post-body img{max-width:100%;height:auto;display:block;margin:16px auto;border:1px solid var(--line);border-radius:10px}
+.lab-post-body table{display:block;max-width:100%;overflow:auto;border-collapse:collapse;font-size:14px;margin:16px 0}
+.lab-post-body td,.lab-post-body th{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.lab-post-body th{background:#f1f6f8;font-weight:700;color:#435a67}
+.lab-post-body td:first-child,.lab-post-body th:first-child{min-width:6em;word-break:keep-all}
+.lab-post-body blockquote{margin:16px 0;padding:10px 18px;border-left:3px solid var(--accent);background:#f0f9f7;color:#46616a;border-radius:0 9px 9px 0}
+.lab-post-body hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.lab-post-body a{color:var(--accent);text-decoration:none}
+.lab-post-body a:hover{text-decoration:underline}
+.lab-post-body strong{font-weight:700}
+.lab-post-body .astro-code{margin:16px 0;border-radius:12px;overflow:auto}
+.lab-post-body .astro-code pre{margin:0}
+@media(max-width:650px){.nav-links{gap:10px}.nav-links a{font-size:12px}.top{top:8px;left:8px;right:8px}.nav{min-height:60px}body{padding-top:74px}}
+</style></head><body>
+<header class="top"><div class="container nav">
+  <a class="brand" href="/zh-CN/">稻田鼠 · LAB NOTES</a>
+  <nav class="nav-links" aria-label="页面导航">
+    <a href="/zh-CN/tags/">标签索引</a>
+    
+    <a href="https://github.com/FukunHennan" rel="noopener me">GitHub</a>
+  </nav>
+</div></header>
+<div class="hero lab-post-hero"><div class="container">
+  <p class="eyebrow">2026-11-19</p>
+  <h1>ESP32-S3-CAM + Home Assistant 视频推流实战：从 3 秒抓拍到 0.3 秒实时画面</h1>
+  <p class="lead">在 ESP32-S3-CAM（Ai-Thinker，OV2640）上用 ESPHome 的 MJPEG Web Server 实现低延时视频直推，配合树莓派上的 Python 标准库转发服务解决单客户端限制，接入自绘智能家居面板与 Home Assistant。含完整固件配置、卡顿根因（modem sleep 与单缓冲反压）、转发加固三件套、断流自愈与实测延时数据。</p>
+  <div class="chips"><span class="chip">esp32</span><span class="chip">home-assistant</span><span class="chip">esphome</span><span class="chip">raspberry-pi</span><span class="chip">mjpeg</span></div>
+</div></div>
+<main class="container article lab-post">
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><p>把一块几十块钱的 ESP32-S3-CAM 接进 Home Assistant 之后，大多数人得到的第一个体验是：画面能动，但每次刷新要等一两秒，像在看监控抓拍而不是实时视频。本文记录我把这条链路从“抓拍模式”改造成“MJPEG 直推 + 服务端分发”的完整过程：为什么 ESP32-S3 只能走 MJPEG、固件怎么配、单客户端限制怎么绕、流卡顿的两个隐蔽根因怎么查、浏览器端有哪些反直觉的坑，以及每一步的实测数据。整套方案已部署上线，夜景 12.8fps、亮景 13.4fps，服务端帧龄 ≤0.08 秒。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="一问题ha-默认摄像头为什么慢">一、问题：HA 默认摄像头为什么慢</h2>
+<p>我的链路是：ESP32-S3-CAM（ESPHome 固件）→ HA 的 ESPHome 集成 → 自绘面板通过 HA 的 <code>camera_proxy</code> 接口取图。在树莓派上对 <code>GET /api/camera_proxy/camera.s3_cam</code> 实测：</p>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>实测值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>单帧耗时</td>
+<td><strong>0.24 ~ 2.98 秒</strong></td>
+</tr>
+<tr>
+<td>空闲时设备帧率</td>
+<td>0.1 fps（<code>idle_framerate</code> 休眠）</td>
+</tr>
+<tr>
+<td>HA 实体 <code>supported_features</code></td>
+<td>0（无流能力）</td>
+</tr>
+</tbody>
+</table>
+<p>慢的根因有三层：</p>
+<ol>
+<li><strong>设备在睡觉</strong>。ESPHome 的 <code>esp32_camera</code> 默认 <code>idle_framerate: 0.1fps</code>，没人看时几乎停帧，每次请求要先唤醒传感器、重新出图。</li>
+<li><strong>按需单帧模型</strong>。ESPHome 原生 API 的摄像头是“请求一帧给一帧”，不是持续流；HA 的 <code>camera_proxy</code> 每次都要走完整条请求链。</li>
+<li><strong>没有流能力</strong>。<code>supported_features=0</code> 意味着 HA 的 WebRTC/HLS 转发在这个实体上根本不可用——不是配置问题，是设备端没有流可转。</li>
+</ol>
+<p>结论：在“请求-响应”模型里优化缓存只能治标，要治本必须让设备<strong>主动持续出流</strong>。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="二先认清硬件事实esp32-s3-没有-h264">二、先认清硬件事实：ESP32-S3 没有 H.264</h2>
+<p>选方案前先把芯片能力摆清楚，这一步能省掉大量无效尝试：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>ESP32-S3 可行性</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RTSP / H.264</td>
+<td>❌</td>
+<td>S3 <strong>没有硬件 H.264 编码器</strong>，软编码在 640x480 下帧率惨不忍睹</td>
+</tr>
+<tr>
+<td>WebRTC / HLS（HA 转发）</td>
+<td>❌</td>
+<td>依赖上游有流；ESPHome 摄像头实体无流能力</td>
+</tr>
+<tr>
+<td><strong>MJPEG over HTTP</strong></td>
+<td>✅</td>
+<td>OV2640 传感器<strong>硬件输出 JPEG</strong>，ESP32 只做搬运，这是硬件下限</td>
+</tr>
+<tr>
+<td>升级 ESP32-P4</td>
+<td>✅（换硬件）</td>
+<td>P4 带硬件 H.264 编码器，才是 WebRTC 的正解</td>
+</tr>
+</tbody>
+</table>
+<p>MJPEG 的本质是“一个 HTTP 长连接里连续发 JPEG”，服务端 <code>Content-Type: multipart/x-mixed-replace</code>，浏览器 <code>&lt;img&gt;</code> 原生支持。640x480 @ 15fps 下帧间隔约 67ms，加上曝光、JPEG 搬运、WiFi 传输与解码，<strong>端到端延时预期 0.2~0.4 秒</strong>——比抓拍模式快一个数量级，且不需要任何转码。</p>
+<p>代价也要说清楚：MJPEG 没有帧间压缩，带宽约为同画质 H.264 的 5<del>10 倍（640x480 q12 约 2</del>5 Mbps，视画面复杂度），无音频，只适合局域网。家庭监控场景这些都可以接受。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="三固件侧esphome-一个组件搞定含防卡顿配置">三、固件侧：ESPHome 一个组件搞定（含防卡顿配置）</h2>
+<p>ESPHome 自带 <code>esp32_camera_web_server</code> 组件，两种模式：<code>snapshot</code>（单帧）和 <code>stream</code>（持续 MJPEG）。我们要后者。下面是<strong>最终上线版</strong>配置——注意 <code>power_save_mode</code>、<code>frame_buffer_count</code>、<code>agc_gain_ceiling</code> 三处，它们是后来排查流卡顿才补上的，缺一个都会卡（第五节详述）：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#85E89D">esphome</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">esp32-s3-cam</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">esp32</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  board</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">esp32-s3-devkitc-1</span></span>
+<span class="line"><span style="color:#85E89D">  framework</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    type</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">arduino</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">psram</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  mode</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">octal</span><span style="color:#6A737D">        # S3-CAM 的 PSRAM 是 octal，配错会出图异常</span></span>
+<span class="line"><span style="color:#85E89D">  speed</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">80MHz</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">api</span><span style="color:#E1E4E8">:                 </span><span style="color:#6A737D"># 保留：HA 集成、OTA、快照都靠它</span></span>
+<span class="line"><span style="color:#85E89D">ota</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">platform</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">esphome</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">wifi</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  ssid</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!secret</span><span style="color:#9ECBFF"> wifi_ssid</span></span>
+<span class="line"><span style="color:#85E89D">  password</span><span style="color:#E1E4E8">: </span><span style="color:#F97583">!secret</span><span style="color:#9ECBFF"> wifi_password</span></span>
+<span class="line"><span style="color:#85E89D">  power_save_mode</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">none</span><span style="color:#6A737D">   # 关键！默认 modem sleep 会让推流忽快忽慢</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">i2c</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">camera_i2c</span></span>
+<span class="line"><span style="color:#85E89D">    sda</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">GPIO4</span></span>
+<span class="line"><span style="color:#85E89D">    scl</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">GPIO5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#85E89D">esp32_camera</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">  name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"S3 摄像头"</span></span>
+<span class="line"><span style="color:#85E89D">  external_clock</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#85E89D">    pin</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">GPIO15</span></span>
+<span class="line"><span style="color:#85E89D">    frequency</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">20MHz</span></span>
+<span class="line"><span style="color:#85E89D">  i2c_id</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">camera_i2c</span></span>
+<span class="line"><span style="color:#85E89D">  data_pins</span><span style="color:#E1E4E8">: [</span><span style="color:#9ECBFF">GPIO11</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO9</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO8</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO10</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO12</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO18</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO17</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">GPIO16</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#85E89D">  vsync_pin</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">GPIO6</span></span>
+<span class="line"><span style="color:#85E89D">  href_pin</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">GPIO7</span></span>
+<span class="line"><span style="color:#85E89D">  pixel_clock_pin</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">GPIO13</span></span>
+<span class="line"><span style="color:#85E89D">  resolution</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">640x480</span></span>
+<span class="line"><span style="color:#85E89D">  frame_buffer_count</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">2</span><span style="color:#6A737D">   # 关键！单缓冲会因发送反压丢帧卡顿</span></span>
+<span class="line"><span style="color:#85E89D">  max_framerate</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">15 fps</span></span>
+<span class="line"><span style="color:#85E89D">  idle_framerate</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">0.1 fps</span><span style="color:#6A737D">   # 没人看流时继续省电休眠</span></span>
+<span class="line"><span style="color:#85E89D">  jpeg_quality</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">12</span></span>
+<span class="line"><span style="color:#85E89D">  agc_gain_ceiling</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">16x</span><span style="color:#6A737D">   # 限制自动增益，夜景不至于曝光拉满掉帧率</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 关键新增：MJPEG 直推口</span></span>
+<span class="line"><span style="color:#85E89D">esp32_camera_web_server</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">port</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">8080</span></span>
+<span class="line"><span style="color:#85E89D">    mode</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">stream</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 流冻死时远程自救（web_server 单连接卡死只能重启恢复）</span></span>
+<span class="line"><span style="color:#85E89D">button</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">  - </span><span style="color:#85E89D">platform</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">restart</span></span>
+<span class="line"><span style="color:#85E89D">    name</span><span style="color:#E1E4E8">: </span><span style="color:#9ECBFF">"S3 摄像头重启"</span></span></code></pre>
+<p>三个容易踩的点：</p>
+<ul>
+<li><strong>引脚表</strong>：ESPHome 官方文档没有 Ai-Thinker S3-CAM 的示例，用 <strong>S3-EYE 族</strong>引脚即可（上面这份已实测出图）。错引脚只会 probe 失败，OTA 可修，无变砖风险。</li>
+<li><strong>流激活时相机跑满帧率</strong>：<code>stream</code> 模式有客户端连接时相机会按 <code>max_framerate</code> 持续工作，功耗和发热明显上升。所以后面的转发服务做了“无人观看自动断流”，让设备平时继续休眠。</li>
+<li><strong>重启按钮不是装饰</strong>：ESP32 的 httpd 有一个罕见的僵尸态（第五节），一旦发生只有重启能救。把它暴露成 HA 按钮，转发服务就能自动按（第七节）。</li>
+</ul>
+<p>烧录不需要串口：在树莓派的 ESPHome 容器里编译，然后 OTA 无线推送：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> exec</span><span style="color:#9ECBFF"> esphome</span><span style="color:#9ECBFF"> esphome</span><span style="color:#9ECBFF"> compile</span><span style="color:#9ECBFF"> /config/esp32_s3_cam.yaml</span></span>
+<span class="line"><span style="color:#B392F0">docker</span><span style="color:#9ECBFF"> exec</span><span style="color:#9ECBFF"> esphome</span><span style="color:#9ECBFF"> esphome</span><span style="color:#9ECBFF"> upload</span><span style="color:#9ECBFF"> /config/esp32_s3_cam.yaml</span><span style="color:#79B8FF"> --device</span><span style="color:#9ECBFF"> esp32-s3-cam.local</span></span></code></pre>
+<p>刷完 <code>curl http://esp32-s3-cam.local:8080/</code> 能看到 multipart 头即成功。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="四单客户端限制服务端拉一路分发-n-路">四、单客户端限制：服务端拉一路、分发 N 路</h2>
+<p><code>esp32_camera_web_server</code> 的 <code>stream</code> 模式<strong>同一时间只接受一个客户端</strong>。浏览器直接连设备的话，开第二个标签页就黑屏，HA 想同时取流也会被挤掉。</p>
+<p>正解是在树莓派上加一层转发：后端只拉一路设备流，按 multipart 边界切出 JPEG，缓存<strong>最新一帧</strong>，再向任意多个浏览器分发。架构：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="text"><code><span class="line"><span>ESP32-S3-CAM :8080 ──(1 路 MJPEG)──&gt; 树莓派 grabber 线程</span></span>
+<span class="line"><span>                                        │ 按 boundary 切帧，只存最新帧</span></span>
+<span class="line"><span>                                        ▼</span></span>
+<span class="line"><span>                                   /api/camstream ──(N 路 MJPEG)──&gt; 浏览器 1..N</span></span>
+<span class="line"><span>                                   /api/camstat   ──(JSON 心跳)───&gt; 前端存活判定</span></span>
+<span class="line"><span>                                   /api/cam       ──(单帧 JPEG)───&gt; 快照回退</span></span></code></pre>
+<p>全部 Python 标准库实现，无第三方依赖。拉流切帧核心（最终版，含 linger 与 read1，原因见第五节）：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#79B8FF">CAM_STREAM</span><span style="color:#F97583"> =</span><span style="color:#9ECBFF"> "http://esp32-s3-cam.local:8080/"</span></span>
+<span class="line"><span style="color:#79B8FF">CAM_LINGER</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 30.0</span><span style="color:#6A737D">   # 最后一个浏览器离开后继续拉流 30s 再断上游</span></span>
+<span class="line"><span style="color:#E1E4E8">_camlock </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> threading.Lock()</span></span>
+<span class="line"><span style="color:#E1E4E8">_cam </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> {</span><span style="color:#9ECBFF">"frame"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">None</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"ts"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.0</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"seq"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"clients"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">        "worker"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">None</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"last_client"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">0.0</span><span style="color:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> _cam_grabber</span><span style="color:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#9ECBFF">    """从 ESP32 MJPEG 口拉流，按 multipart 边界切帧，只保留最新一帧。"""</span></span>
+<span class="line"><span style="color:#F97583">    while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"clients"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> and</span><span style="color:#E1E4E8"> time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"last_client"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> CAM_LINGER</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                _cam[</span><span style="color:#9ECBFF">"worker"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> None</span><span style="color:#6A737D">      # 无人观看超过 linger：断上游，设备回休眠</span></span>
+<span class="line"><span style="color:#F97583">                return</span></span>
+<span class="line"><span style="color:#F97583">        try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            r </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> urllib.request.urlopen(</span><span style="color:#79B8FF">CAM_STREAM</span><span style="color:#E1E4E8">, </span><span style="color:#FFAB70">timeout</span><span style="color:#F97583">=</span><span style="color:#79B8FF">10</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            ctype </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> r.headers.get(</span><span style="color:#9ECBFF">"Content-Type"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">""</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            boundary </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"><span style="color:#F97583">            for</span><span style="color:#E1E4E8"> part </span><span style="color:#F97583">in</span><span style="color:#E1E4E8"> ctype.split(</span><span style="color:#9ECBFF">";"</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">                part </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> part.strip()</span></span>
+<span class="line"><span style="color:#F97583">                if</span><span style="color:#E1E4E8"> part.startswith(</span><span style="color:#9ECBFF">"boundary="</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#E1E4E8">                    boundary </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> part[</span><span style="color:#79B8FF">9</span><span style="color:#E1E4E8">:].strip(</span><span style="color:#9ECBFF">'"'</span><span style="color:#E1E4E8">).encode()</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> boundary </span><span style="color:#F97583">is</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                boundary </span><span style="color:#F97583">=</span><span style="color:#F97583"> b</span><span style="color:#9ECBFF">"123456789000000000000987654321"</span><span style="color:#6A737D">  # ESPHome 默认</span></span>
+<span class="line"><span style="color:#E1E4E8">            delim </span><span style="color:#F97583">=</span><span style="color:#F97583"> b</span><span style="color:#9ECBFF">"--"</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> boundary</span></span>
+<span class="line"><span style="color:#E1E4E8">            buf </span><span style="color:#F97583">=</span><span style="color:#F97583"> b</span><span style="color:#9ECBFF">""</span></span>
+<span class="line"><span style="color:#F97583">            while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"clients"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> and</span><span style="color:#E1E4E8"> time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"last_client"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> CAM_LINGER</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                        r.close(); _cam[</span><span style="color:#9ECBFF">"worker"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">; </span><span style="color:#F97583">return</span></span>
+<span class="line"><span style="color:#6A737D">                # read1：有多少读多少。read(N) 会阻塞到攒满 N 字节，</span></span>
+<span class="line"><span style="color:#6A737D">                # 小帧场景下凭空增加数秒延时</span></span>
+<span class="line"><span style="color:#E1E4E8">                chunk </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> r.read1(</span><span style="color:#79B8FF">65536</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">if</span><span style="color:#79B8FF"> hasattr</span><span style="color:#E1E4E8">(r, </span><span style="color:#9ECBFF">"read1"</span><span style="color:#E1E4E8">) </span><span style="color:#F97583">else</span><span style="color:#E1E4E8"> r.read(</span><span style="color:#79B8FF">16384</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">                if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> chunk:</span></span>
+<span class="line"><span style="color:#F97583">                    break</span></span>
+<span class="line"><span style="color:#E1E4E8">                buf </span><span style="color:#F97583">+=</span><span style="color:#E1E4E8"> chunk</span></span>
+<span class="line"><span style="color:#F97583">                while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">                    i </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> buf.find(delim)</span></span>
+<span class="line"><span style="color:#E1E4E8">                    j </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> buf.find(delim, i </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(delim)) </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">&gt;=</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#E1E4E8"> i </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> or</span><span style="color:#E1E4E8"> j </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                        break</span></span>
+<span class="line"><span style="color:#E1E4E8">                    part </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> buf[i </span><span style="color:#F97583">+</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(delim):j]</span></span>
+<span class="line"><span style="color:#E1E4E8">                    buf </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> buf[j:]</span></span>
+<span class="line"><span style="color:#E1E4E8">                    k </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> part.find(</span><span style="color:#F97583">b</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\xff\xd8</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)   </span><span style="color:#6A737D"># JPEG SOI 魔数</span></span>
+<span class="line"><span style="color:#F97583">                    if</span><span style="color:#E1E4E8"> k </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                        continue</span></span>
+<span class="line"><span style="color:#F97583">                    with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#E1E4E8">                        _cam[</span><span style="color:#9ECBFF">"frame"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> part[k:].rstrip(</span><span style="color:#F97583">b</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\r\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">                        _cam[</span><span style="color:#9ECBFF">"ts"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()</span></span>
+<span class="line"><span style="color:#E1E4E8">                        _cam[</span><span style="color:#9ECBFF">"seq"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#F97583">                if</span><span style="color:#79B8FF"> len</span><span style="color:#E1E4E8">(buf) </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 4</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1024</span><span style="color:#F97583"> *</span><span style="color:#79B8FF"> 1024</span><span style="color:#E1E4E8">:   </span><span style="color:#6A737D"># 防异常流撑爆内存</span></span>
+<span class="line"><span style="color:#E1E4E8">                    buf </span><span style="color:#F97583">=</span><span style="color:#F97583"> b</span><span style="color:#9ECBFF">""</span></span>
+<span class="line"><span style="color:#F97583">        except</span><span style="color:#79B8FF"> Exception</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            time.sleep(</span><span style="color:#79B8FF">2</span><span style="color:#E1E4E8">)                        </span><span style="color:#6A737D"># 设备重启/断网，2s 后重连</span></span></code></pre>
+<p>分发端给每个浏览器开一个循环，只在 <code>seq</code> 变化时写帧（40ms 一拍，约 25fps 上限，足够跟上设备的 15fps）。注意<strong>12 秒宽限</strong>：缓存帧过期不能立即断开，否则冷启动/设备恢复期间前端会陷入重试风暴：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> cam_stream</span><span style="color:#E1E4E8">(self):</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#E1E4E8">        _cam[</span><span style="color:#9ECBFF">"clients"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">+=</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">        _cam[</span><span style="color:#9ECBFF">"last_client"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"worker"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">is</span><span style="color:#79B8FF"> None</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#E1E4E8">            _cam[</span><span style="color:#9ECBFF">"worker"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> threading.Thread(</span><span style="color:#FFAB70">target</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">_cam_grabber, </span><span style="color:#FFAB70">daemon</span><span style="color:#F97583">=</span><span style="color:#79B8FF">True</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#E1E4E8">            _cam[</span><span style="color:#9ECBFF">"worker"</span><span style="color:#E1E4E8">].start()</span></span>
+<span class="line"><span style="color:#F97583">    try</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.send_response(</span><span style="color:#79B8FF">200</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.send_header(</span><span style="color:#9ECBFF">"Content-Type"</span><span style="color:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#9ECBFF">                         "multipart/x-mixed-replace; boundary=hapanel"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.send_header(</span><span style="color:#9ECBFF">"Cache-Control"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"no-store"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">        self</span><span style="color:#E1E4E8">.end_headers()</span></span>
+<span class="line"><span style="color:#E1E4E8">        last </span><span style="color:#F97583">=</span><span style="color:#F97583"> -</span><span style="color:#79B8FF">1</span></span>
+<span class="line"><span style="color:#E1E4E8">        connected </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()</span></span>
+<span class="line"><span style="color:#F97583">        while</span><span style="color:#79B8FF"> True</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#E1E4E8">                seq, frame, fts </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"seq"</span><span style="color:#E1E4E8">], _cam[</span><span style="color:#9ECBFF">"frame"</span><span style="color:#E1E4E8">], _cam[</span><span style="color:#9ECBFF">"ts"</span><span style="color:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#E1E4E8">            fresh </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> frame </span><span style="color:#F97583">is</span><span style="color:#F97583"> not</span><span style="color:#79B8FF"> None</span><span style="color:#F97583"> and</span><span style="color:#E1E4E8"> time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> fts </span><span style="color:#F97583">&lt;=</span><span style="color:#79B8FF"> 12</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#F97583"> not</span><span style="color:#E1E4E8"> fresh </span><span style="color:#F97583">and</span><span style="color:#E1E4E8"> time.time() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> connected </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 12</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">                return</span><span style="color:#6A737D">                # 宽限期满仍无新鲜帧：断开让前端回退快照</span></span>
+<span class="line"><span style="color:#F97583">            if</span><span style="color:#E1E4E8"> fresh </span><span style="color:#F97583">and</span><span style="color:#E1E4E8"> seq </span><span style="color:#F97583">!=</span><span style="color:#E1E4E8"> last:</span></span>
+<span class="line"><span style="color:#79B8FF">                self</span><span style="color:#E1E4E8">.wfile.write(</span></span>
+<span class="line"><span style="color:#F97583">                    b</span><span style="color:#9ECBFF">"--hapanel</span><span style="color:#79B8FF">\r\n</span><span style="color:#9ECBFF">Content-Type: image/jpeg</span><span style="color:#79B8FF">\r\n</span><span style="color:#9ECBFF">Content-Length: "</span></span>
+<span class="line"><span style="color:#F97583">                    +</span><span style="color:#79B8FF"> str</span><span style="color:#E1E4E8">(</span><span style="color:#79B8FF">len</span><span style="color:#E1E4E8">(frame)).encode() </span><span style="color:#F97583">+</span><span style="color:#F97583"> b</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\r\n\r\n</span><span style="color:#9ECBFF">"</span><span style="color:#F97583"> +</span><span style="color:#E1E4E8"> frame </span><span style="color:#F97583">+</span><span style="color:#F97583"> b</span><span style="color:#9ECBFF">"</span><span style="color:#79B8FF">\r\n</span><span style="color:#9ECBFF">"</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#79B8FF">                self</span><span style="color:#E1E4E8">.wfile.flush()</span></span>
+<span class="line"><span style="color:#E1E4E8">                last </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> seq</span></span>
+<span class="line"><span style="color:#E1E4E8">            time.sleep(</span><span style="color:#79B8FF">0.04</span><span style="color:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#F97583">    except</span><span style="color:#E1E4E8"> (</span><span style="color:#79B8FF">BrokenPipeError</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">ConnectionResetError</span><span style="color:#E1E4E8">, </span><span style="color:#79B8FF">OSError</span><span style="color:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#F97583">        pass</span></span>
+<span class="line"><span style="color:#F97583">    finally</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">        with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#E1E4E8">            _cam[</span><span style="color:#9ECBFF">"clients"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">-=</span><span style="color:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#E1E4E8">            _cam[</span><span style="color:#9ECBFF">"last_client"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()   </span><span style="color:#6A737D"># linger 计时起点</span></span></code></pre>
+<p>这层转发带来三个额外好处：</p>
+<ol>
+<li><strong>设备只被一个客户端打扰</strong>，HA 的 ESPHome 原生摄像头（快照、自动化触发）不受影响；</li>
+<li><strong>无人观看自动断上游</strong>（30s linger 后），设备回到 0.1fps 休眠，功耗发热与改造前一致；</li>
+<li>快照接口 <code>/api/cam</code> 可以优先返回流里 3 秒内的新鲜帧，回退路径也变快了。</li>
+</ol></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="五流卡顿的最后一公里modem-sleep-与单缓冲反压">五、流卡顿的最后一公里：modem sleep 与单缓冲反压</h2>
+<p>第一版上线后画面能动，但<strong>忽快忽慢，偶尔冻结十几秒</strong>，而单帧抓拍始终正常。排查走了三步，每一步都反直觉：</p>
+<p><strong>第一步：先怀疑网络，用 ping 定量。</strong> 设备 WiFi 信号满格，但 <code>ping esp32-s3-cam.local</code> 出现秒级延迟尖峰——信号好却延迟大，这是 ESP32 <strong>WiFi modem sleep</strong> 的典型指纹：默认省电模式下射频周期性休眠，TCP 发送要等唤醒窗口。修复一行：<code>wifi: power_save_mode: none</code>。摄像头是常供电设备，省电模式纯属负优化。</p>
+<p><strong>第二步：设备直连稳定、经转发就卡 → 查采集侧。</strong> 用脚本直连设备 8080 口拉流计数，帧率稳定；问题出在 grabber。两个根因：</p>
+<ul>
+<li><code>esp32_camera</code> 默认 <code>frame_buffer_count: 1</code>：发送稍慢，采集就没有空缓冲可写，<strong>整帧丢弃</strong>，表现为帧率抖动。改 2 后采集与发送解耦。</li>
+<li>Python 的 <code>r.read(16384)</code> 会<strong>阻塞到攒满 16384 字节</strong>才返回。夜景 JPEG 一帧才几 KB，攒满要等好几帧——凭空引入数秒延时。改 <code>r.read1(65536)</code>（有多少读多少）后帧龄立刻降到 0.1s 以内。</li>
+</ul>
+<p><strong>第三步：间歇性停顿的元凶——httpd 僵尸窗口。</strong> 修完前两步仍偶发 2~4 分钟的完全冻结。交叉对比发现规律：<strong>每次冻结都发生在浏览器刷新/切页之后</strong>。ESP32 的 <code>esp32_camera_web_server</code> 是单连接 httpd，客户端中途断开后它会进入“卡在发送”的僵尸态，期间拒绝一切新连接，只能等超时或重启。而转发服务旧逻辑“缓存帧过期→立即 EOF→前端自动重试”恰好制造了重连 churn，反复触发这个僵尸窗口。</p>
+<p>修复就是第四节的<strong>加固三件套</strong>：</p>
+<ol>
+<li><strong>12s 宽限</strong>：分发端缓存帧过期不立即 EOF，给 grabber 冷启动/设备恢复留时间；</li>
+<li><strong>30s linger</strong>：最后一个浏览器离开后 grabber 继续拉流 30s（丢弃帧），刷新/切页不再触发设备连接的 stop/start；</li>
+<li><strong>read1 读流</strong>：消灭攒缓冲延时。</li>
+</ol>
+<p>三件套上线后冻结消失。教训：<strong>对单连接嵌入式 httpd，“快速失败快速重试”是反模式，保持连接稳定比什么都重要。</strong></p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="六浏览器端大坑chrome-不逐帧触发-load">六、浏览器端大坑：Chrome 不逐帧触发 load</h2>
+<p>这是整个改造里最反直觉的一点：<code>&lt;img src="multipart流"&gt;</code> 在 Chrome 里<strong>只有首帧触发 <code>load</code> 事件</strong>，后续帧静默替换画面。如果你用 <code>onload</code> 更新“最后画面时间”或判定 LIVE，时间戳会永远卡在首帧——画面明明在动，UI 却显示离线。</p>
+<p>正解是<strong>存活判定走服务端心跳</strong>，与画面渲染解耦。后端加一个 <code>/api/camstat</code>：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#6A737D"># {"seq": 帧序号, "age": 最新帧年龄(秒), "clients": 在线浏览器数}</span></span></code></pre>
+<p>前端每 2 秒查一次，<code>age &lt; 4</code> 即 LIVE；流断了自动回退 1.5 秒快照轮询，30 秒后重试流模式：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#F97583">async</span><span style="color:#F97583"> function</span><span style="color:#B392F0"> camCheck</span><span style="color:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#F97583">  if</span><span style="color:#E1E4E8"> (camMode </span><span style="color:#F97583">!==</span><span style="color:#9ECBFF"> "stream"</span><span style="color:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> lastFrame </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 8000</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">camDead</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    return</span><span style="color:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#F97583">  try</span><span style="color:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#F97583">    const</span><span style="color:#79B8FF"> s</span><span style="color:#F97583"> =</span><span style="color:#F97583"> await</span><span style="color:#E1E4E8"> (</span><span style="color:#F97583">await</span><span style="color:#B392F0"> fetch</span><span style="color:#E1E4E8">(</span><span style="color:#9ECBFF">"/api/camstat"</span><span style="color:#E1E4E8">)).</span><span style="color:#B392F0">json</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (s.age </span><span style="color:#F97583">!=</span><span style="color:#79B8FF"> null</span><span style="color:#F97583"> &amp;&amp;</span><span style="color:#E1E4E8"> s.age </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> 4</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">camLive</span><span style="color:#E1E4E8">();          </span><span style="color:#6A737D">// 心跳新鲜 → LIVE</span></span>
+<span class="line"><span style="color:#F97583">    else</span><span style="color:#F97583"> if</span><span style="color:#E1E4E8"> (Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> lastFrame </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 6000</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">camSnapshotMode</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  } </span><span style="color:#F97583">catch</span><span style="color:#E1E4E8"> (e) {</span></span>
+<span class="line"><span style="color:#F97583">    if</span><span style="color:#E1E4E8"> (Date.</span><span style="color:#B392F0">now</span><span style="color:#E1E4E8">() </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> lastFrame </span><span style="color:#F97583">&gt;</span><span style="color:#79B8FF"> 6000</span><span style="color:#E1E4E8">) </span><span style="color:#B392F0">camSnapshotMode</span><span style="color:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#B392F0">setInterval</span><span style="color:#E1E4E8">(camCheck, </span><span style="color:#79B8FF">2000</span><span style="color:#E1E4E8">);</span></span></code></pre>
+<p>顺带一提，控制类控件要做到“秒级以内”，光靠 1 秒轮询还不够，还要<strong>乐观更新</strong>：点击瞬间先按预期渲染 UI，2.5 秒内设备真值追上即确认，超时回滚。视频走流、状态走快轮询、交互走乐观更新，三层叠加才是完整的“实时模式”。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="七断流自愈让面板自己按重启按钮">七、断流自愈：让面板自己按重启按钮</h2>
+<p>加固三件套消灭了已知冻结路径，但嵌入式设备总有意外（WiFi 掉线、httpd 未知卡死）。最后一道保险是<strong>自愈</strong>：grabber 发现“有观看者且超过 60 秒没有新帧”时，自动调 HA 服务按下第三节暴露的重启按钮：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#79B8FF">CAM_HEAL_AFTER</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 60.0</span><span style="color:#6A737D">      # 停滞阈值</span></span>
+<span class="line"><span style="color:#79B8FF">CAM_HEAL_COOLDOWN</span><span style="color:#F97583"> =</span><span style="color:#79B8FF"> 300.0</span><span style="color:#6A737D">  # 冷却，防重启循环</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> _cam_maybe_heal</span><span style="color:#E1E4E8">(started):</span></span>
+<span class="line"><span style="color:#F97583">    with</span><span style="color:#E1E4E8"> _camlock:</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"clients"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">==</span><span style="color:#79B8FF"> 0</span><span style="color:#E1E4E8">:          </span><span style="color:#6A737D"># 没人看就不折腾设备</span></span>
+<span class="line"><span style="color:#F97583">            return</span></span>
+<span class="line"><span style="color:#E1E4E8">        now </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> time.time()</span></span>
+<span class="line"><span style="color:#E1E4E8">        last </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"ts"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">or</span><span style="color:#E1E4E8"> started      </span><span style="color:#6A737D"># 从未出帧时以 worker 启动时刻计</span></span>
+<span class="line"><span style="color:#F97583">        if</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> last </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> CAM_HEAL_AFTER</span><span style="color:#F97583"> or</span><span style="color:#E1E4E8"> now </span><span style="color:#F97583">-</span><span style="color:#E1E4E8"> _cam[</span><span style="color:#9ECBFF">"heal_ts"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">&lt;</span><span style="color:#79B8FF"> CAM_HEAL_COOLDOWN</span><span style="color:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#F97583">            return</span></span>
+<span class="line"><span style="color:#E1E4E8">        _cam[</span><span style="color:#9ECBFF">"heal_ts"</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> now</span></span>
+<span class="line"><span style="color:#E1E4E8">    ha_req(</span><span style="color:#9ECBFF">"/api/services/button/press"</span><span style="color:#E1E4E8">, {</span><span style="color:#9ECBFF">"entity_id"</span><span style="color:#E1E4E8">: </span><span style="color:#79B8FF">CAM_RESTART_BTN</span><span style="color:#E1E4E8">})</span></span></code></pre>
+<p>两个设计细节：<strong>冷却 300 秒</strong>是防重启循环的关键——设备重启+回连约 10~20 秒，远小于冷却，正常恢复不会触发第二次；<strong>只在有观看者时触发</strong>，没人看时设备爱睡睡，不浪费重启。实测模拟停滞后按钮调用准确发出，冷却期内不重复。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="八要不要接回-ha一个名额的取舍">八、要不要接回 HA？一个名额的取舍</h2>
+<p>固件暴露 8080 之后，HA 其实多了一个选项：用自带的 <strong>MJPEG IP Camera</strong> 集成直接消费 <code>http://esp32-s3-cam.local:8080/</code>，HA 里也能拿到低延时画面。</p>
+<p>但注意第四节的名额问题：<strong>设备只接受一个流客户端</strong>。HA 的 MJPEG 集成和树莓派转发服务只能二选一。我的取舍是：</p>
+<ul>
+<li><strong>转发服务做唯一流消费者</strong>，自绘面板的所有浏览器共享这一路；</li>
+<li>HA 保留 ESPHome 原生摄像头实体，负责快照、移动侦测类自动化——这些是单帧语义，本来就不需要流。</li>
+</ul>
+<p>如果未来换 ESP32-P4（硬件 H.264），就可以走 go2rtc/WebRTC，HA 原生体验与多客户端兼得，那是下一阶段的升级路线。</p></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="九实测与验证最终上线数据">九、实测与验证（最终上线数据）</h2>
+<p>树莓派 4B + Ai-Thinker ESP32-S3-CAM，640x480@15fps，固件 2026-11-19 OTA 推送（上传 21 秒），面板同日部署上线：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>抓拍模式</th>
+<th>MJPEG 直推 + 转发（最终版）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>画面更新</td>
+<td>0.24 ~ 2.98 s/帧</td>
+<td>持续流，<strong>夜景 12.8fps / 亮景 13.4fps</strong></td>
+</tr>
+<tr>
+<td>服务端帧龄</td>
+<td>每次请求现唤醒</td>
+<td><strong>≤0.08s</strong>（心跳连续采样）</td>
+</tr>
+<tr>
+<td>端到端延时</td>
+<td>秒级</td>
+<td><del>0.2</del>0.4s（帧龄 + 分发 ≤40ms + 解码）</td>
+</tr>
+<tr>
+<td>冷启动/重连首帧</td>
+<td>—</td>
+<td><strong>0.22s</strong>（linger 内重连秒出帧）</td>
+</tr>
+<tr>
+<td>多浏览器</td>
+<td>各自请求互相挤占</td>
+<td>一路拉流 N 路分发</td>
+</tr>
+<tr>
+<td>无人观看</td>
+<td>设备休眠</td>
+<td>同样休眠（30s linger 后自动断）</td>
+</tr>
+<tr>
+<td>断流恢复</td>
+<td>—</td>
+<td>快照回退 + 30s 重试 + <strong>60s 停滞自愈重启</strong></td>
+</tr>
+</tbody>
+</table>
+<p>实测还有两个反直觉的现象：</p>
+<ul>
+<li><strong>夜景纯黑时相邻帧字节完全相同</strong>。关灯后画面是静态纯黑，JPEG 编码确定性输出，隔 1 秒抓两帧哈希一致——但这不代表流死了。判活必须看 <code>seq</code> 是否增长、<code>age</code> 是否新鲜，不能比帧内容。</li>
+<li><strong>低照度会拉低帧率</strong>。自动曝光在暗光下延长单帧曝光时间，fps 会下降；<code>agc_gain_ceiling: 16x</code> 限制增益后夜景仍稳在 12.8fps。带宽实测仅 ~0.4Mbps（夜景 q12），比预估低一个量级，白天复杂画面会更高。</li>
+</ul>
+<p>转发服务用 mock MJPEG 源做了 <strong>13 项回归</strong>（纯标准库、不触真机）：流首帧、fan-out 边界、12s 宽限不立即 EOF、linger 保持与到期退出、快照回退、自愈触发与冷却均在列。有三个测试环境的坑值得单独记：</p>
+<ul>
+<li><strong>Windows 的 <code>SO_REUSEADDR</code> 允许两个进程绑定同一端口且都“成功”</strong>，mock 与演示服务撞端口时测试会连到错误的流，数据看似正常实则全错。mock 端口必须与常驻进程错开。</li>
+<li>multipart 切帧不要按 <code>\r\n\r\n</code> 找头结束，直接找 JPEG SOI（<code>FF D8</code>）魔数最稳，不同固件的头部格式差异全部免疫。</li>
+<li>测“停滞自愈”时要先等上一个测试残留的 grabber 线程退出，否则它会回连 mock 源补帧，让停滞永远不成立。</li>
+</ul></div></section>
+<section class="section lab-post-section"><div class="astro-prose lab-post-body"><h2 id="十代码与后续">十、代码与后续</h2>
+<p>完整实现都在项目仓库里：固件配置 <code>esphome/esp32_s3_cam.yaml</code>，转发服务与前端 <code>ha-panel/serve.py</code>（单文件、纯标准库），回归 <code>ha-panel/test_serve.py</code>。<strong>整套已部署上线</strong>：面板摄像头卡片 LIVE 常绿，控制类控件延时 &lt;1s。后续路线：一是把实时模式推广到监控面板其余页面，二是换 ESP32-P4 走硬件 H.264 + WebRTC。</p>
+<p>如果你手上也是 ESP32-S3 + OV2640 的组合，记住一句话就够了：<strong>别找 H.264，MJPEG 直推就是这块芯片的天花板，而天花板已经够低延时了。</strong></p></div></section>
+</main>
+<footer class="container footer">稻田鼠 · LAB NOTES <span class="pill">可离线使用</span> &nbsp;|&nbsp; <a href="https://github.com/FukunHennan/edgeone-page">GitHub</a></footer>
+</body></html>
